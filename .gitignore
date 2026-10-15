@@ -1,0 +1,9 @@
+node_modules/
+.npm-cache/
+--loglevel=warn/
+.expo/
+dist/
+*.log
+.env
+.env.*
+!.env.example
