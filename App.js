@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import * as Clipboard from 'expo-clipboard';
 import * as Speech from 'expo-speech';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { getLibraryItems, initializeLibrary, saveLibraryItem } from './src/storage/library';
 
@@ -17,17 +17,18 @@ const sample = 'Listen AI ile makaleleri, notları ve uzun metinleri istediğini
 export default function App() {
   const [tab, setTab] = useState('home'); const [composer, setComposer] = useState(false);
   const [text, setText] = useState(sample); const [rate, setRate] = useState(1); const [playing, setPlaying] = useState(false); const [activeRange, setActiveRange] = useState(null);
+  const speechSession = useRef(0);
   const [voices, setVoices] = useState([]); const [voiceId, setVoiceId] = useState();
   const [libraryItems, setLibraryItems] = useState([]); const [libraryReady, setLibraryReady] = useState(false);
   useEffect(() => { Speech.getAvailableVoicesAsync().then(list => { const selected = list.filter(v => v.language?.toLowerCase().startsWith('tr')); const choices = selected.length ? selected : list; setVoices(choices.slice(0, 3)); setVoiceId(choices[0]?.identifier); }); return () => Speech.stop(); }, []);
   useEffect(() => { initializeLibrary().then(getLibraryItems).then(setLibraryItems).then(() => setLibraryReady(true)).catch(() => Alert.alert('Kütüphane açılamadı', 'Yerel kayıt alanı başlatılamadı.')); }, []);
-  const play = (selectedRate = rate) => { if (!text.trim()) return Alert.alert('Metin gerekli', 'Dinlemek için önce bir metin girin.'); Speech.stop(); setPlaying(true); setActiveRange(null); Speech.speak(text, { language: 'tr-TR', voice: voiceId, rate: selectedRate, onBoundary: ({ charIndex, charLength }) => setActiveRange({ start: charIndex, end: charIndex + charLength }), onDone: () => { setPlaying(false); setActiveRange(null); }, onStopped: () => { setPlaying(false); setActiveRange(null); }, onError: () => { setPlaying(false); setActiveRange(null); } }); };
+  const play = (selectedRate = rate) => { if (!text.trim()) return Alert.alert('Metin gerekli', 'Dinlemek için önce bir metin girin.'); const session = ++speechSession.current; Speech.stop(); setPlaying(true); setActiveRange(null); Speech.speak(text, { language: 'tr-TR', voice: voiceId, rate: selectedRate, onBoundary: ({ charIndex, charLength }) => { if (session === speechSession.current) setActiveRange({ start: charIndex, end: charIndex + charLength }); }, onDone: () => { if (session === speechSession.current) { setPlaying(false); setActiveRange(null); } }, onStopped: () => { if (session === speechSession.current) { setPlaying(false); setActiveRange(null); } }, onError: () => { if (session === speechSession.current) { setPlaying(false); setActiveRange(null); } } }); };
   const useFeature = id => id === 'write' ? setComposer(true) : Alert.alert('Yakında', 'Bu özellik ürün planına eklendi. Önce metin dinleme akışını tamamlıyoruz.');
   const saveText = async () => { if (!text.trim()) return Alert.alert('Metin gerekli', 'Kaydetmek için önce bir metin girin.'); const title = text.trim().split(/\n|[.!?]/)[0].slice(0, 60) || 'Başlıksız metin'; try { const item = await saveLibraryItem({ title, content: text.trim() }); setLibraryItems(current => [item, ...current]); Alert.alert('Kütüphaneye eklendi', 'Metninizi Kütüphanem sekmesinden tekrar açabilirsiniz.'); } catch { Alert.alert('Kaydedilemedi', 'Metin yerel kütüphaneye kaydedilemedi.'); } };
   const saveAndPlay = async () => { await saveText(); play(); };
   const changeRate = () => { const rates = [0.5, 1, 1.25, 1.5]; const next = rates[(rates.indexOf(rate) + 1) % rates.length]; setRate(next); play(next); };
   return <SafeAreaView style={s.safe}><StatusBar style="dark" />
-    {composer ? <Composer {...{ text, setText, rate, setRate, voices, voiceId, setVoiceId, playing, activeRange }} onBack={() => setComposer(false)} onSaveAndPlay={saveAndPlay} onChangeRate={changeRate} onPlay={playing ? () => { Speech.stop(); setPlaying(false); setActiveRange(null); } : play} /> : <>
+    {composer ? <Composer {...{ text, setText, rate, setRate, voices, voiceId, setVoiceId, playing, activeRange }} onBack={() => setComposer(false)} onSaveAndPlay={saveAndPlay} onChangeRate={changeRate} onPlay={playing ? () => { speechSession.current += 1; Speech.stop(); setPlaying(false); setActiveRange(null); } : play} /> : <>
       {tab === 'home' && <Home onFeature={useFeature} />}{tab === 'library' && <Library items={libraryItems} ready={libraryReady} onAdd={() => setComposer(true)} />}{tab === 'settings' && <Settings />}
       <Nav active={tab} setActive={setTab} />
     </>}</SafeAreaView>;
