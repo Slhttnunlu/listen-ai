@@ -2,8 +2,8 @@
 
 ## 1. Metin Yaz veya Yapıştır — MVP önceliği
 
-- [ ] Metni başlıkla kaydetme ve kütüphaneye ekleme
-- [ ] Kalıcı yerel depolama
+- [x] Metni başlıkla kaydetme ve kütüphaneye ekleme
+- [x] SQLite ile kalıcı yerel depolama
 - [ ] Oynat/duraklat, dinleme yüzdesi ve kaldığı yerden devam
 - [x] Okunan kelimeyi ses motoru sınır olaylarıyla vurgulama
 - [ ] Arka plan oynatma ve kilit ekranı kontrolleri
