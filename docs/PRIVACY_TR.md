@@ -17,7 +17,7 @@ Mevcut sürüm kullanıcı metnini, belgesini veya kütüphanesini Listen AI sun
 
 ## Yerel saklama ve silme
 
-Kayıtlar siz silene veya uygulama verilerini/uygulamayı cihazdan kaldırana kadar cihazda kalabilir. Kütüphanedeki silme işlemi geri alma imkânı sağlamak için önce geri alınabilir olarak işaretlenir. Kalıcı toplu silme ve dışa aktarma kontrolleri production sürümü öncesi tamamlanacaktır.
+Kayıtlar siz silene veya uygulama verilerini/uygulamayı cihazdan kaldırana kadar cihazda kalabilir. Tek kayıt silme 30 gün geri alınabilir; ardından kalıcı temizlenir. Ayarlar'dan aktif kütüphanenizi JSON olarak dışa aktarabilir veya tüm yerel verileri açık onaydan sonra kalıcı silebilirsiniz.
 
 Cihaz yedeklerinin saklanması ve silinmesi Apple/Google hesabınız ile işletim sistemi ayarlarınıza bağlı olabilir.
 

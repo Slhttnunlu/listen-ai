@@ -7,15 +7,15 @@ Bu envanter kaynak kodun mevcut davranışını belgeler. Gelecek planındaki he
 
 ## Mevcut veri akışları
 
-| Veri                                         | Kaynak                                      | Amaç                                           | Konum / aktarım                                                                                 | Saklama                                                  | Silme                                                             |
-| -------------------------------------------- | ------------------------------------------- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ----------------------------------------------------------------- |
-| Metin içeriği ve başlık                      | Kullanıcı yazma/yapıştırma                  | Seslendirme ve kütüphane                       | Cihaz içi SQLite; uygulama sunucusuna gönderilmez                                               | Kullanıcı silene veya uygulama verisini kaldırana kadar  | Kütüphanede silme soft-delete uygular; geri alma korunur          |
-| Dinleme ilerlemesi                           | TTS kelime sınırı                           | Kaldığı yerden devam                           | Cihaz içi SQLite                                                                                | İlgili kayıtla aynı                                      | İlgili kayıtla birlikte                                           |
-| Favori/tamamlandı bilgisi ve zaman damgaları | Kullanıcı/uygulama                          | Filtreleme ve sıralama                         | Cihaz içi SQLite                                                                                | İlgili kayıtla aynı                                      | İlgili kayıtla birlikte                                           |
-| TXT içeriği                                  | Sistem dosya seçici                         | Editöre içerik aktarma                         | Seçilen dosyanın uygulama cache kopyası okunur; metin ancak kullanıcı kaydederse SQLite'a girer | Cache yaşam döngüsü işletim sistemi tarafından yönetilir | İşletim sistemi cache temizliği veya uygulama verisini kaldırma   |
-| Pano metni                                   | Sistem panosu                               | Kullanıcı “Yapıştır” dediğinde editöre aktarma | Yalnızca cihaz belleği/editör; otomatik okunmaz                                                 | Kullanıcı kaydederse SQLite'a girer                      | Editörü temizleme veya kayıt silme                                |
-| Cihaz TTS ses listesi                        | İşletim sistemi                             | Türkçe/uygun sesi seçme                        | Bellekte; uygulama sunucusuna gönderilmez                                                       | Oturum süresince                                         | Uygulama kapanınca                                                |
-| Geri bildirim içeriği                        | Kullanıcının GitHub sayfasında yazdığı veri | Destek ve hata bildirimi                       | Uygulama GitHub issue sayfasını açar; veri GitHub'a kullanıcı tarafından gönderilir             | GitHub ve repository politikasına göre                   | Kullanıcı issue düzenleme/silme talebi veya repository yöneticisi |
+| Veri                                         | Kaynak                                      | Amaç                                           | Konum / aktarım                                                                                 | Saklama                                                  | Silme                                                                    |
+| -------------------------------------------- | ------------------------------------------- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Metin içeriği ve başlık                      | Kullanıcı yazma/yapıştırma                  | Seslendirme ve kütüphane                       | Cihaz içi SQLite; uygulama sunucusuna gönderilmez                                               | Kullanıcı silene veya uygulama verisini kaldırana kadar  | Tek kayıt silme 30 gün geri alınabilir; toplu kalıcı silme Ayarlar'dadır |
+| Dinleme ilerlemesi                           | TTS kelime sınırı                           | Kaldığı yerden devam                           | Cihaz içi SQLite                                                                                | İlgili kayıtla aynı                                      | İlgili kayıtla birlikte                                                  |
+| Favori/tamamlandı bilgisi ve zaman damgaları | Kullanıcı/uygulama                          | Filtreleme ve sıralama                         | Cihaz içi SQLite                                                                                | İlgili kayıtla aynı                                      | İlgili kayıtla birlikte                                                  |
+| TXT içeriği                                  | Sistem dosya seçici                         | Editöre içerik aktarma                         | Seçilen dosyanın uygulama cache kopyası okunur; metin ancak kullanıcı kaydederse SQLite'a girer | Cache yaşam döngüsü işletim sistemi tarafından yönetilir | İşletim sistemi cache temizliği veya uygulama verisini kaldırma          |
+| Pano metni                                   | Sistem panosu                               | Kullanıcı “Yapıştır” dediğinde editöre aktarma | Yalnızca cihaz belleği/editör; otomatik okunmaz                                                 | Kullanıcı kaydederse SQLite'a girer                      | Editörü temizleme veya kayıt silme                                       |
+| Cihaz TTS ses listesi                        | İşletim sistemi                             | Türkçe/uygun sesi seçme                        | Bellekte; uygulama sunucusuna gönderilmez                                                       | Oturum süresince                                         | Uygulama kapanınca                                                       |
+| Geri bildirim içeriği                        | Kullanıcının GitHub sayfasında yazdığı veri | Destek ve hata bildirimi                       | Uygulama GitHub issue sayfasını açar; veri GitHub'a kullanıcı tarafından gönderilir             | GitHub ve repository politikasına göre                   | Kullanıcı issue düzenleme/silme talebi veya repository yöneticisi        |
 
 ## Mevcut sürümde olmayan veri işlemleri
 
@@ -32,7 +32,7 @@ Bu envanter kaynak kodun mevcut davranışını belgeler. Gelecek planındaki he
 ### Kapalı beta
 
 - Yerel kayıt kullanıcı kontrolündedir ve otomatik buluta yüklenmez.
-- Kütüphanedeki silme geri alınabilir tasarlanmıştır. Production öncesi soft-delete kayıtları için otomatik kalıcı temizleme süresi uygulanmalı ve kullanıcı metninde belirtilmelidir.
+- Kütüphanedeki tek kayıt silme 30 gün geri alınabilir; süre dolduğunda uygulama başlangıcında kalıcı temizlenir.
 - Uygulamanın kaldırılması işletim sisteminin uygulama sandbox'ını ve SQLite verisini siler; cihaz yedeği davranışı iOS/Android ayarlarına bağlı olabilir.
 - Destek issue'suna hassas metin veya belge yapıştırılmaması kullanıcıya bildirilir.
 
@@ -47,9 +47,9 @@ Bu envanter kaynak kodun mevcut davranışını belgeler. Gelecek planındaki he
 
 ### Hesapsız/yerel kullanıcı
 
-1. Kütüphane kayıtları için JSON veya düz metin dışa aktarma özelliği production öncesi eklenmelidir.
+1. Ayarlar'daki dışa aktarma aksiyonu aktif kütüphaneyi JSON dosyası olarak sistem paylaşım ekranına verir.
 2. Tek kayıt silme mevcut geri alınabilir akışla yapılır.
-3. “Tüm yerel verileri sil” aksiyonu açık onay ve geri döndürülemezlik uyarısıyla Ayarlar'a eklenmelidir.
+3. “Tüm yerel verileri sil” aksiyonu açık onaydan sonra metinleri ve ilerlemeyi SQLite'tan kalıcı kaldırır.
 4. Uygulamayı kaldırma yerel uygulama verisini cihazdan temizler.
 
 ### Gelecek hesaplı kullanıcı

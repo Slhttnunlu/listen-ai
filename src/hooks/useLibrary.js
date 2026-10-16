@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
+  deleteAllLibraryItems,
   getLibraryItems,
   initializeLibrary,
   renameLibraryItem,
@@ -95,12 +96,18 @@ export function useLibrary({ onError }) {
     return item;
   }, []);
 
+  const clearLibrary = useCallback(async () => {
+    await deleteAllLibraryItems();
+    setItems([]);
+  }, []);
+
   const restoreItem = useCallback(async (item) => {
     await restoreLibraryItem(item.id);
     setItems((current) => [item, ...current]);
   }, []);
 
   return {
+    clearLibrary,
     deleteItem,
     items,
     loadError,

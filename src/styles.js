@@ -255,6 +255,14 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   settingText: { fontSize: 18, fontWeight: '600' },
+  destructiveSettingText: { color: '#b42318', fontSize: 18, fontWeight: '700' },
+  settingsSection: {
+    color: '#777',
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: 1,
+    marginTop: 28,
+  },
   settingStatus: { color: '#777', fontSize: 14, fontWeight: '700' },
   chevron: { fontSize: 30, color: '#aaa' },
   composerHead: {

@@ -1,5 +1,5 @@
 import * as SQLite from 'expo-sqlite';
-import { normalizeLibraryItem } from '../utils/library';
+import { getSoftDeleteCutoff, normalizeLibraryItem } from '../utils/library';
 
 let database;
 export const LIBRARY_SCHEMA_VERSION = 2;
@@ -44,6 +44,10 @@ export async function initializeLibrary() {
       }
     }
     await db.execAsync(`PRAGMA user_version = ${LIBRARY_SCHEMA_VERSION};`);
+    await db.runAsync(
+      'DELETE FROM library_items WHERE deleted_at IS NOT NULL AND deleted_at <= ?',
+      getSoftDeleteCutoff()
+    );
   });
 }
 
@@ -81,6 +85,11 @@ export async function softDeleteLibraryItem(id) {
 export async function restoreLibraryItem(id) {
   const db = await getDatabase();
   await db.runAsync('UPDATE library_items SET deleted_at = NULL WHERE id = ?', id);
+}
+
+export async function deleteAllLibraryItems() {
+  const db = await getDatabase();
+  await db.runAsync('DELETE FROM library_items');
 }
 
 export async function saveLibraryItem({ title, content }) {

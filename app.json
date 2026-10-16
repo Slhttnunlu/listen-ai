@@ -25,6 +25,12 @@
         "backgroundColor": "#E4FFD6"
       }
     },
-    "plugins": ["expo-asset", "expo-document-picker", "expo-status-bar", "expo-sqlite"]
+    "plugins": [
+      "expo-asset",
+      "expo-document-picker",
+      "expo-status-bar",
+      "expo-sqlite",
+      "expo-sharing"
+    ]
   }
 }

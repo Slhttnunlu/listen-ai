@@ -1,8 +1,10 @@
 import {
   filterLibraryItems,
+  getSoftDeleteCutoff,
   getLibraryItemMeta,
   normalizeLibraryItem,
   prepareLibraryItems,
+  serializeLibrary,
 } from '../utils/library';
 
 const items = [
@@ -86,5 +88,22 @@ describe('library utilities', () => {
       is_completed: 0,
       is_favorite: 0,
     });
+  });
+
+  test('creates a portable library export without internal database fields', () => {
+    const exported = JSON.parse(serializeLibrary(items, '2026-10-16T00:00:00.000Z'));
+    expect(exported.schema_version).toBe(1);
+    expect(exported.exported_at).toBe('2026-10-16T00:00:00.000Z');
+    expect(exported.items[0]).toEqual(
+      expect.objectContaining({ content: 'On iki karakter', is_completed: false })
+    );
+    expect(exported.items[0]).not.toHaveProperty('id');
+    expect(exported.items[0]).not.toHaveProperty('deleted_at');
+  });
+
+  test('calculates the 30-day soft-delete retention cutoff', () => {
+    expect(getSoftDeleteCutoff(new Date('2026-10-16T00:00:00.000Z'))).toBe(
+      '2026-09-16T00:00:00.000Z'
+    );
   });
 });

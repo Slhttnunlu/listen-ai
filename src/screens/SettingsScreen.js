@@ -1,7 +1,7 @@
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { styles } from '../styles';
 
-export function SettingsScreen({ onFeedback, onPrivacy, onTerms }) {
+export function SettingsScreen({ onFeedback, onPrivacy, onTerms, onExportData, onDeleteData }) {
   return (
     <ScrollView style={styles.white} contentContainerStyle={styles.settings}>
       <Text style={styles.libTitle}>Ayarlar</Text>
@@ -12,6 +12,31 @@ export function SettingsScreen({ onFeedback, onPrivacy, onTerms }) {
           <Text style={styles.settingStatus}>Yakında</Text>
         </View>
       ))}
+      <Text style={styles.settingsSection}>VERİLERİNİZ</Text>
+      <Pressable
+        accessibilityRole="button"
+        onPress={onExportData}
+        style={styles.setting}
+        testID="export-data-button"
+      >
+        <Text style={styles.settingText}>Kütüphaneyi dışa aktar</Text>
+        <Text accessible={false} style={styles.chevron}>
+          ›
+        </Text>
+      </Pressable>
+      <Pressable
+        accessibilityHint="Tüm kayıtlı metinleri ve dinleme ilerlemesini kalıcı olarak siler"
+        accessibilityRole="button"
+        onPress={onDeleteData}
+        style={styles.setting}
+        testID="delete-data-button"
+      >
+        <Text style={styles.destructiveSettingText}>Tüm yerel verileri sil</Text>
+        <Text accessible={false} style={styles.chevron}>
+          ›
+        </Text>
+      </Pressable>
+      <Text style={styles.settingsSection}>YASAL VE DESTEK</Text>
       <Pressable
         accessibilityRole="link"
         onPress={onPrivacy}

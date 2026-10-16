@@ -106,4 +106,20 @@ describe('screen interactions', () => {
     expect(onPrivacy).toHaveBeenCalledTimes(1);
     expect(onTerms).toHaveBeenCalledTimes(1);
   });
+
+  test('exposes explicit local data export and delete actions', () => {
+    const onExportData = jest.fn();
+    const onDeleteData = jest.fn();
+    const screen = render(
+      <SettingsScreen
+        onFeedback={jest.fn()}
+        onExportData={onExportData}
+        onDeleteData={onDeleteData}
+      />
+    );
+    fireEvent.press(screen.getByTestId('export-data-button'));
+    fireEvent.press(screen.getByTestId('delete-data-button'));
+    expect(onExportData).toHaveBeenCalledTimes(1);
+    expect(onDeleteData).toHaveBeenCalledTimes(1);
+  });
 });

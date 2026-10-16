@@ -12,6 +12,7 @@ import { HomeScreen } from './src/screens/HomeScreen';
 import { LibraryScreen } from './src/screens/LibraryScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
 import { pickTextDocument } from './src/services/documents';
+import { exportLibrary } from './src/services/libraryExport';
 import { styles } from './src/styles';
 import { DEFAULT_TEXT } from './src/utils/text';
 
@@ -30,6 +31,7 @@ export function AppContent() {
   }, []);
 
   const {
+    clearLibrary,
     deleteItem,
     items,
     loadError,
@@ -125,6 +127,43 @@ export function AppContent() {
     }
   }, []);
 
+  const exportLocalData = useCallback(async () => {
+    if (!items.length) {
+      Alert.alert('Kütüphane boş', 'Dışa aktarılacak kayıtlı bir metin bulunmuyor.');
+      return;
+    }
+    try {
+      await exportLibrary(items);
+    } catch (error) {
+      Alert.alert('Dışa aktarılamadı', error.message || 'Kütüphane dosyası oluşturulamadı.');
+    }
+  }, [items]);
+
+  const confirmDeleteLocalData = useCallback(() => {
+    Alert.alert(
+      'Tüm yerel veriler silinsin mi?',
+      'Kayıtlı metinler, favoriler ve dinleme ilerlemesi kalıcı olarak silinir. Bu işlem geri alınamaz.',
+      [
+        { text: 'Vazgeç', style: 'cancel' },
+        {
+          text: 'Kalıcı olarak sil',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              stop();
+              await clearLibrary();
+              setCurrentItem(null);
+              setText(DEFAULT_TEXT);
+              Alert.alert('Yerel veriler silindi', 'Kütüphanenizdeki tüm kayıtlar kaldırıldı.');
+            } catch {
+              Alert.alert('Silinemedi', 'Yerel veriler silinirken bir hata oluştu.');
+            }
+          },
+        },
+      ]
+    );
+  }, [clearLibrary, stop]);
+
   return (
     <SafeAreaView style={styles.safe}>
       <StatusBar style="dark" />
@@ -148,6 +187,8 @@ export function AppContent() {
         }
         settings={
           <SettingsScreen
+            onDeleteData={confirmDeleteLocalData}
+            onExportData={exportLocalData}
             onFeedback={openFeedback}
             onPrivacy={() => openLegalDocument('privacy')}
             onTerms={() => openLegalDocument('terms')}

@@ -1,5 +1,6 @@
 appId: ${APP_ID}
 ---
+- stopApp
 - openLink: ${APP_URL}
 - runFlow:
     when:
@@ -22,6 +23,16 @@ appId: ${APP_ID}
 - tapOn:
     id: nav-settings
 - assertVisible: 'Ayarlar'
+- scrollUntilVisible:
+    element:
+      id: export-data-button
+    direction: DOWN
+- assertVisible:
+    id: delete-data-button
+- tapOn:
+    id: delete-data-button
+- assertVisible: 'Tüm yerel veriler silinsin mi?'
+- tapOn: 'Vazgeç'
 - scrollUntilVisible:
     element:
       id: privacy-button

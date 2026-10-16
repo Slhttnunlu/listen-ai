@@ -1,4 +1,29 @@
 export const LIBRARY_FILTERS = ['Tümü', 'Devam', 'Tamamlandı', '♡ Favoriler'];
+export const SOFT_DELETE_RETENTION_DAYS = 30;
+
+export function getSoftDeleteCutoff(now = new Date()) {
+  return new Date(now.getTime() - SOFT_DELETE_RETENTION_DAYS * 24 * 60 * 60 * 1000).toISOString();
+}
+
+export function serializeLibrary(items, exportedAt = new Date().toISOString()) {
+  return JSON.stringify(
+    {
+      schema_version: 1,
+      exported_at: exportedAt,
+      items: items.map((item) => ({
+        title: item.title,
+        content: item.content,
+        created_at: item.created_at,
+        last_played_at: item.last_played_at || null,
+        progress_index: item.progress_index || 0,
+        is_favorite: Boolean(item.is_favorite),
+        is_completed: Boolean(item.is_completed),
+      })),
+    },
+    null,
+    2
+  );
+}
 
 export function normalizeLibraryItem(item) {
   const content = typeof item?.content === 'string' ? item.content : '';
