@@ -80,12 +80,13 @@ export async function getPlaybackPreferences() {
   await initializeLibrary();
   const db = await getDatabase();
   const rows = await db.getAllAsync(
-    "SELECT key, value FROM app_settings WHERE key IN ('playback_rate', 'voice_id')"
+    "SELECT key, value FROM app_settings WHERE key IN ('playback_rate', 'voice_id', 'tts_engine')"
   );
   const settings = Object.fromEntries(rows.map((row) => [row.key, row.value]));
   return {
     rate: Number(settings.playback_rate) || 1,
     voiceId: settings.voice_id || null,
+    ttsEngine: settings.tts_engine || null,
   };
 }
 

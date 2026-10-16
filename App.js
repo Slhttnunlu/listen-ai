@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 import { Alert, Linking } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { AppErrorBoundary } from './src/components/AppErrorBoundary';
+import { getNextTtsEngine, OFFLINE_TTS_MODEL, ON_DEVICE_TTS_ENABLED } from './src/constants/tts';
 import { useLibrary } from './src/hooks/useLibrary';
 import { usePlaybackPreferences } from './src/hooks/usePlaybackPreferences';
 import { useSpeechPlayer } from './src/hooks/useSpeechPlayer';
@@ -49,9 +50,8 @@ export function AppContent() {
     saveProgress,
     toggleFavorite,
   } = useLibrary({});
-  const { preferredRate, preferredVoiceId, saveRate, saveVoiceId } = usePlaybackPreferences({
-    onError: showSpeechError,
-  });
+  const { preferredRate, preferredVoiceId, saveRate, saveVoiceId, saveTtsEngine, ttsEngine } =
+    usePlaybackPreferences({ onError: showSpeechError });
   const {
     activeRange,
     changeRate,
@@ -69,10 +69,12 @@ export function AppContent() {
     initialIndex: currentItem?.progress_index || 0,
     preferredRate,
     preferredVoiceId,
+    ttsEngine,
     onProgress: saveProgress,
     onError: showSpeechError,
     onRateChange: saveRate,
     onVoiceChange: saveVoiceId,
+    onEngineFallback: saveTtsEngine,
   });
 
   const selectNextVoice = useCallback(() => {
@@ -84,6 +86,11 @@ export function AppContent() {
   const selectNextDefaultRate = useCallback(() => {
     selectRate(getNextRate(rate));
   }, [rate, selectRate]);
+
+  const selectNextTtsEngine = useCallback(() => {
+    stop();
+    saveTtsEngine(getNextTtsEngine(ttsEngine));
+  }, [saveTtsEngine, stop, ttsEngine]);
 
   const startNewText = useCallback(() => {
     stop();
@@ -272,9 +279,13 @@ export function AppContent() {
         settings={
           <SettingsScreen
             rate={rate}
+            ttsEngine={ttsEngine}
+            offlineTtsEnabled={ON_DEVICE_TTS_ENABLED}
+            offlineTtsName={OFFLINE_TTS_MODEL.displayName}
             voice={voices.find((item) => item.identifier === voiceId)}
             voiceCount={voices.length}
             onChangeRate={selectNextDefaultRate}
+            onChangeTtsEngine={selectNextTtsEngine}
             onChangeVoice={selectNextVoice}
             onDeleteData={confirmDeleteLocalData}
             onExportData={exportLocalData}

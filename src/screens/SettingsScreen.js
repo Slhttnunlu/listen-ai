@@ -1,11 +1,16 @@
 import { Pressable, ScrollView, Text, View } from 'react-native';
+import { TTS_ENGINES } from '../constants/tts';
 import { styles } from '../styles';
 
 export function SettingsScreen({
   rate,
+  ttsEngine = TTS_ENGINES.device,
+  offlineTtsEnabled = false,
+  offlineTtsName = 'Offline Türkçe (Deneysel)',
   voice,
   voiceCount = 0,
   onChangeRate,
+  onChangeTtsEngine,
   onChangeVoice,
   onFeedback,
   onPrivacy,
@@ -18,10 +23,24 @@ export function SettingsScreen({
     <ScrollView style={styles.white} contentContainerStyle={styles.settings}>
       <Text style={styles.libTitle}>Ayarlar</Text>
       <Text style={styles.intro}>Dinleme deneyiminizi kişiselleştirin.</Text>
+      {offlineTtsEnabled ? (
+        <Pressable
+          accessibilityHint="Cihaz sistemi ve deneysel offline model arasında geçiş yapar"
+          accessibilityRole="button"
+          onPress={onChangeTtsEngine}
+          style={styles.setting}
+          testID="tts-engine-setting"
+        >
+          <Text style={styles.settingText}>Ses motoru</Text>
+          <Text style={styles.settingStatus} numberOfLines={1}>
+            {ttsEngine === TTS_ENGINES.offline ? offlineTtsName : 'Cihazın sistem sesi'}
+          </Text>
+        </Pressable>
+      ) : null}
       <Pressable
         accessibilityHint={voiceCount > 1 ? 'Sonraki kullanılabilir sesi seçer' : undefined}
         accessibilityRole="button"
-        disabled={voiceCount < 2}
+        disabled={voiceCount < 2 || ttsEngine === TTS_ENGINES.offline}
         onPress={onChangeVoice}
         style={styles.setting}
         testID="voice-setting"

@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { getPlaybackPreferences, setPlaybackPreference } from '../storage/library';
+import { DEFAULT_TTS_ENGINE, normalizeTtsEngine } from '../constants/tts';
 import { PLAYBACK_RATES } from '../utils/text';
 
 export function usePlaybackPreferences({ onError }) {
   const [rate, setRate] = useState(1);
   const [voiceId, setVoiceId] = useState(null);
+  const [ttsEngine, setTtsEngine] = useState(DEFAULT_TTS_ENGINE);
 
   useEffect(() => {
     let mounted = true;
@@ -13,6 +15,7 @@ export function usePlaybackPreferences({ onError }) {
         if (!mounted) return;
         if (PLAYBACK_RATES.includes(preferences.rate)) setRate(preferences.rate);
         setVoiceId(preferences.voiceId);
+        setTtsEngine(normalizeTtsEngine(preferences.ttsEngine));
       })
       .catch(() => onError?.('Dinleme tercihleri yüklenemedi.'));
     return () => {
@@ -46,5 +49,25 @@ export function usePlaybackPreferences({ onError }) {
     [onError]
   );
 
-  return { preferredRate: rate, preferredVoiceId: voiceId, saveRate, saveVoiceId };
+  const saveTtsEngine = useCallback(
+    async (nextEngine) => {
+      const normalizedEngine = normalizeTtsEngine(nextEngine);
+      setTtsEngine(normalizedEngine);
+      try {
+        await setPlaybackPreference('tts_engine', normalizedEngine);
+      } catch {
+        onError?.('Ses motoru tercihi kaydedilemedi.');
+      }
+    },
+    [onError]
+  );
+
+  return {
+    preferredRate: rate,
+    preferredVoiceId: voiceId,
+    saveRate,
+    saveVoiceId,
+    saveTtsEngine,
+    ttsEngine,
+  };
 }

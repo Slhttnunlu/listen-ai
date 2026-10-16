@@ -26,7 +26,12 @@
       }
     },
     "plugins": [
-      "expo-asset",
+      [
+        "expo-asset",
+        {
+          "assets": ["./assets/models"]
+        }
+      ],
       "expo-document-picker",
       "expo-status-bar",
       "expo-sqlite",

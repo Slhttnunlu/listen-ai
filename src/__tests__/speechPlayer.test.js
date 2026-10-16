@@ -1,11 +1,12 @@
 import { act, renderHook } from '@testing-library/react-native';
 import { useSpeechPlayer } from '../hooks/useSpeechPlayer';
-import { getPreferredVoices, speak } from '../services/speech';
+import { getPreferredVoices, speakWithEngine } from '../services/speech';
 
 jest.mock('../services/speech', () => ({
   getPreferredVoices: jest.fn(() => Promise.resolve([])),
-  speak: jest.fn(),
+  speakWithEngine: jest.fn(),
   stopSpeaking: jest.fn(),
+  destroySpeechEngines: jest.fn(),
 }));
 
 describe('useSpeechPlayer error recovery', () => {
@@ -18,7 +19,7 @@ describe('useSpeechPlayer error recovery', () => {
     const onError = jest.fn();
     const onProgress = jest.fn(() => Promise.reject(new Error('database unavailable')));
     let speechOptions;
-    speak.mockImplementation((_text, options) => {
+    speakWithEngine.mockImplementation((_engine, _text, options) => {
       speechOptions = options;
     });
     const { result } = renderHook(() =>
@@ -42,9 +43,7 @@ describe('useSpeechPlayer error recovery', () => {
 
   test('returns to a stopped state when speech cannot start', async () => {
     const onError = jest.fn();
-    speak.mockImplementation(() => {
-      throw new Error('speech unavailable');
-    });
+    speakWithEngine.mockRejectedValue(new Error('speech unavailable'));
     const { result } = renderHook(() =>
       useSpeechPlayer({ text: 'Bir test metni', itemId: 7, onError })
     );
@@ -55,9 +54,71 @@ describe('useSpeechPlayer error recovery', () => {
       started = result.current.play();
     });
 
-    expect(started).toBe(false);
+    await act(async () => Promise.resolve());
+    expect(started).toBe(true);
     expect(result.current.playing).toBe(false);
-    expect(onError).toHaveBeenCalledWith('Seslendirme başlatılamadı. Tekrar deneyebilirsiniz.');
+    expect(onError).toHaveBeenCalledWith(
+      'Metin seslendirilirken beklenmeyen bir hata oluştu. Tekrar deneyebilirsiniz.'
+    );
+  });
+
+  test('falls back to device speech when the offline engine cannot start', async () => {
+    const onError = jest.fn();
+    const onEngineFallback = jest.fn();
+    speakWithEngine
+      .mockRejectedValueOnce(new Error('native model unavailable'))
+      .mockResolvedValueOnce(undefined);
+    const { result } = renderHook(() =>
+      useSpeechPlayer({
+        text: 'Offline model testi',
+        ttsEngine: 'offline-model',
+        onError,
+        onEngineFallback,
+      })
+    );
+    await act(async () => Promise.resolve());
+
+    act(() => result.current.play());
+    await act(async () => Promise.resolve());
+
+    expect(onEngineFallback).toHaveBeenCalledWith('device');
+    expect(speakWithEngine).toHaveBeenNthCalledWith(
+      2,
+      'device',
+      'Offline model testi',
+      expect.any(Object)
+    );
+    expect(onError).toHaveBeenCalledWith(
+      'Offline ses modeli kullanılamadı. Bu dinleme cihazın sistem sesiyle devam edecek.'
+    );
+  });
+
+  test('falls back once when the offline engine reports a streaming error', async () => {
+    const onEngineFallback = jest.fn();
+    let offlineOptions;
+    speakWithEngine.mockImplementation((engine, _text, options) => {
+      if (engine === 'offline-model') offlineOptions = options;
+      return Promise.resolve();
+    });
+    const { result } = renderHook(() =>
+      useSpeechPlayer({
+        text: 'Akış hatası testi',
+        ttsEngine: 'offline-model',
+        onEngineFallback,
+      })
+    );
+    await act(async () => Promise.resolve());
+
+    act(() => result.current.play());
+    await act(async () => offlineOptions.onError(new Error('pcm stream failed')));
+
+    expect(onEngineFallback).toHaveBeenCalledTimes(1);
+    expect(speakWithEngine).toHaveBeenNthCalledWith(
+      2,
+      'device',
+      'Akış hatası testi',
+      expect.any(Object)
+    );
   });
 
   test('uses and updates persisted playback preferences', async () => {

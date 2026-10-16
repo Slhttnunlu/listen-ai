@@ -10,7 +10,11 @@ jest.mock('../storage/library', () => ({
 describe('usePlaybackPreferences', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    getPlaybackPreferences.mockResolvedValue({ rate: 1.25, voiceId: 'tr-two' });
+    getPlaybackPreferences.mockResolvedValue({
+      rate: 1.25,
+      voiceId: 'tr-two',
+      ttsEngine: 'offline-model',
+    });
     setPlaybackPreference.mockResolvedValue(undefined);
   });
 
@@ -20,13 +24,16 @@ describe('usePlaybackPreferences', () => {
 
     expect(result.current.preferredRate).toBe(1.25);
     expect(result.current.preferredVoiceId).toBe('tr-two');
+    expect(result.current.ttsEngine).toBe('offline-model');
 
     await act(async () => {
       await result.current.saveRate(1.5);
       await result.current.saveVoiceId('tr-one');
+      await result.current.saveTtsEngine('device');
     });
     expect(setPlaybackPreference).toHaveBeenCalledWith('playback_rate', '1.5');
     expect(setPlaybackPreference).toHaveBeenCalledWith('voice_id', 'tr-one');
+    expect(setPlaybackPreference).toHaveBeenCalledWith('tts_engine', 'device');
   });
 
   test('keeps the app usable and reports preference storage failures', async () => {

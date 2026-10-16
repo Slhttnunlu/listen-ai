@@ -96,12 +96,15 @@ Dört yaklaşım aynı Türkçe test metinleriyle; ses doğallığı, telaffuz, 
 
 ### 7.4 Uygulama içinde çalışan hafif TTS motoru — cihaz içi model POC
 
-- [ ] iOS/Android ve Expo development build ile uyumlu ONNX/native çalışma zamanını seç
-- [ ] Türkçe modelin kod, ağırlık ve eğitim verisi lisanslarını ticari dağıtım açısından doğrula
-- [ ] Model boyutu, ilk indirme/uygulamayla paketleme ve sürüm güncelleme stratejisini belirle
-- [ ] Tamamen uçak modunda çalışan metin → ses dosyası akışını prototiple
+- [x] iOS/Android ve Expo development build ile uyumlu ONNX/native çalışma zamanı olarak Sherpa-ONNX'i seç
+- [x] POC Türkçe Piper modelinin lisansını incele: CC BY-NC-SA 4.0 olduğu için ticari production dağıtımına uygun değil
+- [x] İlk POC için yaklaşık 79 MB modeli uygulamayla paketle; production öncesi indirilebilir model ve sürümleme kararı al
+- [x] Sherpa-ONNX streaming PCM ile tamamen cihaz içinde çalışan metin → ses prototipini geliştir
 - [ ] Orta sınıf gerçek cihazlarda ilk ses gecikmesi, gerçek zaman katsayısı, RAM, CPU, pil ve ısınmayı ölç
-- [ ] Düşük kaynakta cihaz TTS'ine güvenli fallback ve model kaldırma/depolama kontrollerini ekle
+- [x] Ayarlardan cihaz/offline motor seçimi, build-time görünürlük bayrağı ve hata halinde cihaz TTS'ine güvenli fallback ekle
+- [ ] Production modelini uygulamadan indirilebilir/kaldırılabilir yap ve depolama kontrollerini tamamla
+
+POC uygulama ve doğrulama notları: [`docs/ON_DEVICE_TTS_POC.md`](docs/ON_DEVICE_TTS_POC.md)
 
 **Rol:** Sunucu ve kullanım maliyeti olmadan daha tutarlı ses hedefi; yalnızca mobil performans ve lisans sonuçları kabul sınırlarını geçerse production adayı olacak.
 

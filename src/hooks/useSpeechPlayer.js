@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { getPreferredVoices, speak, stopSpeaking } from '../services/speech';
+import { TTS_ENGINES } from '../constants/tts';
+import {
+  destroySpeechEngines,
+  getPreferredVoices,
+  speakWithEngine,
+  stopSpeaking,
+} from '../services/speech';
 import { clampSpeechIndex, getNextRate } from '../utils/text';
 
 export function useSpeechPlayer({
@@ -8,10 +14,12 @@ export function useSpeechPlayer({
   initialIndex = 0,
   preferredRate = 1,
   preferredVoiceId,
+  ttsEngine = TTS_ENGINES.device,
   onProgress,
   onError,
   onRateChange,
   onVoiceChange,
+  onEngineFallback,
 }) {
   const [playing, setPlaying] = useState(false);
   const [activeRange, setActiveRange] = useState(null);
@@ -28,7 +36,7 @@ export function useSpeechPlayer({
       .catch(() => onError?.('Cihazdaki sesler yüklenemedi.'));
     return () => {
       sessionRef.current += 1;
-      stopSpeaking();
+      destroySpeechEngines();
     };
   }, [onError]);
 
@@ -60,48 +68,67 @@ export function useSpeechPlayer({
             onError?.('Dinleme devam ediyor ancak ilerlemeniz bu kez kaydedilemedi.');
           });
       };
-      try {
-        speak(text.slice(start), {
-          language: 'tr-TR',
-          voice: voiceId,
-          rate: selectedRate,
-          onBoundary: ({ charIndex = 0, charLength = 0 }) => {
-            if (session !== sessionRef.current) return;
-            const wordStart = start + charIndex;
-            indexRef.current = wordStart;
-            setActiveRange({ start: wordStart, end: wordStart + charLength });
-            persistProgress(wordStart, false);
-          },
-          onDone: () => {
-            if (session !== sessionRef.current) return;
-            setPlaying(false);
-            setActiveRange(null);
-            indexRef.current = 0;
-            persistProgress(0, true);
-          },
-          onStopped: () => {
-            if (session !== sessionRef.current) return;
-            setPlaying(false);
-            setActiveRange(null);
-          },
-          onError: () => {
-            if (session !== sessionRef.current) return;
-            setPlaying(false);
-            setActiveRange(null);
-            onError?.(
-              'Metin seslendirilirken beklenmeyen bir hata oluştu. Tekrar deneyebilirsiniz.'
-            );
-          },
-        });
-      } catch {
-        setPlaying(false);
-        setActiveRange(null);
-        onError?.('Seslendirme başlatılamadı. Tekrar deneyebilirsiniz.');
-        return false;
-      }
+      const speechOptions = {
+        language: 'tr-TR',
+        voice: voiceId,
+        rate: selectedRate,
+        onBoundary: ({ charIndex = 0, charLength = 0 }) => {
+          if (session !== sessionRef.current) return;
+          const wordStart = start + charIndex;
+          indexRef.current = wordStart;
+          setActiveRange({ start: wordStart, end: wordStart + charLength });
+          persistProgress(wordStart, false);
+        },
+        onDone: () => {
+          if (session !== sessionRef.current) return;
+          setPlaying(false);
+          setActiveRange(null);
+          indexRef.current = 0;
+          persistProgress(0, true);
+        },
+        onStopped: () => {
+          if (session !== sessionRef.current) return;
+          setPlaying(false);
+          setActiveRange(null);
+        },
+        onError: () => {
+          if (session !== sessionRef.current) return;
+          setPlaying(false);
+          setActiveRange(null);
+          onError?.('Metin seslendirilirken beklenmeyen bir hata oluştu. Tekrar deneyebilirsiniz.');
+        },
+      };
+
+      let fallbackStarted = false;
+      const fallbackToDevice = () => {
+        if (session !== sessionRef.current || fallbackStarted) return;
+        fallbackStarted = true;
+        onEngineFallback?.(TTS_ENGINES.device);
+        onError?.(
+          'Offline ses modeli kullanılamadı. Bu dinleme cihazın sistem sesiyle devam edecek.'
+        );
+        Promise.resolve(
+          speakWithEngine(TTS_ENGINES.device, text.slice(start), speechOptions)
+        ).catch(() => speechOptions.onError());
+      };
+      const selectedEngineOptions =
+        ttsEngine === TTS_ENGINES.offline
+          ? { ...speechOptions, onError: fallbackToDevice }
+          : speechOptions;
+
+      Promise.resolve(speakWithEngine(ttsEngine, text.slice(start), selectedEngineOptions)).catch(
+        () => {
+          if (session !== sessionRef.current) return;
+          if (ttsEngine === TTS_ENGINES.offline) {
+            fallbackToDevice();
+            return;
+          }
+          speechOptions.onError();
+        }
+      );
       return true;
     },
-    [itemId, onError, onProgress, rate, text, voiceId]
+    [itemId, onEngineFallback, onError, onProgress, rate, text, ttsEngine, voiceId]
   );
 
   const stop = useCallback(() => {

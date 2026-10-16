@@ -115,6 +115,20 @@ describe('screen interactions', () => {
     expect(onChangeRate).toHaveBeenCalledTimes(1);
   });
 
+  test('switches between device and experimental offline TTS engines', () => {
+    const onChangeTtsEngine = jest.fn();
+    const screen = render(
+      <SettingsScreen
+        offlineTtsEnabled
+        ttsEngine="offline-model"
+        onChangeTtsEngine={onChangeTtsEngine}
+      />
+    );
+    expect(screen.getByText('Offline Türkçe (Deneysel)')).toBeTruthy();
+    fireEvent.press(screen.getByTestId('tts-engine-setting'));
+    expect(onChangeTtsEngine).toHaveBeenCalledTimes(1);
+  });
+
   test('opens privacy and terms documents from settings', () => {
     const onPrivacy = jest.fn();
     const onTerms = jest.fn();
