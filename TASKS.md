@@ -143,7 +143,8 @@ Bu işler, uygulamanın yalnızca demoda çalışmasından gerçek kullanıcıla
 
 - [ ] Uygulama kimliği, ikon, splash ekranı, mağaza görselleri ve Türkçe mağaza açıklamasını tamamla.
   - [x] iOS/Android uygulama kimliği, sürüm numarası, ikon ve splash varlıklarını yapılandır.
-  - [ ] Mağaza ekran görüntülerini ve Türkçe mağaza açıklamasını son ürün görünümüyle hazırla.
+  - [x] Çalışan özelliklerle uyumlu Türkçe mağaza açıklaması ve metadata kontrol listesini hazırla.
+  - [ ] Mağaza ekran görüntülerini son ürün görünümü ve gerekli cihaz boyutlarıyla hazırla.
 - [ ] EAS Build/Submit veya eşdeğer imzalı build ve dağıtım sürecini kur.
   - [x] Development, Simulator E2E, internal preview ve production EAS profillerini tanımla.
   - [ ] EAS projesini hesaba bağla; imzalı iOS/Android build ve submit doğrulamasını tamamla.
