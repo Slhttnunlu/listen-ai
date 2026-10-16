@@ -1,9 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
+import { createNavigationContainerRef } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
 import { Alert, Linking, SafeAreaView } from 'react-native';
-import { BottomNav } from './src/components/BottomNav';
 import { useLibrary } from './src/hooks/useLibrary';
 import { useSpeechPlayer } from './src/hooks/useSpeechPlayer';
+import { AppNavigator } from './src/navigation/AppNavigator';
 import { ComposerScreen } from './src/screens/ComposerScreen';
 import { HomeScreen } from './src/screens/HomeScreen';
 import { LibraryScreen } from './src/screens/LibraryScreen';
@@ -12,9 +13,9 @@ import { pickTextDocument } from './src/services/documents';
 import { styles } from './src/styles';
 import { DEFAULT_TEXT } from './src/utils/text';
 
+const navigationRef = createNavigationContainerRef();
+
 export default function App() {
-  const [tab, setTab] = useState('home');
-  const [composerOpen, setComposerOpen] = useState(false);
   const [text, setText] = useState(DEFAULT_TEXT);
   const [currentItem, setCurrentItem] = useState(null);
 
@@ -46,7 +47,7 @@ export default function App() {
     stop();
     setCurrentItem(null);
     setText(DEFAULT_TEXT);
-    setComposerOpen(true);
+    if (navigationRef.isReady()) navigationRef.navigate('composer');
   }, [stop]);
 
   const useFeature = useCallback(
@@ -60,7 +61,7 @@ export default function App() {
           stop();
           setCurrentItem(null);
           setText(document.content);
-          setComposerOpen(true);
+          if (navigationRef.isReady()) navigationRef.navigate('composer');
         } catch (error) {
           Alert.alert('Dosya açılamadı', error.message || 'Metin dosyası okunamadı.');
         }
@@ -79,7 +80,7 @@ export default function App() {
       stop();
       setText(item.content);
       setCurrentItem(item);
-      setComposerOpen(true);
+      if (navigationRef.isReady()) navigationRef.navigate('composer');
     },
     [stop]
   );
@@ -99,9 +100,8 @@ export default function App() {
   }, [currentItem, play, rate, saveText, text]);
 
   const closeComposer = useCallback(() => {
-    stop();
-    setComposerOpen(false);
-  }, [stop]);
+    if (navigationRef.canGoBack()) navigationRef.goBack();
+  }, []);
 
   const openFeedback = useCallback(async () => {
     try {
@@ -114,39 +114,39 @@ export default function App() {
   return (
     <SafeAreaView style={styles.safe}>
       <StatusBar style="dark" />
-      {composerOpen ? (
-        <ComposerScreen
-          text={text}
-          setText={setText}
-          rate={rate}
-          playing={playing}
-          activeRange={activeRange}
-          onStop={stop}
-          onSaveAndPlay={saveAndPlay}
-          onChangeRate={changeRate}
-          onBack={closeComposer}
-        />
-      ) : (
-        <>
-          {tab === 'home' && <HomeScreen onFeature={useFeature} />}
-          {tab === 'library' && (
-            <LibraryScreen
-              items={items}
-              ready={ready}
-              loadError={loadError}
-              onRetry={reload}
-              onAdd={startNewText}
-              onOpen={openItem}
-              onRename={renameItem}
-              onToggleFavorite={toggleFavorite}
-              onDelete={deleteItem}
-              onRestore={restoreItem}
-            />
-          )}
-          {tab === 'settings' && <SettingsScreen onFeedback={openFeedback} />}
-          <BottomNav active={tab} onChange={setTab} />
-        </>
-      )}
+      <AppNavigator
+        navigationRef={navigationRef}
+        onComposerBlur={stop}
+        home={<HomeScreen onFeature={useFeature} />}
+        library={
+          <LibraryScreen
+            items={items}
+            ready={ready}
+            loadError={loadError}
+            onRetry={reload}
+            onAdd={startNewText}
+            onOpen={openItem}
+            onRename={renameItem}
+            onToggleFavorite={toggleFavorite}
+            onDelete={deleteItem}
+            onRestore={restoreItem}
+          />
+        }
+        settings={<SettingsScreen onFeedback={openFeedback} />}
+        composer={
+          <ComposerScreen
+            text={text}
+            setText={setText}
+            rate={rate}
+            playing={playing}
+            activeRange={activeRange}
+            onStop={stop}
+            onSaveAndPlay={saveAndPlay}
+            onChangeRate={changeRate}
+            onBack={closeComposer}
+          />
+        }
+      />
     </SafeAreaView>
   );
 }

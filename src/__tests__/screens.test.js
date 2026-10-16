@@ -1,10 +1,18 @@
 import { fireEvent, render } from '@testing-library/react-native';
+import { BottomNav } from '../components/BottomNav';
 import { HomeScreen } from '../screens/HomeScreen';
 import { LibraryScreen } from '../screens/LibraryScreen';
 import { PlayerScreen } from '../screens/PlayerScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 
 describe('screen interactions', () => {
+  test('routes bottom navigation presses through the navigator callback', () => {
+    const onChange = jest.fn();
+    const screen = render(<BottomNav active="home" onChange={onChange} />);
+    fireEvent.press(screen.getByTestId('nav-library'));
+    expect(onChange).toHaveBeenCalledWith('library');
+  });
+
   test('opens the write feature from home', () => {
     const onFeature = jest.fn();
     const screen = render(<HomeScreen onFeature={onFeature} />);

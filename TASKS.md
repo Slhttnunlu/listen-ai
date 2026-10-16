@@ -87,7 +87,7 @@ Bu işler, uygulamanın yalnızca demoda çalışmasından gerçek kullanıcıla
 
 ## P0 — Uygulama kalitesi
 
-- [ ] Uygulama içi navigation yapısını standartlaştır; ekran durumları geri tuşu ve derin bağlantılarla çakışmamalı.
+- [x] React Navigation ile stack/tab yapısını standartlaştır; geri hareketinde TTS'yi durdur ve `listenai://` deep-link şemasını tanımla.
 - [x] `App.js` içeriğini ekran, bileşen, hook ve servis katmanlarına ayır.
 - [x] SQLite `user_version` tabanlı şema sürümleme ve transaction migration stratejisi kur.
 - [ ] Çökme, beklenmeyen TTS hatası ve bozuk yerel veri için kullanıcıya anlaşılır kurtarma akışları ekle.
