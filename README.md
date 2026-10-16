@@ -67,3 +67,5 @@ Kapalı beta yayınlarında [sürüm ve geri alma operasyonu](docs/RELEASE_OPERA
 Beta geri bildirimleri ve haftalık ürün değerlendirmesi [kapalı beta geri bildirim sürecinde](docs/BETA_FEEDBACK.md) yönetilir.
 
 Gelecekteki bulut TTS denemeleri [sağlayıcı dayanıklılığı ve maliyet sınırlarına](docs/TTS_PROVIDER_RELIABILITY.md), telemetry kurulumu ise [gözlemlenebilirlik ve alarm sözleşmesine](docs/OBSERVABILITY.md) uymalıdır.
+
+TTS sağlayıcılarının kontrollü açılması, acil kapatılması ve deney yaşam döngüsü [feature flag sözleşmesinde](docs/FEATURE_FLAGS.md) tanımlanır.

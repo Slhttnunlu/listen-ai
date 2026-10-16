@@ -214,7 +214,9 @@ Bu işler, uygulamanın yalnızca demoda çalışmasından gerçek kullanıcıla
 - [ ] Freemium sınırlarını tanımla: ücretsiz metin uzunluğu, ses seçimi, dosya/OCR ve AI kullanımı.
 - [ ] Abonelik düşünülüyorsa StoreKit/Google Play Billing, deneme, iptal ve geri yükleme akışlarını tasarla.
 - [ ] Fiyatlandırmayı sağlayıcı maliyeti, mağaza komisyonu, destek ve hedef brüt marja göre doğrula.
-- [ ] A/B test veya feature flag stratejisini yalnızca ölçülecek net bir ürün hipotezi varsa ekle.
+- [ ] A/B test veya feature flag altyapısını yalnızca ölçülecek net bir ürün hipotezi varsa ekle.
+  - [x] TTS sağlayıcı rollout/kill switch stratejisini, ölçülebilir hipotezi ve kaldırma yaşam döngüsünü `docs/FEATURE_FLAGS.md` içinde tanımla.
+  - [ ] Ortamları ayrılmış remote config, audit kaydı ve backend kill switch'i kurup staging'de doğrula.
 
 ## Production'a çıkış kriterleri
 
