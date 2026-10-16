@@ -47,6 +47,7 @@ describe('library utilities', () => {
     expect(getLibraryItemMeta(items[0])).toBe('Metin · %47 · 1 dk');
     expect(getLibraryItemMeta(items[1])).toBe('Metin · Tamamlandı · 1 dk');
     expect(getLibraryItemMeta({ ...items[0], source_type: 'docx' })).toBe('DOCX · %47 · 1 dk');
+    expect(getLibraryItemMeta({ ...items[0], source_type: 'scan' })).toBe('Tarama · %47 · 1 dk');
   });
 
   test('searches Turkish content and sorts titles', () => {

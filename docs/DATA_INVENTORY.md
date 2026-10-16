@@ -1,9 +1,9 @@
 # Veri envanteri ve yaşam döngüsü
 
-**Son inceleme:** 16 Ekim 2026  
-**Kapsam:** `0.1.x` kapalı beta; yerel TTS, SQLite kütüphanesi ve TXT/DOCX içe aktarma
+**Son inceleme:** 17 Ekim 2026
+**Kapsam:** `0.1.x` kapalı beta; yerel TTS, SQLite kütüphanesi, TXT/DOCX/PDF içe aktarma ve cihaz içi OCR
 
-Bu envanter kaynak kodun mevcut davranışını belgeler. Gelecek planındaki hesap, bulut AI/TTS, OCR, mail, Drive, analytics ve crash reporting bu sürümde etkin değildir.
+Bu envanter kaynak kodun mevcut davranışını belgeler. Gelecek planındaki hesap, bulut AI/TTS, mail, Drive, analytics ve crash reporting bu sürümde etkin değildir.
 
 ## Mevcut veri akışları
 
@@ -13,6 +13,8 @@ Bu envanter kaynak kodun mevcut davranışını belgeler. Gelecek planındaki he
 | Dinleme ilerlemesi                           | TTS kelime sınırı                           | Kaldığı yerden devam                           | Cihaz içi SQLite                                                                                | İlgili kayıtla aynı                                      | İlgili kayıtla birlikte                                                  |
 | Favori/tamamlandı bilgisi ve zaman damgaları | Kullanıcı/uygulama                          | Filtreleme ve sıralama                         | Cihaz içi SQLite                                                                                | İlgili kayıtla aynı                                      | İlgili kayıtla birlikte                                                  |
 | TXT/DOCX içeriği                             | Sistem dosya seçici                         | Editöre içerik aktarma                         | Seçilen dosyanın uygulama cache kopyası okunur; metin ancak kullanıcı kaydederse SQLite'a girer | Cache yaşam döngüsü işletim sistemi tarafından yönetilir | İşletim sistemi cache temizliği veya uygulama verisini kaldırma          |
+| PDF içeriği                                  | Sistem dosya seçici                         | Dijital PDF metnini editöre aktarma            | PDFKit/PDFBox cihaz içinde metin çıkarır; metin ancak kullanıcı kaydederse SQLite'a girer       | Cache yaşam döngüsü işletim sistemi tarafından yönetilir | İşletim sistemi cache temizliği veya uygulama verisini kaldırma          |
+| Kamera/galeri görseli                        | Kullanıcının açık kamera veya galeri seçimi | Cihaz içi OCR ile editöre metin aktarma        | Vision/ML Kit cihaz içinde işler; kaynak görsel kaydedilmez                                     | Yalnızca sistem picker/camera geçici yaşam döngüsü       | Seçimden sonra uygulama kalıcı görsel saklamaz                           |
 | Pano metni                                   | Sistem panosu                               | Kullanıcı “Yapıştır” dediğinde editöre aktarma | Yalnızca cihaz belleği/editör; otomatik okunmaz                                                 | Kullanıcı kaydederse SQLite'a girer                      | Editörü temizleme veya kayıt silme                                       |
 | Cihaz TTS ses listesi                        | İşletim sistemi                             | Türkçe/uygun sesi seçme                        | Bellekte; uygulama sunucusuna gönderilmez                                                       | Oturum süresince                                         | Uygulama kapanınca                                                       |
 | Geri bildirim içeriği                        | Kullanıcının GitHub sayfasında yazdığı veri | Destek ve hata bildirimi                       | Uygulama GitHub issue sayfasını açar; veri GitHub'a kullanıcı tarafından gönderilir             | GitHub ve repository politikasına göre                   | Kullanıcı issue düzenleme/silme talebi veya repository yöneticisi        |
@@ -21,7 +23,7 @@ Bu envanter kaynak kodun mevcut davranışını belgeler. Gelecek planındaki he
 
 - Kullanıcı hesabı veya kimlik token'ı
 - Reklam kimliği, hassas cihaz kimliği veya kişi listesi
-- Konum, kamera, mikrofon, fotoğraf kitaplığı veya e-posta erişimi
+- Konum, mikrofon veya e-posta erişimi
 - Uygulama içi analytics, reklam veya üçüncü taraf crash reporting
 - OpenAI, Google Gemini ya da başka bir AI/TTS sağlayıcısına içerik gönderimi
 - Uygulama backend'i, senkronizasyon veya bulut yedekleme
@@ -64,13 +66,13 @@ Ayrıntılı kimlik ve hesap silme kararı [`AUTH.md`](AUTH.md) içindedir.
 
 ## İzin ve OAuth değerlendirmesi
 
-| Özellik        | En az izin/kapsam                                                                   | Saklama kararı                                      | Durum        |
-| -------------- | ----------------------------------------------------------------------------------- | --------------------------------------------------- | ------------ |
-| TXT/DOCX seçme | Sistem document picker; geniş dosya sistemi izni yok                                | İçerik yalnızca kullanıcı kaydederse SQLite'a girer | Mevcut       |
-| Kamera OCR     | Kamera yalnızca çekim anında; fotoğraf kitaplığı ayrı ve isteğe bağlı               | Kaynak görsel varsayılan olarak saklanmaz           | Yayınlanmadı |
-| Gmail          | Salt okunur ve mümkün olan en dar mesaj kapsamı; tam posta kutusu kapsamından kaçın | Mesaj varsayılan olarak kalıcı saklanmaz            | Yayınlanmadı |
-| Outlook        | Microsoft Graph için salt okunur, en dar mail kapsamı                               | Mesaj varsayılan olarak kalıcı saklanmaz            | Yayınlanmadı |
-| Drive          | Kullanıcının seçtiği dosyaya sınırlı picker/kapsam tercih edilir                    | Dosya yalnızca açık içe aktarma aksiyonuyla işlenir | Yayınlanmadı |
+| Özellik            | En az izin/kapsam                                                                   | Saklama kararı                                                 | Durum                             |
+| ------------------ | ----------------------------------------------------------------------------------- | -------------------------------------------------------------- | --------------------------------- |
+| TXT/DOCX/PDF seçme | Sistem document picker; geniş dosya sistemi izni yok                                | İçerik yalnızca kullanıcı kaydederse SQLite'a girer            | Mevcut                            |
+| Kamera OCR         | Kamera yalnızca çekim anında; fotoğraf kitaplığı ayrı ve isteğe bağlı               | Kaynak görsel varsayılan olarak saklanmaz; OCR cihazda çalışır | Native build kabul testi bekliyor |
+| Gmail              | Salt okunur ve mümkün olan en dar mesaj kapsamı; tam posta kutusu kapsamından kaçın | Mesaj varsayılan olarak kalıcı saklanmaz                       | Yayınlanmadı                      |
+| Outlook            | Microsoft Graph için salt okunur, en dar mail kapsamı                               | Mesaj varsayılan olarak kalıcı saklanmaz                       | Yayınlanmadı                      |
+| Drive              | Kullanıcının seçtiği dosyaya sınırlı picker/kapsam tercih edilir                    | Dosya yalnızca açık içe aktarma aksiyonuyla işlenir            | Yayınlanmadı                      |
 
 Kamera, mail veya Drive özelliği bu tablo gerçek sağlayıcı kapsamları ve mağaza izin metinleriyle yeniden onaylanmadan açılamaz.
 

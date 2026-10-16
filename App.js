@@ -16,6 +16,7 @@ import { SettingsScreen } from './src/screens/SettingsScreen';
 import { pickTextDocument } from './src/services/documents';
 import { exportLibrary } from './src/services/libraryExport';
 import { pickLibraryBackup } from './src/services/libraryImport';
+import { extractTextFromScan, SCAN_SOURCES, selectImageForScan } from './src/services/scan';
 import { styles } from './src/styles';
 import { createDocumentSectionTitle } from './src/utils/document';
 import { DEFAULT_TEXT, getNextRate } from './src/utils/text';
@@ -100,10 +101,34 @@ export function AppContent() {
     if (navigationRef.isReady()) navigationRef.navigate('composer');
   }, [stop]);
 
+  const scanImage = useCallback(
+    async (source) => {
+      try {
+        const uri = await selectImageForScan(source);
+        if (!uri) return;
+        const content = await extractTextFromScan(uri);
+        stop();
+        setCurrentItem(null);
+        setSourceType('scan');
+        setText(content);
+        if (navigationRef.isReady()) navigationRef.navigate('composer');
+      } catch (error) {
+        Alert.alert('Metin taranamadı', error.message || 'Görseldeki metin okunamadı.');
+      }
+    },
+    [stop]
+  );
+
   const useFeature = useCallback(
     async (id) => {
       if (id === 'write') {
         startNewText();
+      } else if (id === 'scan') {
+        Alert.alert('Metni Tara', 'Kamerayla fotoğraf çekin veya galeriden bir görsel seçin.', [
+          { text: 'Vazgeç', style: 'cancel' },
+          { text: 'Galeriden seç', onPress: () => scanImage(SCAN_SOURCES.library) },
+          { text: 'Fotoğraf çek', onPress: () => scanImage(SCAN_SOURCES.camera) },
+        ]);
       } else if (id === 'document') {
         try {
           const document = await pickTextDocument();
@@ -136,7 +161,7 @@ export function AppContent() {
         );
       }
     },
-    [saveDocumentSections, startNewText, stop]
+    [saveDocumentSections, scanImage, startNewText, stop]
   );
 
   const openItem = useCallback(

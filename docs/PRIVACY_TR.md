@@ -35,7 +35,7 @@ Yerel veriler işletim sisteminin uygulama sandbox'ında tutulur. Hiçbir güven
 
 ## Gelecekteki özellikler
 
-Bulut AI/TTS, OCR, e-posta, Drive, kullanıcı hesabı, analytics veya crash reporting eklenirse özellik açılmadan önce politika ve mağaza veri beyanları güncellenecek; gerekli izin ve kullanıcı onayı sağlanacaktır.
+Kamera/galeri OCR özelliği, yalnızca kullanıcı fotoğraf çekmeyi veya seçmeyi başlattığında izin ister; görsel ve tanınan metin varsayılan olarak sunucuya gönderilmez. Bulut AI/TTS, e-posta, Drive, kullanıcı hesabı, analytics veya crash reporting eklenirse özellik açılmadan önce politika ve mağaza veri beyanları güncellenecek; gerekli izin ve kullanıcı onayı sağlanacaktır.
 
 ## Değişiklikler
 

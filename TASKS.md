@@ -37,10 +37,12 @@
 
 ## 4. Metni Tara
 
-- [ ] Kamera/fotoğraf seçme izinleri
+- [x] Kamera/fotoğraf seçme izinleri
 - [ ] Kırpma ve görüntü kalite kontrolü
-- [ ] Türkçe OCR entegrasyonu
-- [ ] OCR metnini düzenleme, kaydetme ve dinleme
+- [x] Türkçe OCR entegrasyonu
+- [x] OCR metnini düzenleme, kaydetme ve dinleme
+  - [x] Kamera ve galeri seçimi, izin reddi, iptal, boş sonuç ve native build yok hatalarını kullanıcıya açık göster.
+  - [ ] iOS ve Android’de Türkçe metin, düşük ışık, eğik fotoğraf ve büyük metin kabul testlerini tamamla.
 
 **Zorluk:** Yüksek. Sonuç kalitesi fotoğraf ve OCR sağlayıcısına bağlıdır.
 

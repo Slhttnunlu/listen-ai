@@ -32,6 +32,14 @@
           "assets": ["./assets/models"]
         }
       ],
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Metin taramak için kameranıza erişim izni gerekiyor.",
+          "microphonePermission": false,
+          "photosPermission": "Metin taramak için seçtiğiniz fotoğrafa erişim izni gerekiyor."
+        }
+      ],
       "expo-document-picker",
       "expo-status-bar",
       "expo-sqlite",

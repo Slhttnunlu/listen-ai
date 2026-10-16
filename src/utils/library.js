@@ -143,7 +143,8 @@ export function prepareLibraryItems(items, { filter, query, sort }) {
 
 export function getLibraryItemMeta(item) {
   const sourceLabel =
-    { docx: 'DOCX', pdf: 'PDF', text: 'Metin', txt: 'TXT' }[item.source_type] || 'Metin';
+    { docx: 'DOCX', pdf: 'PDF', scan: 'Tarama', text: 'Metin', txt: 'TXT' }[item.source_type] ||
+    'Metin';
   const wordCount = item.content?.trim().split(/\s+/).filter(Boolean).length || 0;
   const duration = Math.max(1, Math.ceil(wordCount / 150));
   const progress = item.content?.length
