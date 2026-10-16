@@ -26,13 +26,50 @@ export function validateDocumentAsset(asset) {
 export function validateExtractedDocument(content) {
   const normalizedContent = content.replace(/^\uFEFF/, '').trim();
   if (!normalizedContent) return { error: 'Seçilen dosyada okunabilir metin bulunamadı.' };
-  if (normalizedContent.length > MAX_EXTRACTED_DOCUMENT_CHARS) {
-    return {
-      error:
-        'Belge 250.000 karakter sınırını aşıyor. Büyük belge bölümleme özelliği henüz hazır değil.',
-    };
-  }
   return { content: normalizedContent };
+}
+
+function splitOversizedBlock(block, maxLength) {
+  const sections = [];
+  let remaining = block.trim();
+  while (remaining.length > maxLength) {
+    let splitAt = remaining.lastIndexOf(' ', maxLength);
+    if (splitAt < Math.floor(maxLength * 0.5)) splitAt = maxLength;
+    sections.push(remaining.slice(0, splitAt).trim());
+    remaining = remaining.slice(splitAt).trim();
+  }
+  if (remaining) sections.push(remaining);
+  return sections;
+}
+
+export function splitDocumentContent(content, maxLength = MAX_EXTRACTED_DOCUMENT_CHARS) {
+  const validation = validateExtractedDocument(content);
+  if (validation.error) return validation;
+
+  const sections = [];
+  let current = '';
+  const blocks = validation.content
+    .split(/\n{2,}/)
+    .flatMap((block) =>
+      block.length > maxLength ? splitOversizedBlock(block, maxLength) : [block.trim()]
+    );
+
+  blocks.forEach((block) => {
+    if (!block) return;
+    const candidate = current ? `${current}\n\n${block}` : block;
+    if (candidate.length <= maxLength) current = candidate;
+    else {
+      if (current) sections.push(current);
+      current = block;
+    }
+  });
+  if (current) sections.push(current);
+  return { sections };
+}
+
+export function createDocumentSectionTitle(fileName, index, total) {
+  const baseName = (fileName || 'Belge').replace(/\.(txt|docx)$/i, '').trim() || 'Belge';
+  return total > 1 ? `${baseName} · Bölüm ${index + 1}/${total}` : baseName;
 }
 
 export function validateTextDocument(asset, content) {

@@ -23,6 +23,7 @@ Bu değerler release build üzerinde gerçek cihazla ölçülür. Hedef aşılı
 - 2 MB sınırında ve sınırı geçen TXT.
 - Türkçe karakter, tablo hücresi ve birden çok paragraf içeren DOCX.
 - Bozuk/parola korumalı, boş ve 10 MB sınırını geçen DOCX.
+- 250.000 karakter sınırının hemen altı/üstü ve tek paragraflı büyük belgede kayıpsız bölümleme.
 
 ## Release kalite kapısı
 

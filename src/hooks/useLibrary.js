@@ -6,6 +6,7 @@ import {
   renameLibraryItem,
   restoreLibraryItem,
   saveLibraryItem,
+  saveLibraryItems,
   setLibraryItemFavorite,
   softDeleteLibraryItem,
   updateLibraryProgress,
@@ -53,6 +54,18 @@ export function useLibrary({ onError }) {
     });
     setItems((current) => [item, ...current]);
     return item;
+  }, []);
+
+  const saveDocumentSections = useCallback(async (sections, sourceType, createTitleForSection) => {
+    const createdItems = await saveLibraryItems(
+      sections.map((content, index) => ({
+        title: createTitleForSection(index, sections.length),
+        content,
+        sourceType,
+      }))
+    );
+    setItems((current) => createdItems.concat(current));
+    return createdItems;
   }, []);
 
   const saveProgress = useCallback(async (id, progressIndex, isCompleted = false) => {
@@ -120,6 +133,7 @@ export function useLibrary({ onError }) {
     renameItem,
     restoreItem,
     saveProgress,
+    saveDocumentSections,
     saveText,
     toggleFavorite,
   };

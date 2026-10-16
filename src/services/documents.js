@@ -1,6 +1,11 @@
 import * as DocumentPicker from 'expo-document-picker';
 import { File } from 'expo-file-system';
-import { DOCX_MIME_TYPE, validateDocumentAsset, validateTextDocument } from '../utils/document';
+import {
+  DOCX_MIME_TYPE,
+  splitDocumentContent,
+  validateDocumentAsset,
+  validateTextDocument,
+} from '../utils/document';
 import { extractDocxText } from './docx';
 
 export async function pickTextDocument() {
@@ -16,8 +21,10 @@ export async function pickTextDocument() {
   const file = new File(asset.uri);
 
   if (assetValidation.type === 'docx') {
+    const content = await extractDocxText(await file.arrayBuffer());
     return {
-      content: await extractDocxText(await file.arrayBuffer()),
+      content,
+      sections: splitDocumentContent(content).sections,
       name: asset.name,
       type: 'docx',
     };
@@ -25,5 +32,10 @@ export async function pickTextDocument() {
 
   const validation = validateTextDocument(asset, await file.text());
   if (validation.error) throw new Error(validation.error);
-  return { content: validation.content, name: asset.name, type: 'txt' };
+  return {
+    content: validation.content,
+    sections: splitDocumentContent(validation.content).sections,
+    name: asset.name,
+    type: 'txt',
+  };
 }

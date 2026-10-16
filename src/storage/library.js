@@ -63,7 +63,7 @@ export async function initializeLibrary() {
 export async function getLibraryItems() {
   const db = await getDatabase();
   const items = await db.getAllAsync(
-    'SELECT * FROM library_items WHERE deleted_at IS NULL ORDER BY COALESCE(last_played_at, created_at) DESC'
+    'SELECT * FROM library_items WHERE deleted_at IS NULL ORDER BY COALESCE(last_played_at, created_at) DESC, id DESC'
   );
   return items.map(normalizeLibraryItem);
 }
@@ -123,6 +123,18 @@ export async function saveLibraryItem({ title, content, sourceType = 'text' }) {
     is_completed: 0,
     progress_index: 0,
   };
+}
+
+export async function saveLibraryItems(entries) {
+  const db = await getDatabase();
+  const createdItems = [];
+  await db.withTransactionAsync(async () => {
+    // Son bölüm önce eklenir; böylece en yeni/id sıralaması kullanıcıya Bölüm 1, 2… gösterir.
+    for (const entry of [...entries].reverse()) {
+      createdItems.push(await saveLibraryItem(entry));
+    }
+  });
+  return createdItems.reverse();
 }
 
 export async function updateLibraryProgress(id, progressIndex, isCompleted = false) {

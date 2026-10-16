@@ -1,10 +1,11 @@
 import {
   DOCX_MIME_TYPE,
+  createDocumentSectionTitle,
   getDocumentType,
   MAX_EXTRACTED_DOCUMENT_CHARS,
+  splitDocumentContent,
   MAX_TEXT_FILE_BYTES,
   validateDocumentAsset,
-  validateExtractedDocument,
   validateTextDocument,
 } from '../utils/document';
 
@@ -33,9 +34,26 @@ describe('document validation', () => {
     );
   });
 
-  test('rejects extracted documents that exceed the safe editor limit', () => {
-    expect(validateExtractedDocument('a'.repeat(MAX_EXTRACTED_DOCUMENT_CHARS + 1)).error).toContain(
-      '250.000 karakter'
+  test('splits large documents at paragraph boundaries within the editor limit', () => {
+    const first = 'a'.repeat(150000);
+    const second = 'b'.repeat(150000);
+    const result = splitDocumentContent(`${first}\n\n${second}`);
+    expect(result.sections).toEqual([first, second]);
+    expect(result.sections.every((section) => section.length <= MAX_EXTRACTED_DOCUMENT_CHARS)).toBe(
+      true
     );
+  });
+
+  test('hard-splits oversized blocks without losing their content', () => {
+    const content = 'kelime '.repeat(80000).trim();
+    const result = splitDocumentContent(content, 1000);
+    expect(result.sections.length).toBeGreaterThan(1);
+    expect(result.sections.every((section) => section.length <= 1000)).toBe(true);
+    expect(result.sections.join(' ')).toBe(content);
+  });
+
+  test('creates recognizable section titles from imported file names', () => {
+    expect(createDocumentSectionTitle('Uzun Rapor.docx', 0, 3)).toBe('Uzun Rapor · Bölüm 1/3');
+    expect(createDocumentSectionTitle('notlar.txt', 0, 1)).toBe('notlar');
   });
 });

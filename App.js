@@ -14,6 +14,7 @@ import { SettingsScreen } from './src/screens/SettingsScreen';
 import { pickTextDocument } from './src/services/documents';
 import { exportLibrary } from './src/services/libraryExport';
 import { styles } from './src/styles';
+import { createDocumentSectionTitle } from './src/utils/document';
 import { DEFAULT_TEXT } from './src/utils/text';
 
 const navigationRef = createNavigationContainerRef();
@@ -40,6 +41,7 @@ export function AppContent() {
     reload,
     renameItem,
     restoreItem,
+    saveDocumentSections,
     saveText,
     saveProgress,
     toggleFavorite,
@@ -69,9 +71,22 @@ export function AppContent() {
           const document = await pickTextDocument();
           if (!document) return;
           stop();
-          setCurrentItem(null);
+          let importedItem = null;
+          if (document.sections.length > 1) {
+            const importedItems = await saveDocumentSections(
+              document.sections,
+              document.type,
+              (index, total) => createDocumentSectionTitle(document.name, index, total)
+            );
+            [importedItem] = importedItems;
+            Alert.alert(
+              'Belge bölümlere ayrıldı',
+              `${document.sections.length} bölüm kütüphanenize kaydedildi.`
+            );
+          }
+          setCurrentItem(importedItem);
           setSourceType(document.type);
-          setText(document.content);
+          setText(document.sections[0]);
           if (navigationRef.isReady()) navigationRef.navigate('composer');
         } catch (error) {
           Alert.alert('Dosya açılamadı', error.message || 'Metin dosyası okunamadı.');
@@ -83,7 +98,7 @@ export function AppContent() {
         );
       }
     },
-    [startNewText, stop]
+    [saveDocumentSections, startNewText, stop]
   );
 
   const openItem = useCallback(

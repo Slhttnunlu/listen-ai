@@ -15,6 +15,7 @@ Her release adayı en az bir güncel iPhone ve bir güncel Android gerçek cihaz
 9. Türkçe paragraflar içeren DOCX seçilir, biçim metne dönüştürülür ve dinletilir.
 10. Boş, desteklenmeyen, 2 MB'dan büyük TXT ve 10 MB'dan büyük DOCX dosyasında anlaşılır hata görülür.
 11. Kayıt aranır, yeniden adlandırılır, favorilenir, silinir ve **Geri al** ile geri getirilir.
+12. 250.000 karakteri aşan belge içe aktarılır; bölümler kütüphanede sıralı ve ayrı kayıtlar olarak görünür.
 
 ## Platform davranışları
 

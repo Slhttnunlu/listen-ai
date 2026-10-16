@@ -23,9 +23,9 @@
 
 - [x] Cihazdan UTF-8 TXT seçme, boyut/içerik doğrulama ve editöre aktarma
 - [ ] PDF metin çıkarma; taranmış PDF'yi OCR akışına yönlendirme
-- [ ] DOCX desteği ve büyük dosyayı bölümlere ayırma
+- [x] DOCX desteği ve büyük dosyayı bölümlere ayırma
   - [x] DOCX arşivinden paragrafları cihaz içinde çıkar, bozuk/parolalı/boş dosya ve 10 MB boyut kontrolü ekle.
-  - [ ] 250.000 karakter üzerindeki belgeleri ayrı kütüphane bölümlerine ayır.
+  - [x] 250.000 karakter üzerindeki belgeleri paragraf/kelime sınırlarında ayrı kütüphane bölümlerine ayır.
 - [ ] Drive bağlantısı için OAuth + backend (sonraki faz)
 
 **Zorluk:** Yüksek. Dosya biçimleri ve büyük içerik yönetimi gerekir.
