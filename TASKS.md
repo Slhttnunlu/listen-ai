@@ -175,8 +175,10 @@ Bu işler, uygulamanın yalnızca demoda çalışmasından gerçek kullanıcıla
 - [x] Kimlik doğrulama stratejisini `docs/AUTH.md` içinde belirle: anonim başlangıç, e-posta/Apple/Google girişi ve hesap silme akışı.
 - [ ] API anahtarları için secret manager, ortam değişkenleri ve erişim yetkisi kur.
 - [ ] İstek doğrulama, kullanıcı başına kota/rate limit ve kötüye kullanım koruması ekle.
-- [ ] OpenAI/ElevenLabs gibi sağlayıcılar için timeout, retry, fallback ve maliyet limiti tasarla.
-- [ ] TTS/AI istekleri için maliyet metrikleri ve kullanıcı başına kullanım limiti oluştur.
+- [x] OpenAI/Gemini gibi sağlayıcılar için timeout, retry, circuit breaker, cihaz TTS fallback'i ve maliyet limitini `docs/TTS_PROVIDER_RELIABILITY.md` içinde tasarla.
+- [ ] TTS/AI istekleri için maliyet metrikleri ve kullanıcı başına kullanım limitini uygula.
+  - [x] Başlangıç metriklerini, kullanıcı/proje kotalarını ve sert bütçe davranışını tanımla.
+  - [ ] Backend sayaçları, rezervasyon/uzlaştırma ve sert bütçe kesicisini uygula.
 - [ ] API günlüklerinde metin, belge veya e-posta içeriğinin maskelenmesini garanti et.
 
 ## P1 — Veri güvenliği ve uyumluluk
@@ -192,7 +194,9 @@ Bu işler, uygulamanın yalnızca demoda çalışmasından gerçek kullanıcıla
 
 - [ ] Crash reporting kur: sürüm, cihaz, işletim sistemi ve stack trace; kişisel veri olmadan.
 - [ ] Uygulama ve backend hata oranı, gecikme, TTS başarısı ve maliyet için dashboard oluştur.
-- [ ] Uyarı eşikleri belirle: çökme oranı, API hata oranı, kota aşımı ve maliyet anomalisi.
+  - [x] İçerik taşımayan metrikleri, dört dashboard görünümünü ve kurulum kabul kapısını tanımla.
+  - [ ] İzleme sağlayıcısında staging/production dashboard'larını kur ve hata enjeksiyonuyla doğrula.
+- [x] Uyarı eşikleri belirle: çökme oranı, API hata oranı, kuyruk, sağlayıcı, kota ve maliyet anomalisi.
 - [x] Her sürüm için release notu, rollback planı ve incident iletişim şablonu oluştur.
 - [x] Yedekleme, geri yükleme ve veri kaybı senaryolarını backend ortaya çıkmadan önce tasarla.
 

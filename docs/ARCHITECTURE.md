@@ -70,7 +70,7 @@ Tek kişi birden fazla rolü taşıyabilir; production erişimi ve acil durum so
 
 ## Mimari kurallar
 
-- Mobil istemci hiçbir zaman OpenAI, ElevenLabs veya cloud secret'ı taşımaz.
+- Mobil istemci hiçbir zaman OpenAI, Google Gemini veya başka bir cloud secret'ı taşımaz.
 - Tüm yazma istekleri idempotency anahtarı ve izleme kimliği destekler.
 - Dış sağlayıcı çağrılarında timeout, sınırlı retry, circuit breaker/fallback ve maliyet bütçesi bulunur.
 - İçerik payload'ları loglanmaz; hata kodları serbest metin yerine kontrollü bir sözlükten gelir.

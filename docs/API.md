@@ -15,7 +15,7 @@ Makine tarafından okunabilir başlangıç sözleşmesi [`api/openapi.yaml`](api
 - Yazma istekleri UUID biçiminde `Idempotency-Key` taşır. Aynı kullanıcı, endpoint ve anahtarla yinelenen istek aynı işi döndürür.
 - Mobil istemci API çağrısını 15 saniyede sonlandırır. Uzun TTS/AI üretimi HTTP bağlantısında bekletilmez; `202 Accepted` ile job oluşturulur ve durum sorgulanır.
 - Job durum sorgusu ilk 5 saniye sonra başlar; `Retry-After` varsa ona uyulur. Aralık en fazla 30 saniyeye kadar üstel olarak artırılır.
-- `429`, `502`, `503` ve `504` yanıtları yalnızca idempotent isteklerde, jitter eklenmiş en fazla üç retry ile denenir.
+- `429`, `502`, `503` ve `504` yanıtları yalnızca idempotent isteklerde, jitter eklenmiş en fazla iki retry ile denenir.
 - Diğer `4xx` yanıtları otomatik denenmez. Kullanıcı iptal ettiğinde bekleyen sorgu durdurulur.
 
 ## Hata sözleşmesi

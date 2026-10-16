@@ -23,7 +23,7 @@ Bu envanter kaynak kodun mevcut davranışını belgeler. Gelecek planındaki he
 - Reklam kimliği, hassas cihaz kimliği veya kişi listesi
 - Konum, kamera, mikrofon, fotoğraf kitaplığı veya e-posta erişimi
 - Uygulama içi analytics, reklam veya üçüncü taraf crash reporting
-- OpenAI, ElevenLabs ya da başka bir AI/TTS sağlayıcısına içerik gönderimi
+- OpenAI, Google Gemini ya da başka bir AI/TTS sağlayıcısına içerik gönderimi
 - Uygulama backend'i, senkronizasyon veya bulut yedekleme
 - Ödeme ve abonelik verisi
 

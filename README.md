@@ -58,10 +58,12 @@ Projede Expo SDK 57'nin desteklediği Node sürümleri kullanılmalıdır. Öner
 - 0.75×–1.5× hız kontrolü
 - Başlatma, hız değiştirme ve durdurma
 
-Bulut TTS (OpenAI veya ElevenLabs), PDF içe aktarma ve kullanıcı hesabı sonraki aşamalardır. API anahtarları mobil uygulamaya eklenmemelidir; bu özellikler için bir backend kullanılmalıdır.
+Bulut TTS (OpenAI veya Google Gemini), PDF içe aktarma ve kullanıcı hesabı sonraki aşamalardır. API anahtarları mobil uygulamaya eklenmemelidir; bu özellikler için bir backend kullanılmalıdır.
 
 Yerel/çevrimdışı sınır ile gelecekteki backend bileşenleri [hedef mimari](docs/ARCHITECTURE.md) belgesinde tanımlanmıştır.
 
 Kapalı beta yayınlarında [sürüm ve geri alma operasyonu](docs/RELEASE_OPERATIONS.md) izlenir. Yerel ve gelecekteki bulut verisi için kurtarma sınırları [yedekleme ve geri yükleme tasarımında](docs/BACKUP_RECOVERY.md) açıklanır.
 
 Beta geri bildirimleri ve haftalık ürün değerlendirmesi [kapalı beta geri bildirim sürecinde](docs/BETA_FEEDBACK.md) yönetilir.
+
+Gelecekteki bulut TTS denemeleri [sağlayıcı dayanıklılığı ve maliyet sınırlarına](docs/TTS_PROVIDER_RELIABILITY.md), telemetry kurulumu ise [gözlemlenebilirlik ve alarm sözleşmesine](docs/OBSERVABILITY.md) uymalıdır.
