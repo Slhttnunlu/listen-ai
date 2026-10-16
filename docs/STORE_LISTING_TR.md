@@ -1,6 +1,6 @@
 # Listen AI — Türkçe mağaza metinleri
 
-Bu metinler kapalı beta için mevcut çalışan özellikleri anlatır. OCR, PDF/DOCX, bulut AI, podcast ve e-posta özellikleri yayınlanmadan mağaza metnine eklenmemelidir.
+Bu metinler kapalı beta için mevcut çalışan özellikleri anlatır. OCR, PDF, bulut AI, podcast ve e-posta özellikleri yayınlanmadan mağaza metnine eklenmemelidir.
 
 ## Ortak konumlandırma
 
@@ -8,18 +8,18 @@ Bu metinler kapalı beta için mevcut çalışan özellikleri anlatır. OCR, PDF
 
 **Kısa açıklama / alt başlık:** Metinlerini dinle, kaldığın yerden devam et
 
-**Tanıtım metni:** Notlarını ve TXT belgelerini cihazının sesiyle dinle. Okunan kelimeyi takip et, hızını ayarla ve kayıtlarına çevrimdışı ulaş.
+**Tanıtım metni:** Notlarını, TXT ve DOCX belgelerini cihazının sesiyle dinle. Okunan kelimeyi takip et, hızını ayarla ve kayıtlarına çevrimdışı ulaş.
 
 ## Uzun açıklama
 
 Listen AI, Türkçe metinleri ekrana bağlı kalmadan dinlemeni kolaylaştırır.
 
-Metnini yaz veya yapıştır, istersen cihazından bir TXT belgesi seç ve dinlemeye başla. Okunan kelime metin üzerinde vurgulanır; dinleme hızını değiştirebilir ve daha sonra kaldığın yerden devam edebilirsin.
+Metnini yaz veya yapıştır, istersen cihazından bir TXT ya da DOCX belgesi seç ve dinlemeye başla. Okunan kelime metin üzerinde vurgulanır; dinleme hızını değiştirebilir ve daha sonra kaldığın yerden devam edebilirsin.
 
 ### Öne çıkan özellikler
 
 - Türkçe metinleri cihazın yerleşik sesleriyle dinleme
-- Metin yazma, yapıştırma ve UTF-8 TXT belgesi içe aktarma
+- Metin yazma, yapıştırma ve UTF-8 TXT/DOCX belgesi içe aktarma
 - Okunan kelimeyi metin içinde anlık takip etme
 - Ayarlanabilir oynatma hızı
 - Metinleri yerel kütüphaneye kaydetme
@@ -33,7 +33,7 @@ Geri bildirimlerini uygulamadaki Ayarlar ekranından iletebilirsin.
 
 ## Google Play kısa açıklama
 
-Türkçe metin ve TXT belgelerini dinle, okunan kelimeyi takip et.
+Türkçe metin, TXT ve DOCX belgelerini dinle; okunan kelimeyi takip et.
 
 ## Anahtar kelime adayları
 
@@ -46,7 +46,7 @@ Mağaza alanının karakter sınırına göre virgüller ve boşluklar yayın s�
 Listen AI kapalı beta sürümü hazır:
 
 - Metin yazma, yapıştırma ve dinleme
-- TXT belgesi içe aktarma
+- TXT ve DOCX belgesi içe aktarma
 - Aktif kelime vurgusu ve hız kontrolü
 - Yerel kütüphane ve kaldığın yerden devam
 - Arama, sıralama ve favoriler
@@ -68,7 +68,7 @@ Görüşlerini Ayarlar bölümündeki geri bildirim bağlantısıyla paylaşabil
 ## Ekran görüntüsü senaryoları
 
 1. Ana Sayfa — “Metinlerini istediğin yerde dinle”
-2. Metin editörü — “Yaz, yapıştır veya TXT belgesi seç”
+2. Metin editörü — “Yaz, yapıştır veya TXT/DOCX belgesi seç”
 3. Oynatıcı — “Okunan kelimeyi anlık takip et”
 4. Kütüphane — “Kaldığın yerden devam et”
 5. Kütüphane filtreleri — “Ara, sırala ve favorilerine ulaş”

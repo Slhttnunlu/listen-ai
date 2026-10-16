@@ -6,7 +6,7 @@ Listen AI; uzun metin, not ve makaleleri ekrana bağlı kalmadan dinlemek isteye
 
 ## İlk kullanım senaryosu
 
-Kullanıcı uygulamayı açar, bir metin yazar/yapıştırır veya TXT dosyası seçer, **Kaydet ve Dinle** düğmesine basar ve uygulamaya daha sonra döndüğünde kaldığı yerden devam eder.
+Kullanıcı uygulamayı açar, bir metin yazar/yapıştırır veya TXT/DOCX dosyası seçer, **Kaydet ve Dinle** düğmesine basar ve uygulamaya daha sonra döndüğünde kaldığı yerden devam eder.
 
 ## İlk yayın başarı metrikleri
 
@@ -25,7 +25,7 @@ Metrikler beta döneminde doğrulanır; hedefler kullanıcı metinleri veya dosy
 | Event                | İzin verilen alanlar                              |
 | -------------------- | ------------------------------------------------- |
 | `app_opened`         | `app_version`, `platform`, `locale`               |
-| `text_created`       | `source: typed/pasted/txt`, `length_bucket`       |
+| `text_created`       | `source: typed/pasted/txt/docx`, `length_bucket`  |
 | `playback_started`   | `rate`, `voice_locale`, `length_bucket`, `resume` |
 | `playback_stopped`   | `progress_bucket`, `reason`                       |
 | `playback_completed` | `length_bucket`, `duration_bucket`                |

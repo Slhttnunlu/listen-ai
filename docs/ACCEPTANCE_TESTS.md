@@ -12,8 +12,9 @@ Her release adayı en az bir güncel iPhone ve bir güncel Android gerçek cihaz
 6. Dinleme durdurulup kütüphaneden açılır; kayıtlı ilerlemeden devam eder.
 7. Dinleme tamamlanır; kayıt **Tamamlandı** filtresinde görünür.
 8. TXT dosyası seçilir, editörde görüntülenir ve dinletilir.
-9. Boş, desteklenmeyen ve 2 MB'dan büyük dosyada anlaşılır hata görülür.
-10. Kayıt aranır, yeniden adlandırılır, favorilenir, silinir ve **Geri al** ile geri getirilir.
+9. Türkçe paragraflar içeren DOCX seçilir, biçim metne dönüştürülür ve dinletilir.
+10. Boş, desteklenmeyen, 2 MB'dan büyük TXT ve 10 MB'dan büyük DOCX dosyasında anlaşılır hata görülür.
+11. Kayıt aranır, yeniden adlandırılır, favorilenir, silinir ve **Geri al** ile geri getirilir.
 
 ## Platform davranışları
 

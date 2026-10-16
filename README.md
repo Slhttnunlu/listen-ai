@@ -58,6 +58,6 @@ Projede Expo SDK 57'nin desteklediği Node sürümleri kullanılmalıdır. Öner
 - 0.75×–1.5× hız kontrolü
 - Başlatma, hız değiştirme ve durdurma
 
-Bulut TTS (OpenAI veya ElevenLabs), PDF/içerik içe aktarma, hesap ve kayıtlı kütüphane sonraki aşamalardır. API anahtarları mobil uygulamaya eklenmemelidir; bu özellikler için bir backend kullanılmalıdır.
+Bulut TTS (OpenAI veya ElevenLabs), PDF içe aktarma ve kullanıcı hesabı sonraki aşamalardır. API anahtarları mobil uygulamaya eklenmemelidir; bu özellikler için bir backend kullanılmalıdır.
 
 Yerel/çevrimdışı sınır ile gelecekteki backend bileşenleri [hedef mimari](docs/ARCHITECTURE.md) belgesinde tanımlanmıştır.

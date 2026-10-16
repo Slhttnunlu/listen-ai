@@ -21,6 +21,8 @@ Bu değerler release build üzerinde gerçek cihazla ölçülür. Hedef aşılı
 - Boşluksuz 2.000 karakterlik tek kelime.
 - UTF-8 BOM içeren TXT.
 - 2 MB sınırında ve sınırı geçen TXT.
+- Türkçe karakter, tablo hücresi ve birden çok paragraf içeren DOCX.
+- Bozuk/parola korumalı, boş ve 10 MB sınırını geçen DOCX.
 
 ## Release kalite kapısı
 

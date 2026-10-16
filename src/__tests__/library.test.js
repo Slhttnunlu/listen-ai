@@ -45,6 +45,7 @@ describe('library utilities', () => {
   test('prioritizes completion and resume metadata', () => {
     expect(getLibraryItemMeta(items[0])).toBe('Metin · %47 · 1 dk');
     expect(getLibraryItemMeta(items[1])).toBe('Metin · Tamamlandı · 1 dk');
+    expect(getLibraryItemMeta({ ...items[0], source_type: 'docx' })).toBe('DOCX · %47 · 1 dk');
   });
 
   test('searches Turkish content and sorts titles', () => {
@@ -87,6 +88,7 @@ describe('library utilities', () => {
       progress_index: 0,
       is_completed: 0,
       is_favorite: 0,
+      source_type: 'text',
     });
   });
 
@@ -95,7 +97,11 @@ describe('library utilities', () => {
     expect(exported.schema_version).toBe(1);
     expect(exported.exported_at).toBe('2026-10-16T00:00:00.000Z');
     expect(exported.items[0]).toEqual(
-      expect.objectContaining({ content: 'On iki karakter', is_completed: false })
+      expect.objectContaining({
+        content: 'On iki karakter',
+        is_completed: false,
+        source_type: 'text',
+      })
     );
     expect(exported.items[0]).not.toHaveProperty('id');
     expect(exported.items[0]).not.toHaveProperty('deleted_at');

@@ -45,8 +45,12 @@ export function useLibrary({ onError }) {
       .finally(() => setReady(true));
   }, [onError]);
 
-  const saveText = useCallback(async (content) => {
-    const item = await saveLibraryItem({ title: createTitle(content), content: content.trim() });
+  const saveText = useCallback(async (content, sourceType = 'text') => {
+    const item = await saveLibraryItem({
+      title: createTitle(content),
+      content: content.trim(),
+      sourceType,
+    });
     setItems((current) => [item, ...current]);
     return item;
   }, []);

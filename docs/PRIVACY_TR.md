@@ -7,9 +7,9 @@ Listen AI, metinleri cihazın yerleşik seslendirme özelliğiyle dinletmek ve d
 
 ## İşlenen bilgiler
 
-Uygulamaya yazdığınız, yapıştırdığınız veya TXT dosyasından aktardığınız metinler; başlık, favori/tamamlandı durumu ve dinleme ilerlemesiyle birlikte cihazınızdaki uygulama veritabanında saklanabilir.
+Uygulamaya yazdığınız, yapıştırdığınız veya TXT/DOCX dosyasından aktardığınız metinler; başlık, favori/tamamlandı durumu ve dinleme ilerlemesiyle birlikte cihazınızdaki uygulama veritabanında saklanabilir.
 
-Pano yalnızca **Yapıştır** düğmesine dokunduğunuzda okunur. TXT dosyasına yalnızca sistem dosya seçicisinde seçtiğinizde erişilir.
+Pano yalnızca **Yapıştır** düğmesine dokunduğunuzda okunur. TXT veya DOCX dosyasına yalnızca sistem dosya seçicisinde seçtiğinizde erişilir.
 
 ## Verilerin gönderilmesi
 

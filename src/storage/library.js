@@ -2,7 +2,7 @@ import * as SQLite from 'expo-sqlite';
 import { getSoftDeleteCutoff, normalizeLibraryItem } from '../utils/library';
 
 let database;
-export const LIBRARY_SCHEMA_VERSION = 2;
+export const LIBRARY_SCHEMA_VERSION = 3;
 
 async function getDatabase() {
   if (!database) database = await SQLite.openDatabaseAsync('listen-ai.db');
@@ -23,6 +23,7 @@ export async function initializeLibrary() {
         is_favorite INTEGER NOT NULL DEFAULT 0,
         is_completed INTEGER NOT NULL DEFAULT 0,
         progress_index INTEGER NOT NULL DEFAULT 0,
+        source_type TEXT NOT NULL DEFAULT 'text',
         deleted_at TEXT
       );
     `);
@@ -41,6 +42,14 @@ export async function initializeLibrary() {
       const columns = await db.getAllAsync('PRAGMA table_info(library_items);');
       if (!columns.some((column) => column.name === 'deleted_at')) {
         await db.execAsync('ALTER TABLE library_items ADD COLUMN deleted_at TEXT;');
+      }
+    }
+    if (version < 3) {
+      const columns = await db.getAllAsync('PRAGMA table_info(library_items);');
+      if (!columns.some((column) => column.name === 'source_type')) {
+        await db.execAsync(
+          "ALTER TABLE library_items ADD COLUMN source_type TEXT NOT NULL DEFAULT 'text';"
+        );
       }
     }
     await db.execAsync(`PRAGMA user_version = ${LIBRARY_SCHEMA_VERSION};`);
@@ -92,13 +101,14 @@ export async function deleteAllLibraryItems() {
   await db.runAsync('DELETE FROM library_items');
 }
 
-export async function saveLibraryItem({ title, content }) {
+export async function saveLibraryItem({ title, content, sourceType = 'text' }) {
   const db = await getDatabase();
   const now = new Date().toISOString();
   const result = await db.runAsync(
-    'INSERT INTO library_items (title, content, created_at, last_played_at) VALUES (?, ?, ?, ?)',
+    'INSERT INTO library_items (title, content, source_type, created_at, last_played_at) VALUES (?, ?, ?, ?, ?)',
     title,
     content,
+    sourceType,
     now,
     now
   );
@@ -106,6 +116,7 @@ export async function saveLibraryItem({ title, content }) {
     id: result.lastInsertRowId,
     title,
     content,
+    source_type: sourceType,
     created_at: now,
     last_played_at: now,
     is_favorite: 0,

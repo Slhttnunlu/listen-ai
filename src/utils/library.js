@@ -13,6 +13,7 @@ export function serializeLibrary(items, exportedAt = new Date().toISOString()) {
       items: items.map((item) => ({
         title: item.title,
         content: item.content,
+        source_type: item.source_type || 'text',
         created_at: item.created_at,
         last_played_at: item.last_played_at || null,
         progress_index: item.progress_index || 0,
@@ -45,6 +46,7 @@ export function normalizeLibraryItem(item) {
     last_played_at:
       typeof item?.last_played_at === 'string' && item.last_played_at ? item.last_played_at : null,
     progress_index: progressIndex,
+    source_type: ['text', 'txt', 'docx'].includes(item?.source_type) ? item.source_type : 'text',
     is_completed: item?.is_completed ? 1 : 0,
     is_favorite: item?.is_favorite ? 1 : 0,
   };
@@ -78,12 +80,13 @@ export function prepareLibraryItems(items, { filter, query, sort }) {
 }
 
 export function getLibraryItemMeta(item) {
+  const sourceLabel = { docx: 'DOCX', text: 'Metin', txt: 'TXT' }[item.source_type] || 'Metin';
   const wordCount = item.content?.trim().split(/\s+/).filter(Boolean).length || 0;
   const duration = Math.max(1, Math.ceil(wordCount / 150));
   const progress = item.content?.length
     ? Math.min(100, Math.round(((item.progress_index || 0) / item.content.length) * 100))
     : 0;
-  if (item.is_completed) return `Metin · Tamamlandı · ${duration} dk`;
-  if (progress > 0) return `Metin · %${progress} · ${duration} dk`;
-  return `Metin · ${duration} dk · ${new Date(item.created_at).toLocaleDateString('tr-TR')}`;
+  if (item.is_completed) return `${sourceLabel} · Tamamlandı · ${duration} dk`;
+  if (progress > 0) return `${sourceLabel} · %${progress} · ${duration} dk`;
+  return `${sourceLabel} · ${duration} dk · ${new Date(item.created_at).toLocaleDateString('tr-TR')}`;
 }

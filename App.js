@@ -25,6 +25,7 @@ const LEGAL_URLS = {
 export function AppContent() {
   const [text, setText] = useState(DEFAULT_TEXT);
   const [currentItem, setCurrentItem] = useState(null);
+  const [sourceType, setSourceType] = useState('text');
 
   const showSpeechError = useCallback((message) => {
     Alert.alert('Seslendirme hatası', message);
@@ -54,6 +55,7 @@ export function AppContent() {
   const startNewText = useCallback(() => {
     stop();
     setCurrentItem(null);
+    setSourceType('text');
     setText(DEFAULT_TEXT);
     if (navigationRef.isReady()) navigationRef.navigate('composer');
   }, [stop]);
@@ -68,6 +70,7 @@ export function AppContent() {
           if (!document) return;
           stop();
           setCurrentItem(null);
+          setSourceType(document.type);
           setText(document.content);
           if (navigationRef.isReady()) navigationRef.navigate('composer');
         } catch (error) {
@@ -88,6 +91,7 @@ export function AppContent() {
       stop();
       setText(item.content);
       setCurrentItem(item);
+      setSourceType(item.source_type || 'text');
       if (navigationRef.isReady()) navigationRef.navigate('composer');
     },
     [stop]
@@ -99,13 +103,13 @@ export function AppContent() {
       return;
     }
     try {
-      const item = currentItem || (await saveText(text));
+      const item = currentItem || (await saveText(text, sourceType));
       setCurrentItem(item);
       play(rate, item.progress_index || 0, item.id);
     } catch {
       Alert.alert('Kaydedilemedi', 'Metin yerel kütüphaneye kaydedilemedi.');
     }
-  }, [currentItem, play, rate, saveText, text]);
+  }, [currentItem, play, rate, saveText, sourceType, text]);
 
   const closeComposer = useCallback(() => {
     if (navigationRef.canGoBack()) navigationRef.goBack();
@@ -153,6 +157,7 @@ export function AppContent() {
               stop();
               await clearLibrary();
               setCurrentItem(null);
+              setSourceType('text');
               setText(DEFAULT_TEXT);
               Alert.alert('Yerel veriler silindi', 'Kütüphanenizdeki tüm kayıtlar kaldırıldı.');
             } catch {
