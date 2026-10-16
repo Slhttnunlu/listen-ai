@@ -2,6 +2,7 @@ node_modules/
 .npm-cache/
 --loglevel=warn/
 .expo/
+ios/
 dist/
 *.log
 .env

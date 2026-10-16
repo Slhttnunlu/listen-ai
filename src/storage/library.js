@@ -21,6 +21,13 @@ export async function initializeLibrary() {
       is_completed INTEGER NOT NULL DEFAULT 0
     );
   `);
+  try {
+    await db.execAsync(
+      'ALTER TABLE library_items ADD COLUMN progress_index INTEGER NOT NULL DEFAULT 0;'
+    );
+  } catch {
+    // Existing installs have already received this one-time schema migration.
+  }
 }
 
 export async function getLibraryItems() {
@@ -41,4 +48,14 @@ export async function saveLibraryItem({ title, content }) {
     now
   );
   return { id: result.lastInsertRowId, title, content, created_at: now, last_played_at: now };
+}
+
+export async function updateLibraryProgress(id, progressIndex) {
+  const db = await getDatabase();
+  await db.runAsync(
+    'UPDATE library_items SET progress_index = ?, last_played_at = ? WHERE id = ?',
+    progressIndex,
+    new Date().toISOString(),
+    id
+  );
 }

@@ -5,14 +5,16 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
-    "ios": "expo start --ios",
-    "android": "expo start --android",
-    "web": "expo start --web"
+    "ios": "expo run:ios",
+    "android": "expo run:android",
+    "web": "expo start --web",
+    "test:export:ios": "expo export --platform ios --output-dir /tmp/listen-ai-export"
   },
   "dependencies": {
     "expo": "^57.0.0",
     "expo-asset": "~57.0.20",
     "expo-clipboard": "~57.0.2",
+    "expo-dev-client": "~57.0.20",
     "expo-speech": "~57.0.3",
     "expo-sqlite": "~57.0.4",
     "expo-status-bar": "~57.0.1",

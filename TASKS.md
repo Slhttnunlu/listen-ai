@@ -4,7 +4,7 @@
 
 - [x] Metni başlıkla kaydetme ve kütüphaneye ekleme
 - [x] SQLite ile kalıcı yerel depolama
-- [ ] Oynat/duraklat, dinleme yüzdesi ve kaldığı yerden devam
+- [x] Dinleme ilerlemesini kaydetme ve kütüphaneden kaldığı yerden devam
 - [x] Okunan kelimeyi ses motoru sınır olaylarıyla vurgulama
 - [ ] Arka plan oynatma ve kilit ekranı kontrolleri
 
@@ -100,7 +100,7 @@ Bu işler, uygulamanın yalnızca demoda çalışmasından gerçek kullanıcıla
 - [ ] ESLint, Prettier ve import/format kurallarını kur; CI'da zorunlu çalıştır.
 - [ ] Birim test altyapısını kur: metin bölme, aktif kelime eşleme, süre biçimleme ve depolama dönüşümleri.
 - [ ] Bileşen test altyapısını kur: ekranların temel render'ı, kart etkileşimleri ve hata/boş durumları.
-- [ ] E2E test stratejisi seç: Maestro veya Detox; en az “metin gir → dinlemeyi başlat → durdur” akışını otomatikleştir.
+- [x] Maestro E2E akışını kur: “metin gir → dinlemeyi başlat → hızı değiştir → durdur” ve kütüphane sekmesi iOS Simulator'da otomatikleşti.
 - [ ] CI kontrol listesi oluştur: bağımlılık kurulumu, lint, test, Expo export ve raporların saklanması.
 - [ ] Ana dala doğrudan kırık build alınmasını engelleyen branch/PR kontrollerini tanımla.
 

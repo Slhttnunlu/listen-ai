@@ -1,0 +1,26 @@
+appId: ${APP_ID}
+---
+- openLink: ${APP_URL}
+- runFlow:
+    when:
+      visible:
+        id: player-back-button
+    commands:
+      - tapOn:
+          id: player-back-button
+- runFlow:
+    when:
+      visible:
+        id: back-button
+    commands:
+      - tapOn:
+          id: back-button
+- extendedWaitUntil:
+    visible:
+      id: nav-library
+    timeout: 15000
+- tapOn:
+    id: nav-library
+- assertVisible: "Kütüphanem"
+- assertVisible:
+    id: nav-home

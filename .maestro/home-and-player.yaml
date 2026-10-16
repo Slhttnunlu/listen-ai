@@ -1,0 +1,53 @@
+appId: ${APP_ID}
+---
+- openLink: ${APP_URL}
+- runFlow:
+    when:
+      visible:
+        id: player-back-button
+    commands:
+      - tapOn:
+          id: player-back-button
+- runFlow:
+    when:
+      visible:
+        id: back-button
+    commands:
+      - tapOn:
+          id: back-button
+- runFlow:
+    when:
+      visible:
+        id: nav-home
+    commands:
+      - tapOn:
+          id: nav-home
+- extendedWaitUntil:
+    visible:
+      id: feature-write
+    timeout: 15000
+- assertVisible:
+    id: feature-write
+- tapOn:
+    id: feature-write
+- assertVisible:
+    id: text-input
+- tapOn:
+    id: text-input
+- tapOn:
+    id: clear-button
+- inputText: "Maestro ile dinleme akisi test ediliyor. Bu metin oynatma ekraninin acik kalmasi icin biraz daha uzundur."
+- tapOn:
+    id: save-and-listen-button
+- assertVisible:
+    id: player-screen
+- assertVisible:
+    id: speed-button
+- tapOn:
+    id: speed-button
+- assertVisible:
+    id: player-screen
+- tapOn:
+    id: stop-button
+- assertVisible:
+    id: text-input

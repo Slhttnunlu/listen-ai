@@ -10,6 +10,7 @@
       "backgroundColor": "#E4FFD6"
     },
     "ios": {
+      "bundleIdentifier": "com.slhttnunlu.listenai",
       "supportsTablet": true
     },
     "android": {
