@@ -17,6 +17,10 @@ export function getPdfExtractionErrorMessage(error) {
   }
 }
 
+export function isPdfOcrRedirectError(error) {
+  return error?.code === 'PDF_NO_SELECTABLE_TEXT';
+}
+
 export async function extractPdfText(uri) {
   if (!isAvailable()) {
     throw new Error(
@@ -33,9 +37,11 @@ export async function extractPdfText(uri) {
 
   const validation = validateExtractedDocument(content);
   if (validation.error) {
-    throw new Error(
-      'Bu PDF’de seçilebilir metin bulunamadı. Taranmış/görsel PDF olabilir; Metni Tara özelliği OCR desteği geldiğinde kullanılabilecek.'
+    const error = new Error(
+      'Bu PDF’de seçilebilir metin bulunamadı. Taranmış/görsel PDF olabilir; sayfayı fotoğraf veya ekran görüntüsü olarak Metni Tara ile açabilirsiniz.'
     );
+    error.code = 'PDF_NO_SELECTABLE_TEXT';
+    throw error;
   }
   return validation.content;
 }

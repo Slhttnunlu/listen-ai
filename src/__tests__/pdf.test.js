@@ -6,7 +6,11 @@ jest.mock('expo-pdf-text-extract', () => ({
   isAvailable: mockIsAvailable,
 }));
 
-const { extractPdfText, getPdfExtractionErrorMessage } = require('../services/pdf');
+const {
+  extractPdfText,
+  getPdfExtractionErrorMessage,
+  isPdfOcrRedirectError,
+} = require('../services/pdf');
 
 describe('PDF extraction', () => {
   beforeEach(() => {
@@ -19,11 +23,22 @@ describe('PDF extraction', () => {
     await expect(extractPdfText('file:///rapor.pdf')).rejects.toThrow('development build');
   });
 
-  test('directs image-only PDFs to the future OCR flow', async () => {
+  test('marks image-only PDFs for the OCR redirect flow', async () => {
     mockIsAvailable.mockReturnValue(true);
     mockExtractText.mockResolvedValue('   ');
 
-    await expect(extractPdfText('file:///tarama.pdf')).rejects.toThrow('Taranmış/görsel PDF');
+    let error;
+    try {
+      await extractPdfText('file:///tarama.pdf');
+    } catch (caughtError) {
+      error = caughtError;
+    }
+
+    expect(error).toMatchObject({
+      code: 'PDF_NO_SELECTABLE_TEXT',
+      message: expect.stringContaining('Taranmış/görsel PDF'),
+    });
+    expect(isPdfOcrRedirectError(error)).toBe(true);
   });
 
   test('returns normalized digital PDF text', async () => {

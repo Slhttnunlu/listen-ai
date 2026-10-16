@@ -24,9 +24,9 @@
 ## 3. Doküman
 
 - [x] Cihazdan UTF-8 TXT seçme, boyut/içerik doğrulama ve editöre aktarma
-- [ ] PDF metin çıkarma; taranmış PDF'yi OCR akışına yönlendirme
+- [ ] PDF metin çıkarma; taranmış PDF sayfasını OCR akışına yönlendirme
   - [x] Native development build’de dijital PDF metnini cihaz üzerinde çıkar ve büyük/bozuk/parolalı dosya hatalarını açık göster.
-  - [x] Seçilebilir metni olmayan PDF’yi gelecekteki OCR/Metni Tara akışına yönlendir.
+  - [x] Seçilebilir metni olmayan PDF’de kullanıcıyı fotoğraf/ekran görüntüsü seçen Metni Tara akışına yönlendir.
   - [ ] iOS ve Android native build’de dijital, taranmış, parolalı ve bozuk PDF kabul testlerini tamamla.
 - [x] DOCX desteği ve büyük dosyayı bölümlere ayırma
   - [x] DOCX arşivinden paragrafları cihaz içinde çıkar, bozuk/parolalı/boş dosya ve 10 MB boyut kontrolü ekle.

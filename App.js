@@ -16,6 +16,7 @@ import { SettingsScreen } from './src/screens/SettingsScreen';
 import { pickTextDocument } from './src/services/documents';
 import { exportLibrary } from './src/services/libraryExport';
 import { pickLibraryBackup } from './src/services/libraryImport';
+import { isPdfOcrRedirectError } from './src/services/pdf';
 import { extractTextFromScan, SCAN_SOURCES, selectImageForScan } from './src/services/scan';
 import { styles } from './src/styles';
 import { createDocumentSectionTitle } from './src/utils/document';
@@ -119,16 +120,23 @@ export function AppContent() {
     [stop]
   );
 
+  const openScanSourceDialog = useCallback(
+    (message = 'Kamerayla fotoğraf çekin veya galeriden bir görsel seçin.') => {
+      Alert.alert('Metni Tara', message, [
+        { text: 'Vazgeç', style: 'cancel' },
+        { text: 'Galeriden seç', onPress: () => scanImage(SCAN_SOURCES.library) },
+        { text: 'Fotoğraf çek', onPress: () => scanImage(SCAN_SOURCES.camera) },
+      ]);
+    },
+    [scanImage]
+  );
+
   const useFeature = useCallback(
     async (id) => {
       if (id === 'write') {
         startNewText();
       } else if (id === 'scan') {
-        Alert.alert('Metni Tara', 'Kamerayla fotoğraf çekin veya galeriden bir görsel seçin.', [
-          { text: 'Vazgeç', style: 'cancel' },
-          { text: 'Galeriden seç', onPress: () => scanImage(SCAN_SOURCES.library) },
-          { text: 'Fotoğraf çek', onPress: () => scanImage(SCAN_SOURCES.camera) },
-        ]);
+        openScanSourceDialog();
       } else if (id === 'document') {
         try {
           const document = await pickTextDocument();
@@ -152,7 +160,20 @@ export function AppContent() {
           setText(document.sections[0]);
           if (navigationRef.isReady()) navigationRef.navigate('composer');
         } catch (error) {
-          Alert.alert('Dosya açılamadı', error.message || 'Metin dosyası okunamadı.');
+          if (isPdfOcrRedirectError(error)) {
+            Alert.alert('Taranmış PDF', error.message, [
+              { text: 'Vazgeç', style: 'cancel' },
+              {
+                text: 'Metni Tara',
+                onPress: () =>
+                  openScanSourceDialog(
+                    'PDF sayfasının fotoğrafını çekin veya ekran görüntüsünü seçin.'
+                  ),
+              },
+            ]);
+          } else {
+            Alert.alert('Dosya açılamadı', error.message || 'Metin dosyası okunamadı.');
+          }
         }
       } else {
         Alert.alert(
@@ -161,7 +182,7 @@ export function AppContent() {
         );
       }
     },
-    [saveDocumentSections, scanImage, startNewText, stop]
+    [openScanSourceDialog, saveDocumentSections, startNewText, stop]
   );
 
   const openItem = useCallback(
