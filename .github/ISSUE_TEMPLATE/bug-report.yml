@@ -1,0 +1,70 @@
+name: Beta hata bildirimi
+description: Tekrarlanabilir bir Listen AI hatasını bildirin.
+title: '[Hata]: '
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Dinlediğiniz metni veya kişisel bilgileri eklemeyin. Ekran görüntüsü yüklemeden önce bildirimleri, dosya adlarını ve içerikleri gizleyin.
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - iOS
+        - Android
+    validations:
+      required: true
+  - type: input
+    id: os-device
+    attributes:
+      label: Cihaz ve işletim sistemi
+      placeholder: Örn. iPhone 15, iOS 18.3
+    validations:
+      required: true
+  - type: input
+    id: app-version
+    attributes:
+      label: Uygulama sürümü ve build
+      placeholder: Örn. 0.1.0 (12)
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Tekrarlama adımları
+      placeholder: |
+        1. ... ekranını açtım
+        2. ... düğmesine dokundum
+        3. ... oldu
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Beklenen davranış
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Gerçekleşen davranış
+    validations:
+      required: true
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: Tekrarlanma sıklığı
+      options:
+        - Her seferinde
+        - Bazen
+        - Bir kez
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Gizlilik kontrolü
+      options:
+        - label: Paylaşımımda kullanıcı metni, belge adı, parola/token veya kişisel bilgi yok.
+          required: true

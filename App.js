@@ -132,7 +132,9 @@ export function AppContent() {
 
   const openFeedback = useCallback(async () => {
     try {
-      await Linking.openURL('https://github.com/Slhttnunlu/listen-ai/issues/new');
+      await Linking.openURL(
+        'https://github.com/Slhttnunlu/listen-ai/issues/new?template=beta-feedback.yml'
+      );
     } catch {
       Alert.alert('Bağlantı açılamadı', 'Geri bildirim sayfası şu anda açılamıyor.');
     }

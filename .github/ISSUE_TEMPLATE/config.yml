@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Güvenlik veya gizlilik bildirimi
+    url: https://github.com/Slhttnunlu/listen-ai/security/advisories/new
+    about: Hassas güvenlik konularını herkese açık issue yerine özel olarak bildirin.

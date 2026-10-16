@@ -63,3 +63,5 @@ Bulut TTS (OpenAI veya ElevenLabs), PDF içe aktarma ve kullanıcı hesabı sonr
 Yerel/çevrimdışı sınır ile gelecekteki backend bileşenleri [hedef mimari](docs/ARCHITECTURE.md) belgesinde tanımlanmıştır.
 
 Kapalı beta yayınlarında [sürüm ve geri alma operasyonu](docs/RELEASE_OPERATIONS.md) izlenir. Yerel ve gelecekteki bulut verisi için kurtarma sınırları [yedekleme ve geri yükleme tasarımında](docs/BACKUP_RECOVERY.md) açıklanır.
+
+Beta geri bildirimleri ve haftalık ürün değerlendirmesi [kapalı beta geri bildirim sürecinde](docs/BETA_FEEDBACK.md) yönetilir.

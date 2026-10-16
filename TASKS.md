@@ -152,7 +152,7 @@ Bu işler, uygulamanın yalnızca demoda çalışmasından gerçek kullanıcıla
   - [x] Development, Simulator E2E, internal preview ve production EAS profillerini tanımla.
   - [ ] EAS projesini hesaba bağla; imzalı iOS/Android build ve submit doğrulamasını tamamla.
 - [ ] iOS TestFlight ve Google Play Internal Testing kanallarında kapalı beta yayınla.
-- [ ] Beta katılımcıları için geri bildirim formu, hata toplama ve haftalık değerlendirme ritmi belirle.
+- [x] Beta katılımcıları için geri bildirim formu, hata toplama ve haftalık değerlendirme ritmi belirle.
 - [ ] Freemium sınırlarını tanımla: ücretsiz metin uzunluğu, ses seçimi, dosya/OCR ve AI kullanımı.
 - [ ] Abonelik düşünülüyorsa StoreKit/Google Play Billing, deneme, iptal ve geri yükleme akışlarını tasarla.
 - [ ] Fiyatlandırmayı sağlayıcı maliyeti, mağaza komisyonu, destek ve hedef brüt marja göre doğrula.

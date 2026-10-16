@@ -1,0 +1,60 @@
+name: Beta geri bildirimi
+description: Listen AI kapalı beta deneyiminizi ve önerinizi paylaşın.
+title: '[Beta]: '
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Teşekkürler. Bu form herkese açık olabilir. Dinlediğiniz metni, belge adını, e-posta adresini, parola/token veya başka kişisel bilgiyi eklemeyin.
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - iOS
+        - Android
+    validations:
+      required: true
+  - type: input
+    id: app-version
+    attributes:
+      label: Uygulama sürümü ve build
+      placeholder: Örn. 0.1.0 (12)
+    validations:
+      required: true
+  - type: dropdown
+    id: experience
+    attributes:
+      label: Genel deneyim
+      options:
+        - Çok iyi
+        - İyi
+        - Orta
+        - Kötü
+        - Çok kötü
+    validations:
+      required: true
+  - type: textarea
+    id: useful
+    attributes:
+      label: En faydalı bulduğunuz bölüm
+      description: İçerik metnini paylaşmadan kullanım amacını anlatabilirsiniz.
+    validations:
+      required: true
+  - type: textarea
+    id: improve
+    attributes:
+      label: En çok iyileştirilmesi gereken bölüm
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Beklediğiniz ama bulamadığınız özellik
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Gizlilik kontrolü
+      options:
+        - label: Bu issue'ya metin, belge adı, parola/token veya başka hassas bilgi eklemedim.
+          required: true
