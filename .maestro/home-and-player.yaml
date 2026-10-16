@@ -36,7 +36,7 @@ appId: ${APP_ID}
     id: text-input
 - tapOn:
     id: clear-button
-- inputText: "Maestro ile dinleme akisi test ediliyor. Bu metin oynatma ekraninin acik kalmasi icin biraz daha uzundur."
+- inputText: 'Maestro ile dinleme akisi test ediliyor. Bu metin oynatma ekraninin acik kalmasi icin biraz daha uzundur.'
 - tapOn:
     id: save-and-listen-button
 - assertVisible:

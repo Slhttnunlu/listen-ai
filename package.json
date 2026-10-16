@@ -2,12 +2,20 @@
   "name": "listen-ai",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "^22.13.0 || ^24.3.0 || >=25.0.0"
+  },
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
     "ios": "expo run:ios",
     "android": "expo run:android",
     "web": "expo start --web",
+    "test": "jest --runInBand",
+    "test:watch": "jest --watch",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test:export:ios": "expo export --platform ios --output-dir /tmp/listen-ai-export"
   },
   "dependencies": {
@@ -21,7 +29,20 @@
     "react": "19.2.3",
     "react-native": "0.86.3"
   },
+  "jest": {
+    "preset": "jest-expo",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/ios/"
+    ]
+  },
   "devDependencies": {
-    "@babel/core": "^7.25.2"
+    "@babel/core": "^7.25.2",
+    "@testing-library/react-native": "^13.3.3",
+    "eslint": "^9.39.5",
+    "eslint-config-expo": "^58.0.4",
+    "jest-expo": "~57.0.0",
+    "prettier": "^3.9.10",
+    "react-test-renderer": "^19.2.3"
   }
 }

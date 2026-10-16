@@ -21,6 +21,6 @@ appId: ${APP_ID}
     timeout: 15000
 - tapOn:
     id: nav-library
-- assertVisible: "Kütüphanem"
+- assertVisible: 'Kütüphanem'
 - assertVisible:
     id: nav-home

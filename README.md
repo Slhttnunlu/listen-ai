@@ -38,6 +38,19 @@ Paketleme kontrolü:
 npm run test:export:ios
 ```
 
+## Kod kalite kontrolleri
+
+Pull request veya `main` push'unda GitHub Actions şu kontrolleri çalıştırır:
+
+```bash
+npm run lint
+npm run format:check
+npm test
+npm run test:export:ios
+```
+
+Projede Expo SDK 57'nin desteklediği Node sürümleri kullanılmalıdır. Önerilen yerel sürüm Node `22.13+` LTS'dir.
+
 ## MVP kapsamı
 
 - Metin yapıştırma ve düzenleme

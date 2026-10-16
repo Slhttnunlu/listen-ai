@@ -1,72 +1,111 @@
 import { StatusBar } from 'expo-status-bar';
-import * as Clipboard from 'expo-clipboard';
-import * as Speech from 'expo-speech';
-import { useEffect, useRef, useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { getLibraryItems, initializeLibrary, saveLibraryItem, updateLibraryProgress } from './src/storage/library';
-
-const features = [
-  ['write', 'Tᵀ', 'Metin Yaz veya Yapıştır', 'Dinlemek için metin yazın veya yapıştırın'],
-  ['document', '▱', 'Doküman', "Drive'dan veya cihazdan dosya yükleyin"],
-  ['podcast', '◉', 'Podcast', 'Dinlemesi keyifli podcastler oluştur'],
-  ['scan', '⌁', 'Metni Tara', 'Kitap, belge, görsel ve daha fazlasını tarayın'],
-  ['mail', '✉', 'Mail', 'E-postaları kolayca dinleyin'],
-];
-const sample = 'Listen AI ile makaleleri, notları ve uzun metinleri istediğiniz yerde dinleyin.';
+import { useCallback, useState } from 'react';
+import { Alert, SafeAreaView } from 'react-native';
+import { BottomNav } from './src/components/BottomNav';
+import { useLibrary } from './src/hooks/useLibrary';
+import { useSpeechPlayer } from './src/hooks/useSpeechPlayer';
+import { ComposerScreen } from './src/screens/ComposerScreen';
+import { HomeScreen } from './src/screens/HomeScreen';
+import { LibraryScreen } from './src/screens/LibraryScreen';
+import { SettingsScreen } from './src/screens/SettingsScreen';
+import { styles } from './src/styles';
+import { DEFAULT_TEXT } from './src/utils/text';
 
 export default function App() {
-  const [tab, setTab] = useState('home'); const [composer, setComposer] = useState(false);
-  const [text, setText] = useState(sample); const [rate, setRate] = useState(1); const [playing, setPlaying] = useState(false); const [activeRange, setActiveRange] = useState(null);
-  const speechSession = useRef(0);
-  const speechIndex = useRef(0);
-  const [voices, setVoices] = useState([]); const [voiceId, setVoiceId] = useState();
-  const [libraryItems, setLibraryItems] = useState([]); const [libraryReady, setLibraryReady] = useState(false);
-  const [currentItemId, setCurrentItemId] = useState(null);
-  useEffect(() => { Speech.getAvailableVoicesAsync().then(list => { const selected = list.filter(v => v.language?.toLowerCase().startsWith('tr')); const choices = selected.length ? selected : list; setVoices(choices.slice(0, 3)); setVoiceId(choices[0]?.identifier); }); return () => Speech.stop(); }, []);
-  useEffect(() => { initializeLibrary().then(getLibraryItems).then(setLibraryItems).then(() => setLibraryReady(true)).catch(() => Alert.alert('Kütüphane açılamadı', 'Yerel kayıt alanı başlatılamadı.')); }, []);
-  const play = (selectedRate = rate, startIndex = speechIndex.current) => { if (!text.trim()) return Alert.alert('Metin gerekli', 'Dinlemek için önce bir metin girin.'); const session = ++speechSession.current; const start = Math.min(Math.max(startIndex, 0), text.length); speechIndex.current = start; Speech.stop(); setPlaying(true); setActiveRange(null); Speech.speak(text.slice(start), { language: 'tr-TR', voice: voiceId, rate: selectedRate, onBoundary: ({ charIndex, charLength }) => { if (session === speechSession.current) { const wordStart = start + charIndex; speechIndex.current = wordStart; setActiveRange({ start: wordStart, end: wordStart + charLength }); if (currentItemId) updateLibraryProgress(currentItemId, wordStart).catch(() => {}); } }, onDone: () => { if (session === speechSession.current) { setPlaying(false); setActiveRange(null); speechIndex.current = 0; if (currentItemId) updateLibraryProgress(currentItemId, 0).catch(() => {}); } }, onStopped: () => { if (session === speechSession.current) { setPlaying(false); setActiveRange(null); } }, onError: () => { if (session === speechSession.current) { setPlaying(false); setActiveRange(null); } } }); };
-  const useFeature = id => { if (id === 'write') { setCurrentItemId(null); speechIndex.current = 0; setComposer(true); } else Alert.alert('Yakında', 'Bu özellik ürün planına eklendi. Önce metin dinleme akışını tamamlıyoruz.'); };
-  const saveText = async () => { if (!text.trim()) return null; if (currentItemId) return currentItemId; const title = text.trim().split(/\n|[.!?]/)[0].slice(0, 60) || 'Başlıksız metin'; try { const item = await saveLibraryItem({ title, content: text.trim() }); setCurrentItemId(item.id); setLibraryItems(current => [item, ...current]); return item.id; } catch { Alert.alert('Kaydedilemedi', 'Metin yerel kütüphaneye kaydedilemedi.'); return null; } };
-  const saveAndPlay = async () => { const id = await saveText(); if (id) play(); };
-  const openItem = item => { setText(item.content); setCurrentItemId(item.id); speechIndex.current = item.progress_index || 0; setComposer(true); };
-  const changeRate = () => { const rates = [0.5, 1, 1.25, 1.5]; const next = rates[(rates.indexOf(rate) + 1) % rates.length]; setRate(next); play(next, speechIndex.current); };
-  return <SafeAreaView style={s.safe}><StatusBar style="dark" />
-    {composer ? <Composer {...{ text, setText, rate, setRate, voices, voiceId, setVoiceId, playing, activeRange }} onBack={() => setComposer(false)} onSaveAndPlay={saveAndPlay} onChangeRate={changeRate} onPlay={playing ? () => { speechSession.current += 1; Speech.stop(); setPlaying(false); setActiveRange(null); } : play} /> : <>
-      {tab === 'home' && <Home onFeature={useFeature} />}{tab === 'library' && <Library items={libraryItems} ready={libraryReady} onAdd={() => { setCurrentItemId(null); speechIndex.current = 0; setComposer(true); }} onOpen={openItem} />}{tab === 'settings' && <Settings />}
-      <Nav active={tab} setActive={setTab} />
-    </>}</SafeAreaView>;
+  const [tab, setTab] = useState('home');
+  const [composerOpen, setComposerOpen] = useState(false);
+  const [text, setText] = useState(DEFAULT_TEXT);
+  const [currentItem, setCurrentItem] = useState(null);
+
+  const showLibraryError = useCallback(() => {
+    Alert.alert('Kütüphane açılamadı', 'Yerel kayıt alanı başlatılamadı.');
+  }, []);
+  const showSpeechError = useCallback((message) => {
+    Alert.alert('Seslendirme hatası', message);
+  }, []);
+
+  const { items, ready, saveText, saveProgress } = useLibrary({ onError: showLibraryError });
+  const { activeRange, changeRate, play, playing, rate, stop } = useSpeechPlayer({
+    text,
+    itemId: currentItem?.id,
+    initialIndex: currentItem?.progress_index || 0,
+    onProgress: saveProgress,
+    onError: showSpeechError,
+  });
+
+  const startNewText = useCallback(() => {
+    stop();
+    setCurrentItem(null);
+    setText(DEFAULT_TEXT);
+    setComposerOpen(true);
+  }, [stop]);
+
+  const useFeature = useCallback(
+    (id) => {
+      if (id === 'write') startNewText();
+      else
+        Alert.alert(
+          'Yakında',
+          'Bu özellik ürün planına eklendi. Önce metin dinleme akışını tamamlıyoruz.'
+        );
+    },
+    [startNewText]
+  );
+
+  const openItem = useCallback(
+    (item) => {
+      stop();
+      setText(item.content);
+      setCurrentItem(item);
+      setComposerOpen(true);
+    },
+    [stop]
+  );
+
+  const saveAndPlay = useCallback(async () => {
+    if (!text.trim()) {
+      Alert.alert('Metin gerekli', 'Dinlemek için önce bir metin girin.');
+      return;
+    }
+    try {
+      const item = currentItem || (await saveText(text));
+      setCurrentItem(item);
+      play(rate, item.progress_index || 0, item.id);
+    } catch {
+      Alert.alert('Kaydedilemedi', 'Metin yerel kütüphaneye kaydedilemedi.');
+    }
+  }, [currentItem, play, rate, saveText, text]);
+
+  const closeComposer = useCallback(() => {
+    stop();
+    setComposerOpen(false);
+  }, [stop]);
+
+  return (
+    <SafeAreaView style={styles.safe}>
+      <StatusBar style="dark" />
+      {composerOpen ? (
+        <ComposerScreen
+          text={text}
+          setText={setText}
+          rate={rate}
+          playing={playing}
+          activeRange={activeRange}
+          onStop={stop}
+          onSaveAndPlay={saveAndPlay}
+          onChangeRate={changeRate}
+          onBack={closeComposer}
+        />
+      ) : (
+        <>
+          {tab === 'home' && <HomeScreen onFeature={useFeature} />}
+          {tab === 'library' && (
+            <LibraryScreen items={items} ready={ready} onAdd={startNewText} onOpen={openItem} />
+          )}
+          {tab === 'settings' && <SettingsScreen />}
+          <BottomNav active={tab} onChange={setTab} />
+        </>
+      )}
+    </SafeAreaView>
+  );
 }
-
-function Home({ onFeature }) { return <ScrollView style={s.page} contentContainerStyle={s.home} showsVerticalScrollIndicator={false}>
-  <View style={s.hero}><View style={s.glow} /><Text style={s.brand}>Listen AI</Text><View style={s.art}>
-    <Bubble style={s.b1} symbol="▤" /><Bubble style={s.b2} symbol="◖◗" /><Bubble style={s.b3} symbol="⌁" /><View style={s.play}><Text style={s.playText}>▶</Text></View>
-  </View><View style={s.dots}><Text style={s.activeDot}>━</Text><Text style={s.dot}>● ● ● ● ● ●</Text></View><View style={s.heroFooter}><Text style={s.heroTitle}>İstediğiniz zaman, istediğiniz yerde dinleyin</Text><View style={s.trial}><Text>Ücretsiz deneyin</Text></View></View></View>
-  <View style={s.sheet}><Text style={s.sheetTitle}>Bugün ne dinlemek istersiniz?</Text>{features.map(([id, icon, title, description]) => <Pressable key={id} testID={`feature-${id}`} onPress={() => onFeature(id)} style={s.card}><View style={s.cardIcon}><Text style={s.cardIconText}>{icon}</Text></View><View style={s.copy}><Text style={s.cardTitle}>{title}</Text><Text style={s.cardDesc}>{description}</Text></View></Pressable>)}</View>
-</ScrollView>; }
-function Bubble({ style, symbol }) { return <View style={[s.bubble, style]}><Text style={s.bubbleText}>{symbol}</Text></View>; }
-function Library({ items, ready, onAdd, onOpen }) { const [filter, setFilter] = useState('Tümü'); return <View style={s.white}><View style={s.libHead}><Text style={s.libTitle}>Kütüphanem</Text><View style={s.pro}><Text style={s.proText}>PRO</Text></View></View><ScrollView horizontal contentContainerStyle={s.filters} showsHorizontalScrollIndicator={false}>{['Tümü', 'Devam', 'Tamamlandı', '♡ Favoriler'].map(x => <Pressable onPress={() => setFilter(x)} key={x} style={[s.filter, filter === x && s.filterOn]}><Text style={[s.filterText, filter === x && s.filterTextOn]}>{x}</Text></Pressable>)}</ScrollView><ScrollView contentContainerStyle={s.list}>{!ready ? <Text style={s.empty}>Kütüphaneniz yükleniyor…</Text> : items.length === 0 ? <Text style={s.empty}>Henüz kayıtlı metin yok. İlk metninizi eklemek için + düğmesine dokunun.</Text> : items.map(item => <Pressable key={item.id} onPress={() => onOpen(item)} style={s.libraryCard}><View style={s.preview}><Text style={s.previewText}>☰</Text></View><View style={s.copy}><Text numberOfLines={1} style={s.itemTitle}>{item.title}</Text><Text style={s.meta}>Metin · {item.progress_index > 0 ? 'Devam ediyor' : new Date(item.created_at).toLocaleDateString('tr-TR')}</Text></View><Text style={s.more}>›</Text></Pressable>)}</ScrollView><Pressable onPress={onAdd} style={s.fab}><Text style={s.fabText}>＋</Text></Pressable></View>; }
-function Settings() { return <ScrollView style={s.white} contentContainerStyle={s.settings}><Text style={s.libTitle}>Ayarlar</Text><Text style={s.intro}>Dinleme deneyiminizi kişiselleştirin.</Text>{['Varsayılan ses', 'Oynatma hızı', 'Bildirimler', 'Yardım ve geri bildirim'].map(x => <View key={x} style={s.setting}><Text style={s.settingText}>{x}</Text><Text style={s.chevron}>›</Text></View>)}</ScrollView>; }
-function Composer({ text, setText, rate, setRate, voices, voiceId, setVoiceId, playing, activeRange, onPlay, onSaveAndPlay, onChangeRate, onBack }) {
-  const paste = async () => { const value = await Clipboard.getStringAsync(); if (value) setText(value); else Alert.alert('Pano boş', 'Yapıştırılacak bir metin bulunamadı.'); };
-  if (playing) return <Player text={text} activeRange={activeRange} rate={rate} onStop={onPlay} onChangeRate={onChangeRate} onBack={onBack} />;
-  return <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 10 : 0} style={s.white}><View style={s.composerHead}><Pressable testID="back-button" onPress={onBack}><Text style={s.back}>‹</Text></Pressable><Text style={s.composerTitle}>Metin ekle</Text><View /></View><View style={s.entryPage}><View style={s.entryActions}><Text style={s.label}>METNİNİZ</Text><View style={s.entryButtons}><Pressable testID="paste-button" onPress={paste}><Text style={s.entryAction}>Yapıştır</Text></Pressable>{text.length > 0 && <Pressable testID="clear-button" onPress={() => setText('')}><Text style={s.clearAction}>⌫ Temizle</Text></Pressable>}</View></View><TextInput testID="text-input" autoFocus value={text} onChangeText={setText} multiline style={s.entryInput} textAlignVertical="top" placeholder="Dinlemek istediğiniz metni buraya yazın veya yapıştırın…" placeholderTextColor="#999" /><View style={s.entryFooter}><Pressable testID="save-and-listen-button" onPress={onSaveAndPlay} style={s.listenButton}><Text style={s.listenButtonText}>Kaydet ve Dinle</Text></Pressable></View></View></KeyboardAvoidingView>;
-}
-function Player({ text, activeRange, rate, onStop, onChangeRate, onBack }) { const progress = activeRange ? Math.min(100, Math.round((activeRange.end / text.length) * 100)) : 0; return <View testID="player-screen" style={s.playerPage}><StatusBar style="light" /><View style={s.playerHeader}><Pressable testID="player-back-button" onPress={onBack} style={s.playerBack}><Text style={s.playerBackText}>‹</Text></Pressable><View style={s.playerTools}><Text style={s.playerTool}>♧ AI</Text><Text style={s.playerTool}>Aᴬ</Text></View></View><ScrollView contentContainerStyle={s.readingArea}><ReadAlong text={text} activeRange={activeRange} dark /></ScrollView><View style={s.playerControls}><Text numberOfLines={1} style={s.nowPlaying}>{text.slice(0, 40) || 'Başlıksız metin'}</Text><View testID="playback-progress" style={s.progress}><View style={[s.progressFill, { width: `${progress}%` }]} /><View style={[s.progressDot, { left: `${progress}%` }]} /></View><View style={s.timeRow}><Text>{progress}%</Text><Text>—</Text></View><View style={s.playerButtons}><Text style={s.avatar}>◉</Text><Text style={s.skip}>↶₁₀</Text><Pressable testID="stop-button" onPress={onStop} style={s.mainStop}><Text style={s.mainStopText}>■</Text></Pressable><Text style={s.skip}>↷₁₀</Text><Pressable testID="speed-button" onPress={onChangeRate}><Text style={s.ratePill}>{rate}×</Text></Pressable></View></View></View>; }
-function ReadAlong({ text, activeRange, dark }) { if (!text) return null; const parts = text.split(/(\s+)/); let index = 0; return <View style={[s.readAlong, dark && s.readAlongDark]}><Text style={[s.readText, dark && s.readTextDark]}>{parts.map((part, i) => { const start = index; index += part.length; const isActive = activeRange && start < activeRange.end && index > activeRange.start; return <Text key={i} style={isActive ? s.readActive : undefined}>{part}</Text>; })}</Text></View>; }
-function Nav({ active, setActive }) { return <View style={s.nav}>{[['home','⌂','Ana Sayfa'],['library','◧','Kütüphanem'],['settings','⚙','Ayarlar']].map(([id, icon, label]) => <Pressable key={id} testID={`nav-${id}`} onPress={() => setActive(id)} style={s.navItem}><Text style={[s.navIcon, active === id && s.navOn]}>{icon}</Text><Text style={[s.navLabel, active === id && s.navOn]}>{label}</Text></Pressable>)}</View>; }
-
-const s = StyleSheet.create({
- safe:{flex:1,backgroundColor:'#fff'},page:{flex:1,backgroundColor:'#e4ffd6'},home:{paddingBottom:90},hero:{height:650,padding:24,overflow:'hidden'},glow:{position:'absolute',width:720,height:720,borderRadius:360,backgroundColor:'#caffb5',right:-340,top:-85},brand:{fontSize:18,fontWeight:'800',color:'#111'},art:{height:278,width:330,alignSelf:'center',marginTop:48},bubble:{position:'absolute',alignItems:'center',justifyContent:'center'},b1:{left:0,top:76,width:134,height:134,borderRadius:68,backgroundColor:'#eee'},b2:{left:88,top:20,width:158,height:158,borderRadius:79,backgroundColor:'#efb98e'},b3:{right:0,top:42,width:135,height:135,borderRadius:68,backgroundColor:'#8fc782'},bubbleText:{fontSize:44,color:'#fff',fontWeight:'800'},play:{position:'absolute',right:7,bottom:13,width:91,height:91,borderRadius:46,alignItems:'center',justifyContent:'center',backgroundColor:'#ffbc00'},playText:{fontSize:34,color:'#fff',marginLeft:5},dots:{flexDirection:'row',alignItems:'center'},activeDot:{fontSize:22,color:'#111',marginRight:12},dot:{color:'#c5e9b9',letterSpacing:4},heroFooter:{marginTop:28,flexDirection:'row',alignItems:'center',justifyContent:'space-between'},heroTitle:{fontSize:28,lineHeight:34,fontWeight:'800',letterSpacing:-.8,width:'63%',color:'#111'},trial:{backgroundColor:'#fff',paddingHorizontal:13,paddingVertical:13,borderRadius:25},sheet:{backgroundColor:'#fff',borderTopLeftRadius:42,borderTopRightRadius:42,marginTop:-25,padding:26},sheetTitle:{fontSize:28,fontWeight:'800',letterSpacing:-.8,marginBottom:25},card:{minHeight:130,borderWidth:2,borderColor:'#e9e9e9',borderRadius:28,flexDirection:'row',alignItems:'center',padding:19,marginBottom:16},cardIcon:{width:75,height:75,borderRadius:20,backgroundColor:'#fff8e6',alignItems:'center',justifyContent:'center',marginRight:19},cardIconText:{fontSize:30,fontWeight:'800',color:'#ffbb00'},copy:{flex:1},cardTitle:{fontSize:21,fontWeight:'800',letterSpacing:-.4},cardDesc:{fontSize:15,color:'#909090',marginTop:7,lineHeight:20},nav:{height:88,position:'absolute',left:0,right:0,bottom:0,backgroundColor:'#fff',borderTopWidth:1,borderColor:'#eee',flexDirection:'row'},navItem:{flex:1,alignItems:'center',justifyContent:'center'},navIcon:{fontSize:29,color:'#c4c5c7'},navLabel:{fontSize:12,fontWeight:'700',color:'#c4c5c7'},navOn:{color:'#111'},white:{flex:1,backgroundColor:'#fff'},libHead:{padding:27,paddingTop:35,paddingBottom:28,flexDirection:'row',justifyContent:'space-between',alignItems:'center'},libTitle:{fontSize:32,fontWeight:'800',letterSpacing:-1},pro:{paddingVertical:10,paddingHorizontal:18,borderRadius:25,backgroundColor:'#ffb900'},proText:{color:'#fff',fontWeight:'800',fontSize:16},filters:{paddingHorizontal:26,paddingBottom:25,gap:10},filter:{paddingHorizontal:18,paddingVertical:11,borderRadius:24,backgroundColor:'#f1f1f1'},filterOn:{backgroundColor:'#111'},filterText:{fontSize:16,fontWeight:'700',color:'#888'},filterTextOn:{color:'#fff'},list:{padding:26,paddingTop:0,gap:17},libraryCard:{minHeight:148,borderRadius:28,borderWidth:2,borderColor:'#e8e8e8',padding:19,flexDirection:'row',alignItems:'center'},preview:{width:88,height:88,borderRadius:20,backgroundColor:'#f0f0f0',alignItems:'center',justifyContent:'center'},previewText:{fontSize:34,color:'#999'},itemTitle:{fontSize:20,fontWeight:'700'},meta:{fontSize:14,color:'#999',marginTop:9},more:{fontSize:28,color:'#999'},fab:{position:'absolute',right:27,bottom:108,width:83,height:83,borderRadius:42,backgroundColor:'#ffbc00',alignItems:'center',justifyContent:'center',borderWidth:2,borderColor:'#e2a700'},fabText:{fontSize:50,color:'#fff',lineHeight:54},settings:{padding:27,paddingTop:35},intro:{fontSize:16,color:'#888',marginTop:10,marginBottom:28},setting:{paddingVertical:21,borderBottomWidth:1,borderColor:'#eee',flexDirection:'row',justifyContent:'space-between'},settingText:{fontSize:18,fontWeight:'600'},chevron:{fontSize:30,color:'#aaa'},composerHead:{padding:16,borderBottomWidth:1,borderColor:'#eee',flexDirection:'row',justifyContent:'space-between',alignItems:'center'},back:{fontSize:38,lineHeight:35},composerTitle:{fontSize:18,fontWeight:'800'},composer:{padding:22},label:{fontSize:11,fontWeight:'800',letterSpacing:1,color:'#888',marginBottom:9},input:{minHeight:205,borderRadius:20,borderWidth:1,borderColor:'#e7e7e7',backgroundColor:'#fafafa',padding:16,fontSize:17,lineHeight:25},control:{fontSize:17,fontWeight:'800',marginTop:26,marginBottom:12},speeds:{flexDirection:'row',gap:8},speed:{flex:1,paddingVertical:12,alignItems:'center',borderRadius:12,backgroundColor:'#f3f3f3'},speedOn:{backgroundColor:'#111'},speedText:{fontWeight:'800',color:'#777'},speedTextOn:{color:'#fff'},voice:{padding:14,borderWidth:1,borderColor:'#e8e8e8',borderRadius:15,marginBottom:8,backgroundColor:'#fafafa'},voiceOn:{borderWidth:2,borderColor:'#ffbc00',padding:13},voiceName:{fontWeight:'700',fontSize:15},voiceLang:{color:'#999',fontSize:12,marginTop:3},listen:{marginTop:30,paddingVertical:18,alignItems:'center',borderRadius:18,backgroundColor:'#ffbc00'},stop:{backgroundColor:'#e55353'},listenText:{color:'#fff',fontSize:17,fontWeight:'800'},
- readAlong:{backgroundColor:'#fafafa',borderColor:'#e7e7e7',borderRadius:20,borderWidth:1,minHeight:205,padding:16},readText:{fontSize:17,lineHeight:25,color:'#1c1c1c'},readActive:{backgroundColor:'#d5ac27',color:'#fff',fontWeight:'800'},save:{color:'#e5a600',fontSize:15,fontWeight:'800'},empty:{color:'#898989',fontSize:16,lineHeight:24,paddingTop:16,textAlign:'center'},entryPage:{flex:1,padding:22},entryActions:{alignItems:'center',flexDirection:'row',justifyContent:'space-between',marginBottom:10},entryButtons:{flexDirection:'row',gap:14},entryAction:{color:'#d59a00',fontSize:14,fontWeight:'800'},clearAction:{color:'#8b8b8b',fontSize:14,fontWeight:'700'},entryInput:{backgroundColor:'#fafafa',borderColor:'#e7e7e7',borderRadius:20,borderWidth:1,color:'#1c1c1c',fontSize:18,lineHeight:27,minHeight:360,padding:17},entryFooter:{flexDirection:'row',gap:12,marginTop:18},saveButton:{alignItems:'center',borderColor:'#e5a600',borderRadius:16,borderWidth:2,flex:1,paddingVertical:16},saveButtonText:{color:'#d59a00',fontSize:16,fontWeight:'800'},listenButton:{alignItems:'center',backgroundColor:'#ffbc00',borderRadius:16,flex:1,paddingVertical:16},listenButtonText:{color:'#fff',fontSize:16,fontWeight:'800'},playerPage:{backgroundColor:'#090909',flex:1},playerHeader:{alignItems:'center',borderBottomColor:'#303030',borderBottomWidth:1,flexDirection:'row',justifyContent:'space-between',padding:18},playerBack:{alignItems:'center',backgroundColor:'#1c1c1c',borderRadius:28,height:56,justifyContent:'center',width:56},playerBackText:{color:'#fff',fontSize:48,lineHeight:48},playerTools:{flexDirection:'row',gap:10},playerTool:{borderColor:'#353535',borderRadius:28,borderWidth:1,color:'#fff',fontSize:18,paddingHorizontal:15,paddingVertical:13},readingArea:{padding:24,paddingTop:45},readAlongDark:{backgroundColor:'transparent',borderWidth:0,minHeight:0,padding:0},readTextDark:{color:'#f6f6f6',fontSize:27,lineHeight:38},playerControls:{backgroundColor:'#0d0d0d',borderColor:'#292929',borderTopLeftRadius:30,borderTopRightRadius:30,borderWidth:1,marginTop:'auto',padding:25},nowPlaying:{color:'#fff',fontSize:19,fontWeight:'800'},progress:{alignItems:'center',flexDirection:'row',marginTop:25},progressDot:{backgroundColor:'#fff',borderRadius:12,height:24,width:24,zIndex:1},progressLine:{backgroundColor:'#252525',borderRadius:5,height:8,marginLeft:-2,flex:1},timeRow:{color:'#858585',flexDirection:'row',justifyContent:'space-between',marginTop:7},playerButtons:{alignItems:'center',flexDirection:'row',justifyContent:'space-between',marginTop:28},avatar:{color:'#fff',fontSize:48},skip:{color:'#fff',fontSize:32},mainStop:{alignItems:'center',backgroundColor:'#ffbc00',borderRadius:45,height:90,justifyContent:'center',width:90},mainStopText:{color:'#fff',fontSize:30},ratePill:{borderColor:'#e90066',borderRadius:15,borderWidth:2,color:'#ff1475',fontSize:20,paddingHorizontal:10,paddingVertical:8},
-});
-
-// Compact overrides keep the primary actions reachable when the iPhone keyboard is open.
-Object.assign(s, {
-  entryInput: [s.entryInput, { flex: 1, minHeight: 150 }],
-  hero: [s.hero, { height: 505 }],
-  art: [s.art, { height: 205, marginTop: 22 }],
-  heroFooter: [s.heroFooter, { marginTop: 10 }],
-  progress: { backgroundColor: '#252525', borderRadius: 5, height: 8, marginTop: 25, position: 'relative' },
-  progressFill: { backgroundColor: '#ffbc00', borderRadius: 5, height: 8 },
-  progressDot: { backgroundColor: '#fff', borderRadius: 12, height: 24, marginLeft: -12, position: 'absolute', top: -8, width: 24 },
-});

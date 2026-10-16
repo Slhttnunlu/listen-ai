@@ -12,9 +12,9 @@
 
 ## 2. Kütüphanem
 
-- [ ] Devam eden, tamamlanan ve favori filtrelerini gerçek veriye bağlama
+- [x] Devam eden, tamamlanan ve favori filtrelerini gerçek veriye bağlama
 - [ ] Arama, sıralama, yeniden adlandırma ve geri alınabilir silme
-- [ ] Kartlarda süre, kaynak türü ve ilerleme gösterimi
+- [x] Kartlarda tahmini süre, kaynak türü ve gerçek dinleme ilerlemesi gösterimi
 
 **Zorluk:** Orta. Metin kaydetme ile birlikte yapılır.
 
@@ -88,8 +88,8 @@ Bu işler, uygulamanın yalnızca demoda çalışmasından gerçek kullanıcıla
 ## P0 — Uygulama kalitesi
 
 - [ ] Uygulama içi navigation yapısını standartlaştır; ekran durumları geri tuşu ve derin bağlantılarla çakışmamalı.
-- [ ] `App.js` içeriğini ekran, bileşen, hook ve servis katmanlarına ayır.
-- [ ] Yerel veri için şema, sürümleme ve migration stratejisi belirle.
+- [x] `App.js` içeriğini ekran, bileşen, hook ve servis katmanlarına ayır.
+- [x] SQLite `user_version` tabanlı şema sürümleme ve transaction migration stratejisi kur.
 - [ ] Çökme, beklenmeyen TTS hatası ve bozuk yerel veri için kullanıcıya anlaşılır kurtarma akışları ekle.
 - [ ] Uzun metin, Türkçe karakter, emoji, satır sonu ve çok uzun kelime senaryolarını kapsayan test verisi oluştur.
 - [ ] Performans hedefleri belirle: ilk açılış, ilk sesin başlaması, uzun metinde kaydırma ve bellek kullanımı.
@@ -97,11 +97,11 @@ Bu işler, uygulamanın yalnızca demoda çalışmasından gerçek kullanıcıla
 
 ## P0 — Otomatik test ve kalite kapıları
 
-- [ ] ESLint, Prettier ve import/format kurallarını kur; CI'da zorunlu çalıştır.
-- [ ] Birim test altyapısını kur: metin bölme, aktif kelime eşleme, süre biçimleme ve depolama dönüşümleri.
-- [ ] Bileşen test altyapısını kur: ekranların temel render'ı, kart etkileşimleri ve hata/boş durumları.
+- [x] ESLint, Prettier ve import/format kurallarını kur; CI'da zorunlu çalıştır.
+- [x] Birim test altyapısını kur: metin bölme, aktif kelime eşleme, ilerleme ve kütüphane dönüşümleri.
+- [x] Bileşen test altyapısını kur: ana ekran, kütüphane filtreleri ve oynatıcı kontrolleri.
 - [x] Maestro E2E akışını kur: “metin gir → dinlemeyi başlat → hızı değiştir → durdur” ve kütüphane sekmesi iOS Simulator'da otomatikleşti.
-- [ ] CI kontrol listesi oluştur: bağımlılık kurulumu, lint, test, Expo export ve raporların saklanması.
+- [x] GitHub Actions CI kur: bağımlılık kurulumu, lint, format, test ve Expo iOS export.
 - [ ] Ana dala doğrudan kırık build alınmasını engelleyen branch/PR kontrollerini tanımla.
 
 ## P1 — Backend ve AI/TTS hazırlığı
