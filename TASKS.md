@@ -109,7 +109,7 @@ Bu işler, uygulamanın yalnızca demoda çalışmasından gerçek kullanıcıla
 - [x] Bileşen test altyapısını kur: ana ekran, kütüphane filtreleri ve oynatıcı kontrolleri.
 - [x] Maestro E2E akışını kur: “metin gir → dinlemeyi başlat → hızı değiştir → durdur” ve kütüphane sekmesi iOS Simulator'da otomatikleşti.
 - [x] GitHub Actions CI kur: bağımlılık kurulumu, lint, format, test ve Expo iOS export.
-- [ ] Ana dala doğrudan kırık build alınmasını engelleyen branch/PR kontrollerini tanımla.
+- [x] Ana dala doğrudan kırık build alınmasını engelleyen branch/PR kontrollerini `docs/BRANCH_PROTECTION.md` içinde tanımla ve PR şablonu ekle.
 
 ## P1 — Backend ve AI/TTS hazırlığı
 
