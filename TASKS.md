@@ -139,8 +139,8 @@ Bu işler, uygulamanın yalnızca demoda çalışmasından gerçek kullanıcıla
 - [ ] Crash reporting kur: sürüm, cihaz, işletim sistemi ve stack trace; kişisel veri olmadan.
 - [ ] Uygulama ve backend hata oranı, gecikme, TTS başarısı ve maliyet için dashboard oluştur.
 - [ ] Uyarı eşikleri belirle: çökme oranı, API hata oranı, kota aşımı ve maliyet anomalisi.
-- [ ] Her sürüm için release notu, rollback planı ve incident iletişim şablonu oluştur.
-- [ ] Yedekleme, geri yükleme ve veri kaybı senaryolarını backend ortaya çıkmadan önce tasarla.
+- [x] Her sürüm için release notu, rollback planı ve incident iletişim şablonu oluştur.
+- [x] Yedekleme, geri yükleme ve veri kaybı senaryolarını backend ortaya çıkmadan önce tasarla.
 
 ## P2 — Yayın, büyüme ve gelir modeli
 

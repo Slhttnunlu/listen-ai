@@ -61,3 +61,5 @@ Projede Expo SDK 57'nin desteklediği Node sürümleri kullanılmalıdır. Öner
 Bulut TTS (OpenAI veya ElevenLabs), PDF içe aktarma ve kullanıcı hesabı sonraki aşamalardır. API anahtarları mobil uygulamaya eklenmemelidir; bu özellikler için bir backend kullanılmalıdır.
 
 Yerel/çevrimdışı sınır ile gelecekteki backend bileşenleri [hedef mimari](docs/ARCHITECTURE.md) belgesinde tanımlanmıştır.
+
+Kapalı beta yayınlarında [sürüm ve geri alma operasyonu](docs/RELEASE_OPERATIONS.md) izlenir. Yerel ve gelecekteki bulut verisi için kurtarma sınırları [yedekleme ve geri yükleme tasarımında](docs/BACKUP_RECOVERY.md) açıklanır.
