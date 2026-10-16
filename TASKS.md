@@ -38,7 +38,7 @@
 ## 4. Metni Tara
 
 - [x] Kamera/fotoğraf seçme izinleri
-- [ ] Kırpma ve görüntü kalite kontrolü
+- [x] Sistem kırpma arayüzü ile düşük çözünürlüklü veya aşırı büyük görselleri OCR öncesinde kontrol etme
 - [x] Türkçe OCR entegrasyonu
 - [x] OCR metnini düzenleme, kaydetme ve dinleme
   - [x] Kamera ve galeri seçimi, izin reddi, iptal, boş sonuç ve native build yok hatalarını kullanıcıya açık göster.

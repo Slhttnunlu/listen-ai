@@ -32,7 +32,7 @@ describe('image scan service', () => {
 
     await expect(selectImageForScan(SCAN_SOURCES.camera)).resolves.toBe('file:///camera.jpg');
     expect(mockLaunchCameraAsync).toHaveBeenCalledWith(
-      expect.objectContaining({ mediaTypes: ['images'], quality: 1 })
+      expect.objectContaining({ allowsEditing: true, mediaTypes: ['images'], quality: 1 })
     );
   });
 
@@ -47,6 +47,21 @@ describe('image scan service', () => {
     mockLaunchImageLibraryAsync.mockResolvedValue({ canceled: true });
 
     await expect(selectImageForScan(SCAN_SOURCES.library)).resolves.toBeNull();
+  });
+
+  test('rejects images that are too small or too large for reliable scanning', async () => {
+    mockRequestCameraPermissionsAsync.mockResolvedValue({ granted: true });
+    mockLaunchCameraAsync.mockResolvedValue({
+      canceled: false,
+      assets: [{ uri: 'file:///small.jpg', width: 400, height: 300 }],
+    });
+    await expect(selectImageForScan(SCAN_SOURCES.camera)).rejects.toThrow('çözünürlüğü');
+
+    mockLaunchCameraAsync.mockResolvedValue({
+      canceled: false,
+      assets: [{ uri: 'file:///large.jpg', width: 1600, height: 1200, fileSize: 16 * 1024 * 1024 }],
+    });
+    await expect(selectImageForScan(SCAN_SOURCES.camera)).rejects.toThrow('çok büyük');
   });
 
   test('normalizes OCR lines and rejects empty images', async () => {

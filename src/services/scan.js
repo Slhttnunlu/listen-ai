@@ -6,11 +6,26 @@ export const SCAN_SOURCES = {
   library: 'library',
 };
 
+const MIN_SCAN_EDGE_PIXELS = 900;
+const MAX_SCAN_FILE_SIZE_BYTES = 15 * 1024 * 1024;
+
 function getTextExtractor() {
   try {
     return require('expo-text-extractor');
   } catch {
     return null;
+  }
+}
+
+function validateScanAsset(asset) {
+  const longestEdge = Math.max(asset.width || 0, asset.height || 0);
+  if (longestEdge > 0 && longestEdge < MIN_SCAN_EDGE_PIXELS) {
+    throw new Error(
+      'Fotoğraf çözünürlüğü metin taramak için çok düşük. Daha net bir fotoğraf seçin.'
+    );
+  }
+  if (asset.fileSize && asset.fileSize > MAX_SCAN_FILE_SIZE_BYTES) {
+    throw new Error('Fotoğraf dosyası çok büyük. Daha küçük bir görsel seçin veya kırpın.');
   }
 }
 
@@ -33,12 +48,15 @@ export async function selectImageForScan(source) {
       ? ImagePicker.launchCameraAsync
       : ImagePicker.launchImageLibraryAsync;
   const result = await openPicker({
-    allowsEditing: false,
+    allowsEditing: true,
     mediaTypes: ['images'],
     quality: 1,
   });
   if (result.canceled) return null;
-  return result.assets?.[0]?.uri || null;
+  const asset = result.assets?.[0];
+  if (!asset?.uri) return null;
+  validateScanAsset(asset);
+  return asset.uri;
 }
 
 export async function extractTextFromScan(uri) {
