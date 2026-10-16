@@ -1,5 +1,8 @@
 export const LIBRARY_FILTERS = ['Tümü', 'Devam', 'Tamamlandı', '♡ Favoriler'];
 export const SOFT_DELETE_RETENTION_DAYS = 30;
+export const LIBRARY_EXPORT_SCHEMA_VERSION = 1;
+export const MAX_LIBRARY_IMPORT_ITEMS = 5000;
+export const MAX_LIBRARY_ITEM_CHARS = 250000;
 
 export function getSoftDeleteCutoff(now = new Date()) {
   return new Date(now.getTime() - SOFT_DELETE_RETENTION_DAYS * 24 * 60 * 60 * 1000).toISOString();
@@ -8,7 +11,7 @@ export function getSoftDeleteCutoff(now = new Date()) {
 export function serializeLibrary(items, exportedAt = new Date().toISOString()) {
   return JSON.stringify(
     {
-      schema_version: 1,
+      schema_version: LIBRARY_EXPORT_SCHEMA_VERSION,
       exported_at: exportedAt,
       items: items.map((item) => ({
         title: item.title,
@@ -24,6 +27,65 @@ export function serializeLibrary(items, exportedAt = new Date().toISOString()) {
     null,
     2
   );
+}
+
+function isValidDate(value) {
+  return typeof value === 'string' && Number.isFinite(Date.parse(value));
+}
+
+export function parseLibraryImport(json, currentItems = []) {
+  let payload;
+  try {
+    payload = JSON.parse(json);
+  } catch {
+    throw new Error('Yedek dosyası geçerli JSON değil.');
+  }
+  if (payload?.schema_version !== LIBRARY_EXPORT_SCHEMA_VERSION || !Array.isArray(payload.items)) {
+    throw new Error('Yedek şeması bu uygulama sürümüyle uyumlu değil.');
+  }
+  if (payload.items.length > MAX_LIBRARY_IMPORT_ITEMS) {
+    throw new Error(`Bir yedekte en fazla ${MAX_LIBRARY_IMPORT_ITEMS} kayıt olabilir.`);
+  }
+
+  const knownContents = new Set(currentItems.map((item) => item.content));
+  const importedItems = [];
+  let duplicateCount = 0;
+
+  payload.items.forEach((item, index) => {
+    if (typeof item?.content !== 'string' || !item.content.trim()) {
+      throw new Error(`${index + 1}. kaydın metni boş veya geçersiz.`);
+    }
+    if (item.content.length > MAX_LIBRARY_ITEM_CHARS) {
+      throw new Error(`${index + 1}. kayıt ${MAX_LIBRARY_ITEM_CHARS} karakter sınırını aşıyor.`);
+    }
+    if (typeof item.title !== 'string' || !item.title.trim() || item.title.length > 200) {
+      throw new Error(`${index + 1}. kaydın başlığı geçersiz.`);
+    }
+    if (
+      !isValidDate(item.created_at) ||
+      (item.last_played_at && !isValidDate(item.last_played_at))
+    ) {
+      throw new Error(`${index + 1}. kaydın tarih bilgisi geçersiz.`);
+    }
+    if (!['text', 'txt', 'docx'].includes(item.source_type)) {
+      throw new Error(`${index + 1}. kaydın kaynak türü geçersiz.`);
+    }
+    if (
+      !Number.isFinite(item.progress_index) ||
+      typeof item.is_favorite !== 'boolean' ||
+      typeof item.is_completed !== 'boolean'
+    ) {
+      throw new Error(`${index + 1}. kaydın ilerleme bilgisi geçersiz.`);
+    }
+    if (knownContents.has(item.content)) {
+      duplicateCount += 1;
+      return;
+    }
+    knownContents.add(item.content);
+    importedItems.push(normalizeLibraryItem(item));
+  });
+
+  return { items: importedItems, duplicateCount, totalCount: payload.items.length };
 }
 
 export function normalizeLibraryItem(item) {

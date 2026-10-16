@@ -3,6 +3,7 @@ import {
   deleteAllLibraryItems,
   getLibraryItems,
   initializeLibrary,
+  importLibraryItems,
   renameLibraryItem,
   restoreLibraryItem,
   saveLibraryItem,
@@ -85,6 +86,12 @@ export function useLibrary({ onError }) {
     );
   }, []);
 
+  const importItems = useCallback(async (backupItems) => {
+    const imported = await importLibraryItems(backupItems);
+    setItems((current) => imported.concat(current));
+    return imported;
+  }, []);
+
   const renameItem = useCallback(async (id, title) => {
     const trimmedTitle = title.trim();
     if (!trimmedTitle) return false;
@@ -127,6 +134,7 @@ export function useLibrary({ onError }) {
     clearLibrary,
     deleteItem,
     items,
+    importItems,
     loadError,
     ready,
     reload,

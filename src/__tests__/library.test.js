@@ -3,6 +3,7 @@ import {
   getSoftDeleteCutoff,
   getLibraryItemMeta,
   normalizeLibraryItem,
+  parseLibraryImport,
   prepareLibraryItems,
   serializeLibrary,
 } from '../utils/library';
@@ -111,5 +112,29 @@ describe('library utilities', () => {
     expect(getSoftDeleteCutoff(new Date('2026-10-16T00:00:00.000Z'))).toBe(
       '2026-09-16T00:00:00.000Z'
     );
+  });
+
+  test('validates and merges an export while skipping duplicate content', () => {
+    const backup = serializeLibrary([
+      { ...items[0], title: 'Mükerrer', source_type: 'txt' },
+      { ...items[1], title: 'Yeni DOCX', content: 'Yeni içerik', source_type: 'docx' },
+    ]);
+    const result = parseLibraryImport(backup, [items[0]]);
+    expect(result.duplicateCount).toBe(1);
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0]).toMatchObject({ title: 'Yeni DOCX', source_type: 'docx' });
+  });
+
+  test('rejects malformed or incompatible library backups', () => {
+    expect(() => parseLibraryImport('{')).toThrow('geçerli JSON');
+    expect(() => parseLibraryImport('{"schema_version":2,"items":[]}')).toThrow('uyumlu değil');
+    expect(() =>
+      parseLibraryImport(
+        JSON.stringify({
+          schema_version: 1,
+          items: [{ title: 'Bozuk', content: '', created_at: '2026-01-01T00:00:00.000Z' }],
+        })
+      )
+    ).toThrow('metni boş');
   });
 });

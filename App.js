@@ -13,6 +13,7 @@ import { LibraryScreen } from './src/screens/LibraryScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
 import { pickTextDocument } from './src/services/documents';
 import { exportLibrary } from './src/services/libraryExport';
+import { pickLibraryBackup } from './src/services/libraryImport';
 import { styles } from './src/styles';
 import { createDocumentSectionTitle } from './src/utils/document';
 import { DEFAULT_TEXT } from './src/utils/text';
@@ -36,6 +37,7 @@ export function AppContent() {
     clearLibrary,
     deleteItem,
     items,
+    importItems,
     loadError,
     ready,
     reload,
@@ -186,6 +188,37 @@ export function AppContent() {
     );
   }, [clearLibrary, stop]);
 
+  const importLocalData = useCallback(async () => {
+    try {
+      const backup = await pickLibraryBackup(items);
+      if (!backup) return;
+      if (!backup.items.length) {
+        Alert.alert('Yeni kayıt bulunamadı', `${backup.duplicateCount} mükerrer kayıt atlandı.`);
+        return;
+      }
+      Alert.alert(
+        'Kütüphane yedeği içe aktarılsın mı?',
+        `${backup.items.length} yeni kayıt eklenecek. ${backup.duplicateCount} mükerrer kayıt atlanacak. Mevcut kayıtlarınız korunur.`,
+        [
+          { text: 'Vazgeç', style: 'cancel' },
+          {
+            text: 'İçe aktar',
+            onPress: async () => {
+              try {
+                await importItems(backup.items);
+                Alert.alert('İçe aktarıldı', `${backup.items.length} kayıt kütüphaneye eklendi.`);
+              } catch {
+                Alert.alert('İçe aktarılamadı', 'Kütüphane değiştirilmedi. Tekrar deneyin.');
+              }
+            },
+          },
+        ]
+      );
+    } catch (error) {
+      Alert.alert('Yedek açılamadı', error.message || 'Yedek dosyası doğrulanamadı.');
+    }
+  }, [importItems, items]);
+
   return (
     <SafeAreaView style={styles.safe}>
       <StatusBar style="dark" />
@@ -211,6 +244,7 @@ export function AppContent() {
           <SettingsScreen
             onDeleteData={confirmDeleteLocalData}
             onExportData={exportLocalData}
+            onImportData={importLocalData}
             onFeedback={openFeedback}
             onPrivacy={() => openLegalDocument('privacy')}
             onTerms={() => openLegalDocument('terms')}

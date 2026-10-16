@@ -16,6 +16,7 @@
 - [x] Arama, sıralama, yeniden adlandırma, favorileme ve SQLite soft-delete ile geri alınabilir silme
 - [x] Kartlarda tahmini süre, kaynak türü ve gerçek dinleme ilerlemesi gösterimi
 - [x] Yerel kütüphaneyi JSON dışa aktarma, tüm veriyi kalıcı silme ve 30 günlük soft-delete temizliği
+- [x] Sürümlenmiş JSON yedeğini doğrulayarak ve mükerrerleri atlayarak kütüphaneyle birleştirme
 
 **Zorluk:** Orta. Metin kaydetme ile birlikte yapılır.
 

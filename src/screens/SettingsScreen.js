@@ -1,7 +1,14 @@
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { styles } from '../styles';
 
-export function SettingsScreen({ onFeedback, onPrivacy, onTerms, onExportData, onDeleteData }) {
+export function SettingsScreen({
+  onFeedback,
+  onPrivacy,
+  onTerms,
+  onExportData,
+  onImportData,
+  onDeleteData,
+}) {
   return (
     <ScrollView style={styles.white} contentContainerStyle={styles.settings}>
       <Text style={styles.libTitle}>Ayarlar</Text>
@@ -20,6 +27,18 @@ export function SettingsScreen({ onFeedback, onPrivacy, onTerms, onExportData, o
         testID="export-data-button"
       >
         <Text style={styles.settingText}>Kütüphaneyi dışa aktar</Text>
+        <Text accessible={false} style={styles.chevron}>
+          ›
+        </Text>
+      </Pressable>
+      <Pressable
+        accessibilityHint="Listen AI JSON yedeğini mevcut kütüphaneyle birleştirir"
+        accessibilityRole="button"
+        onPress={onImportData}
+        style={styles.setting}
+        testID="import-data-button"
+      >
+        <Text style={styles.settingText}>Kütüphane yedeğini içe aktar</Text>
         <Text accessible={false} style={styles.chevron}>
           ›
         </Text>

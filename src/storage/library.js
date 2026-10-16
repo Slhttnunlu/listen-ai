@@ -137,6 +137,30 @@ export async function saveLibraryItems(entries) {
   return createdItems.reverse();
 }
 
+export async function importLibraryItems(items) {
+  const db = await getDatabase();
+  const imported = [];
+  await db.withTransactionAsync(async () => {
+    for (const item of [...items].reverse()) {
+      const result = await db.runAsync(
+        `INSERT INTO library_items
+          (title, content, source_type, created_at, last_played_at, is_favorite, is_completed, progress_index)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        item.title,
+        item.content,
+        item.source_type,
+        item.created_at,
+        item.last_played_at,
+        item.is_favorite,
+        item.is_completed,
+        item.progress_index
+      );
+      imported.push({ ...item, id: result.lastInsertRowId });
+    }
+  });
+  return imported.reverse();
+}
+
 export async function updateLibraryProgress(id, progressIndex, isCompleted = false) {
   const db = await getDatabase();
   await db.runAsync(

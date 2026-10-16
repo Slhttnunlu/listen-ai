@@ -109,17 +109,21 @@ describe('screen interactions', () => {
 
   test('exposes explicit local data export and delete actions', () => {
     const onExportData = jest.fn();
+    const onImportData = jest.fn();
     const onDeleteData = jest.fn();
     const screen = render(
       <SettingsScreen
         onFeedback={jest.fn()}
         onExportData={onExportData}
+        onImportData={onImportData}
         onDeleteData={onDeleteData}
       />
     );
     fireEvent.press(screen.getByTestId('export-data-button'));
+    fireEvent.press(screen.getByTestId('import-data-button'));
     fireEvent.press(screen.getByTestId('delete-data-button'));
     expect(onExportData).toHaveBeenCalledTimes(1);
+    expect(onImportData).toHaveBeenCalledTimes(1);
     expect(onDeleteData).toHaveBeenCalledTimes(1);
   });
 });

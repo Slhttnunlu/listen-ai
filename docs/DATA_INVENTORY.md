@@ -48,9 +48,10 @@ Bu envanter kaynak kodun mevcut davranışını belgeler. Gelecek planındaki he
 ### Hesapsız/yerel kullanıcı
 
 1. Ayarlar'daki dışa aktarma aksiyonu aktif kütüphaneyi JSON dosyası olarak sistem paylaşım ekranına verir.
-2. Tek kayıt silme mevcut geri alınabilir akışla yapılır.
-3. “Tüm yerel verileri sil” aksiyonu açık onaydan sonra metinleri ve ilerlemeyi SQLite'tan kalıcı kaldırır.
-4. Uygulamayı kaldırma yerel uygulama verisini cihazdan temizler.
+2. Uyumlu JSON yedeği boyut ve şema doğrulamasından sonra mevcut kütüphaneyle tek transaction içinde birleştirilebilir; aynı içerikler atlanır.
+3. Tek kayıt silme mevcut geri alınabilir akışla yapılır.
+4. “Tüm yerel verileri sil” aksiyonu açık onaydan sonra metinleri ve ilerlemeyi SQLite'tan kalıcı kaldırır.
+5. Uygulamayı kaldırma yerel uygulama verisini cihazdan temizler.
 
 ### Gelecek hesaplı kullanıcı
 
