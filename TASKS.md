@@ -98,6 +98,9 @@ Bu işler, uygulamanın yalnızca demoda çalışmasından gerçek kullanıcıla
 - [x] Uzun metin, Türkçe karakter, emoji, satır sonu ve çok uzun kelime test sınıflarını tanımla.
 - [x] İlk açılış, ilk ses, uzun metin, kütüphane ve bellek performans hedeflerini belirle.
 - [ ] Erişilebilirlik denetimi yap: VoiceOver/TalkBack, dinamik metin boyutu, kontrast ve dokunma alanları.
+  - [x] Etkileşimli kontrollerin ad, rol, seçili durum ve minimum dokunma alanı temelini iyileştir.
+  - [x] `docs/ACCESSIBILITY.md` içinde yayın öncesi gerçek cihaz denetim listesini tanımla.
+  - [ ] VoiceOver/TalkBack, maksimum dinamik metin ve kontrast kontrollerini gerçek cihazlarda tamamla.
 
 ## P0 — Otomatik test ve kalite kapıları
 

@@ -56,14 +56,21 @@ export function ComposerScreen({
         >
           <Text style={styles.back}>‹</Text>
         </Pressable>
-        <Text style={styles.composerTitle}>Metin ekle</Text>
+        <Text accessibilityRole="header" style={styles.composerTitle}>
+          Metin ekle
+        </Text>
         <View />
       </View>
       <View style={styles.entryPage}>
         <View style={styles.entryActions}>
           <Text style={styles.label}>METNİNİZ</Text>
           <View style={styles.entryButtons}>
-            <Pressable accessibilityRole="button" testID="paste-button" onPress={paste}>
+            <Pressable
+              accessibilityRole="button"
+              testID="paste-button"
+              onPress={paste}
+              style={styles.textActionButton}
+            >
               <Text style={styles.entryAction}>Yapıştır</Text>
             </Pressable>
             {text.length > 0 && (
@@ -71,6 +78,7 @@ export function ComposerScreen({
                 accessibilityRole="button"
                 testID="clear-button"
                 onPress={() => setText('')}
+                style={styles.textActionButton}
               >
                 <Text style={styles.clearAction}>⌫ Temizle</Text>
               </Pressable>

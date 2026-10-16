@@ -7,6 +7,7 @@ export function BottomNav({ active, onChange }) {
     <View style={styles.nav}>
       {NAV_ITEMS.map(([id, icon, label]) => (
         <Pressable
+          accessibilityLabel={label}
           accessibilityRole="button"
           accessibilityState={{ selected: active === id }}
           key={id}
@@ -14,7 +15,9 @@ export function BottomNav({ active, onChange }) {
           style={styles.navItem}
           testID={`nav-${id}`}
         >
-          <Text style={[styles.navIcon, active === id && styles.navOn]}>{icon}</Text>
+          <Text accessible={false} style={[styles.navIcon, active === id && styles.navOn]}>
+            {icon}
+          </Text>
           <Text style={[styles.navLabel, active === id && styles.navOn]}>{label}</Text>
         </Pressable>
       ))}

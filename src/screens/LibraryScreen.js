@@ -46,7 +46,9 @@ export function LibraryScreen({
   return (
     <View style={styles.white}>
       <View style={styles.libHead}>
-        <Text style={styles.libTitle}>Kütüphanem</Text>
+        <Text accessibilityRole="header" style={styles.libTitle}>
+          Kütüphanem
+        </Text>
         <View style={styles.pro}>
           <Text style={styles.proText}>PRO</Text>
         </View>
@@ -61,6 +63,8 @@ export function LibraryScreen({
           style={styles.searchInput}
         />
         <Pressable
+          accessibilityLabel={`Sıralama: ${sort}`}
+          accessibilityHint="Başlığa veya son kullanıma göre sıralamayı değiştirir"
           accessibilityRole="button"
           onPress={() =>
             setSort((current) => (current === 'Son Kullanılan' ? 'Başlık' : 'Son Kullanılan'))
@@ -113,6 +117,7 @@ export function LibraryScreen({
           filteredItems.map((item) => (
             <View key={item.id} style={styles.libraryCard}>
               <Pressable
+                accessibilityLabel={`${item.title} metnini aç`}
                 accessibilityRole="button"
                 onPress={() => onOpen(item)}
                 style={styles.libraryCardMain}
@@ -151,15 +156,28 @@ export function LibraryScreen({
               </Pressable>
               {managedId === item.id && (
                 <View style={styles.itemActions}>
-                  <Pressable accessibilityRole="button" onPress={() => onToggleFavorite(item)}>
+                  <Pressable
+                    accessibilityLabel={item.is_favorite ? 'Favoriden çıkar' : 'Favorile'}
+                    accessibilityRole="button"
+                    onPress={() => onToggleFavorite(item)}
+                    style={styles.itemActionButton}
+                  >
                     <Text style={styles.itemAction}>
                       {item.is_favorite ? 'Favoriden çıkar' : 'Favorile'}
                     </Text>
                   </Pressable>
-                  <Pressable accessibilityRole="button" onPress={() => startRename(item)}>
+                  <Pressable
+                    accessibilityRole="button"
+                    onPress={() => startRename(item)}
+                    style={styles.itemActionButton}
+                  >
                     <Text style={styles.itemAction}>Yeniden adlandır</Text>
                   </Pressable>
-                  <Pressable accessibilityRole="button" onPress={() => deleteWithUndo(item)}>
+                  <Pressable
+                    accessibilityRole="button"
+                    onPress={() => deleteWithUndo(item)}
+                    style={styles.itemActionButton}
+                  >
                     <Text style={styles.deleteAction}>Sil</Text>
                   </Pressable>
                 </View>
@@ -179,6 +197,7 @@ export function LibraryScreen({
               await onRestore(deletedItem);
               setDeletedItem(null);
             }}
+            style={styles.undoButton}
           >
             <Text style={styles.undoAction}>Geri al</Text>
           </Pressable>

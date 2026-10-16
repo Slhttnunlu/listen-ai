@@ -179,6 +179,7 @@ export const styles = StyleSheet.create({
     marginTop: 14,
     paddingTop: 14,
   },
+  itemActionButton: { justifyContent: 'center', minHeight: 44, paddingHorizontal: 2 },
   itemAction: { color: '#555', fontSize: 13, fontWeight: '700' },
   deleteAction: { color: '#c43c3c', fontSize: 13, fontWeight: '800' },
   undoBar: {
@@ -196,6 +197,7 @@ export const styles = StyleSheet.create({
   },
   undoText: { color: '#fff', flex: 1, marginRight: 12 },
   undoAction: { color: '#ffbc00', fontWeight: '800' },
+  undoButton: { justifyContent: 'center', minHeight: 44, paddingHorizontal: 6 },
   fab: {
     position: 'absolute',
     right: 27,
@@ -261,6 +263,7 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
   },
   entryButtons: { flexDirection: 'row', gap: 14 },
+  textActionButton: { justifyContent: 'center', minHeight: 44 },
   entryAction: { color: '#d59a00', fontSize: 14, fontWeight: '800' },
   clearAction: { color: '#8b8b8b', fontSize: 14, fontWeight: '700' },
   entryInput: {
@@ -374,4 +377,5 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
   },
+  rateButton: { alignItems: 'center', justifyContent: 'center', minHeight: 48, minWidth: 54 },
 });

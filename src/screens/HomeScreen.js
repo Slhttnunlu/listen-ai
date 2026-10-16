@@ -4,7 +4,11 @@ import { styles } from '../styles';
 
 function Bubble({ style, symbol }) {
   return (
-    <View style={[styles.bubble, style]}>
+    <View
+      accessible={false}
+      importantForAccessibility="no-hide-descendants"
+      style={[styles.bubble, style]}
+    >
       <Text style={styles.bubbleText}>{symbol}</Text>
     </View>
   );
@@ -19,8 +23,10 @@ export function HomeScreen({ onFeature }) {
     >
       <View style={styles.hero}>
         <View style={styles.glow} />
-        <Text style={styles.brand}>Listen AI</Text>
-        <View style={styles.art}>
+        <Text accessibilityRole="header" style={styles.brand}>
+          Listen AI
+        </Text>
+        <View accessible={false} importantForAccessibility="no-hide-descendants" style={styles.art}>
           <Bubble style={styles.b1} symbol="▤" />
           <Bubble style={styles.b2} symbol="◖◗" />
           <Bubble style={styles.b3} symbol="⌁" />
@@ -28,7 +34,11 @@ export function HomeScreen({ onFeature }) {
             <Text style={styles.playText}>▶</Text>
           </View>
         </View>
-        <View style={styles.dots}>
+        <View
+          accessible={false}
+          importantForAccessibility="no-hide-descendants"
+          style={styles.dots}
+        >
           <Text style={styles.activeDot}>━</Text>
           <Text style={styles.dot}>● ● ● ● ● ●</Text>
         </View>
@@ -40,9 +50,12 @@ export function HomeScreen({ onFeature }) {
         </View>
       </View>
       <View style={styles.sheet}>
-        <Text style={styles.sheetTitle}>Bugün ne dinlemek istersiniz?</Text>
+        <Text accessibilityRole="header" style={styles.sheetTitle}>
+          Bugün ne dinlemek istersiniz?
+        </Text>
         {FEATURES.map(([id, icon, title, description]) => (
           <Pressable
+            accessibilityLabel={`${title}. ${description}`}
             accessibilityRole="button"
             key={id}
             testID={`feature-${id}`}

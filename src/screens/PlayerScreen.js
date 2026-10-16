@@ -58,9 +58,11 @@ export function PlayerScreen({ text, activeRange, rate, onStop, onChangeRate, on
           <Text style={styles.skip}>↷₁₀</Text>
           <Pressable
             accessibilityLabel={`Oynatma hızı ${rate}`}
+            accessibilityHint="Oynatma hızını değiştirir"
             accessibilityRole="button"
             testID="speed-button"
             onPress={onChangeRate}
+            style={styles.rateButton}
           >
             <Text style={styles.ratePill}>{rate}×</Text>
           </Pressable>
