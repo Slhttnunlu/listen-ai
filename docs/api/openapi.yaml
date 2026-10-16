@@ -1,0 +1,259 @@
+openapi: 3.1.0
+info:
+  title: Listen AI API
+  version: 1.0.0-draft
+  description: Bulut TTS için içerik gizliliğini koruyan asenkron API başlangıç sözleşmesi.
+servers:
+  - url: https://api.listen-ai.example/v1
+    description: Production placeholder
+  - url: https://staging-api.listen-ai.example/v1
+    description: Staging placeholder
+tags:
+  - name: System
+  - name: TTS
+security:
+  - bearerAuth: []
+paths:
+  /health:
+    get:
+      tags: [System]
+      operationId: getHealth
+      security: []
+      responses:
+        '200':
+          description: API is ready to receive traffic.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+  /tts/jobs:
+    post:
+      tags: [TTS]
+      operationId: createTtsJob
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTtsJobRequest'
+      responses:
+        '202':
+          description: Job accepted for asynchronous processing.
+          headers:
+            X-Request-Id:
+              $ref: '#/components/headers/RequestId'
+            Retry-After:
+              description: Suggested seconds before polling the job.
+              schema:
+                type: integer
+                minimum: 1
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TtsJob'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '403':
+          $ref: '#/components/responses/QuotaError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+        '503':
+          $ref: '#/components/responses/ProviderError'
+  /tts/jobs/{jobId}:
+    parameters:
+      - $ref: '#/components/parameters/JobId'
+    get:
+      tags: [TTS]
+      operationId: getTtsJob
+      responses:
+        '200':
+          description: Current job state.
+          headers:
+            X-Request-Id:
+              $ref: '#/components/headers/RequestId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TtsJob'
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+    delete:
+      tags: [TTS]
+      operationId: cancelTtsJob
+      responses:
+        '204':
+          description: Job cancellation accepted or job already terminal.
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  headers:
+    RequestId:
+      description: Trace-safe request identifier.
+      schema:
+        type: string
+        format: uuid
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+    JobId:
+      name: jobId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    HealthResponse:
+      type: object
+      additionalProperties: false
+      required: [status]
+      properties:
+        status:
+          type: string
+          const: ok
+    CreateTtsJobRequest:
+      type: object
+      additionalProperties: false
+      required: [text, language, voice, rate]
+      properties:
+        text:
+          type: string
+          minLength: 1
+          maxLength: 20000
+        language:
+          type: string
+          enum: [tr-TR]
+        voice:
+          type: string
+          minLength: 1
+          maxLength: 100
+        rate:
+          type: number
+          minimum: 0.5
+          maximum: 2
+        format:
+          type: string
+          enum: [mp3, m4a]
+          default: m4a
+    TtsJob:
+      type: object
+      additionalProperties: false
+      required: [id, status, created_at, expires_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [queued, processing, completed, failed, cancelled]
+        created_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
+        audio_url:
+          type: [string, 'null']
+          format: uri
+        duration_seconds:
+          type: [number, 'null']
+          minimum: 0
+        error:
+          oneOf:
+            - $ref: '#/components/schemas/ErrorBody'
+            - type: 'null'
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      required: [error]
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorBody'
+    ErrorBody:
+      type: object
+      additionalProperties: false
+      required: [code, message, request_id]
+      properties:
+        code:
+          type: string
+          enum:
+            - validation_failed
+            - authentication_required
+            - quota_exceeded
+            - job_not_found
+            - conflict
+            - rate_limited
+            - provider_unavailable
+            - internal_error
+        message:
+          type: string
+          maxLength: 240
+        request_id:
+          type: string
+          format: uuid
+        details:
+          type: object
+          additionalProperties: true
+  responses:
+    ValidationError:
+      description: Request validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    AuthenticationError:
+      description: Authentication is required or expired.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    QuotaError:
+      description: User quota is exhausted.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFoundError:
+      description: Job does not exist or is not visible to this user.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    RateLimitError:
+      description: Request rate is too high.
+      headers:
+        Retry-After:
+          description: Seconds before retrying.
+          schema:
+            type: integer
+            minimum: 1
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ProviderError:
+      description: Upstream TTS provider is temporarily unavailable.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'

@@ -114,7 +114,7 @@ Bu işler, uygulamanın yalnızca demoda çalışmasından gerçek kullanıcıla
 ## P1 — Backend ve AI/TTS hazırlığı
 
 - [x] Backend için teknoloji, barındırma bölgesi, ortamlar (development/staging/production) ve sahiplik kararını `docs/ARCHITECTURE.md` içinde tanımla.
-- [ ] API sözleşmesi yaz: istek/yanıt şemaları, sürümleme, hata kodları, zaman aşımı ve tekrar deneme davranışı.
+- [x] API sözleşmesini `docs/api/openapi.yaml` ve `docs/API.md` içinde yaz: istek/yanıt şemaları, sürümleme, hata kodları, zaman aşımı ve tekrar deneme davranışı.
 - [ ] Kimlik doğrulama stratejisini belirle: anonim başlangıç, e-posta/Apple/Google girişi ve hesap silme akışı.
 - [ ] API anahtarları için secret manager, ortam değişkenleri ve erişim yetkisi kur.
 - [ ] İstek doğrulama, kullanıcı başına kota/rate limit ve kötüye kullanım koruması ekle.
