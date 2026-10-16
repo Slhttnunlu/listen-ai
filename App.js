@@ -1,7 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import { createNavigationContainerRef } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
-import { Alert, Linking, SafeAreaView } from 'react-native';
+import { Alert, Linking } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { AppErrorBoundary } from './src/components/AppErrorBoundary';
 import { useLibrary } from './src/hooks/useLibrary';
 import { useSpeechPlayer } from './src/hooks/useSpeechPlayer';
 import { AppNavigator } from './src/navigation/AppNavigator';
@@ -15,7 +17,7 @@ import { DEFAULT_TEXT } from './src/utils/text';
 
 const navigationRef = createNavigationContainerRef();
 
-export default function App() {
+export function AppContent() {
   const [text, setText] = useState(DEFAULT_TEXT);
   const [currentItem, setCurrentItem] = useState(null);
 
@@ -148,5 +150,15 @@ export default function App() {
         }
       />
     </SafeAreaView>
+  );
+}
+
+export default function App() {
+  return (
+    <SafeAreaProvider>
+      <AppErrorBoundary>
+        <AppContent />
+      </AppErrorBoundary>
+    </SafeAreaProvider>
   );
 }

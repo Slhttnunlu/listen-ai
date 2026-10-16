@@ -90,11 +90,11 @@ Bu işler, uygulamanın yalnızca demoda çalışmasından gerçek kullanıcıla
 - [x] React Navigation ile stack/tab yapısını standartlaştır; geri hareketinde TTS'yi durdur ve `listenai://` deep-link şemasını tanımla.
 - [x] `App.js` içeriğini ekran, bileşen, hook ve servis katmanlarına ayır.
 - [x] SQLite `user_version` tabanlı şema sürümleme ve transaction migration stratejisi kur.
-- [ ] Çökme, beklenmeyen TTS hatası ve bozuk yerel veri için kullanıcıya anlaşılır kurtarma akışları ekle.
+- [x] Çökme, beklenmeyen TTS hatası ve bozuk yerel veri için kullanıcıya anlaşılır kurtarma akışları ekle.
   - [x] Kütüphane yükleme hatasında kullanıcıya tekrar deneme akışı sun.
   - [x] TTS başlatma ve ilerleme kaydı hatalarını yakala; oynatmayı güvenli durumda tut.
   - [x] Bozuk veya eksik eski SQLite satırlarını güvenli varsayılanlarla normalize et.
-  - [ ] Uygulama seviyesinde beklenmeyen render hataları için hata sınırı ve kurtarma ekranı ekle.
+  - [x] Uygulama seviyesinde beklenmeyen render hataları için hata sınırı ve kurtarma ekranı ekle.
 - [x] Uzun metin, Türkçe karakter, emoji, satır sonu ve çok uzun kelime test sınıflarını tanımla.
 - [x] İlk açılış, ilk ses, uzun metin, kütüphane ve bellek performans hedeflerini belirle.
 - [ ] Erişilebilirlik denetimi yap: VoiceOver/TalkBack, dinamik metin boyutu, kontrast ve dokunma alanları.
