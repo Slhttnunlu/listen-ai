@@ -1,7 +1,7 @@
 import * as SQLite from 'expo-sqlite';
 
 let database;
-export const LIBRARY_SCHEMA_VERSION = 1;
+export const LIBRARY_SCHEMA_VERSION = 2;
 
 async function getDatabase() {
   if (!database) database = await SQLite.openDatabaseAsync('listen-ai.db');
@@ -21,7 +21,8 @@ export async function initializeLibrary() {
         last_played_at TEXT,
         is_favorite INTEGER NOT NULL DEFAULT 0,
         is_completed INTEGER NOT NULL DEFAULT 0,
-        progress_index INTEGER NOT NULL DEFAULT 0
+        progress_index INTEGER NOT NULL DEFAULT 0,
+        deleted_at TEXT
       );
     `);
 
@@ -34,16 +35,50 @@ export async function initializeLibrary() {
           'ALTER TABLE library_items ADD COLUMN progress_index INTEGER NOT NULL DEFAULT 0;'
         );
       }
-      await db.execAsync(`PRAGMA user_version = ${LIBRARY_SCHEMA_VERSION};`);
     }
+    if (version < 2) {
+      const columns = await db.getAllAsync('PRAGMA table_info(library_items);');
+      if (!columns.some((column) => column.name === 'deleted_at')) {
+        await db.execAsync('ALTER TABLE library_items ADD COLUMN deleted_at TEXT;');
+      }
+    }
+    await db.execAsync(`PRAGMA user_version = ${LIBRARY_SCHEMA_VERSION};`);
   });
 }
 
 export async function getLibraryItems() {
   const db = await getDatabase();
   return db.getAllAsync(
-    'SELECT * FROM library_items ORDER BY COALESCE(last_played_at, created_at) DESC'
+    'SELECT * FROM library_items WHERE deleted_at IS NULL ORDER BY COALESCE(last_played_at, created_at) DESC'
   );
+}
+
+export async function renameLibraryItem(id, title) {
+  const db = await getDatabase();
+  await db.runAsync('UPDATE library_items SET title = ? WHERE id = ?', title.trim(), id);
+}
+
+export async function setLibraryItemFavorite(id, isFavorite) {
+  const db = await getDatabase();
+  await db.runAsync(
+    'UPDATE library_items SET is_favorite = ? WHERE id = ?',
+    isFavorite ? 1 : 0,
+    id
+  );
+}
+
+export async function softDeleteLibraryItem(id) {
+  const db = await getDatabase();
+  await db.runAsync(
+    'UPDATE library_items SET deleted_at = ? WHERE id = ?',
+    new Date().toISOString(),
+    id
+  );
+}
+
+export async function restoreLibraryItem(id) {
+  const db = await getDatabase();
+  await db.runAsync('UPDATE library_items SET deleted_at = NULL WHERE id = ?', id);
 }
 
 export async function saveLibraryItem({ title, content }) {

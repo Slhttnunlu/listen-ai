@@ -13,7 +13,7 @@
 ## 2. Kütüphanem
 
 - [x] Devam eden, tamamlanan ve favori filtrelerini gerçek veriye bağlama
-- [ ] Arama, sıralama, yeniden adlandırma ve geri alınabilir silme
+- [x] Arama, sıralama, yeniden adlandırma, favorileme ve SQLite soft-delete ile geri alınabilir silme
 - [x] Kartlarda tahmini süre, kaynak türü ve gerçek dinleme ilerlemesi gösterimi
 
 **Zorluk:** Orta. Metin kaydetme ile birlikte yapılır.

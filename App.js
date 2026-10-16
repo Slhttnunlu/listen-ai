@@ -24,7 +24,16 @@ export default function App() {
     Alert.alert('Seslendirme hatası', message);
   }, []);
 
-  const { items, ready, saveText, saveProgress } = useLibrary({ onError: showLibraryError });
+  const {
+    deleteItem,
+    items,
+    ready,
+    renameItem,
+    restoreItem,
+    saveText,
+    saveProgress,
+    toggleFavorite,
+  } = useLibrary({ onError: showLibraryError });
   const { activeRange, changeRate, play, playing, rate, stop } = useSpeechPlayer({
     text,
     itemId: currentItem?.id,
@@ -100,7 +109,16 @@ export default function App() {
         <>
           {tab === 'home' && <HomeScreen onFeature={useFeature} />}
           {tab === 'library' && (
-            <LibraryScreen items={items} ready={ready} onAdd={startNewText} onOpen={openItem} />
+            <LibraryScreen
+              items={items}
+              ready={ready}
+              onAdd={startNewText}
+              onOpen={openItem}
+              onRename={renameItem}
+              onToggleFavorite={toggleFavorite}
+              onDelete={deleteItem}
+              onRestore={restoreItem}
+            />
           )}
           {tab === 'settings' && <SettingsScreen />}
           <BottomNav active={tab} onChange={setTab} />

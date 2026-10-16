@@ -2,7 +2,11 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   getLibraryItems,
   initializeLibrary,
+  renameLibraryItem,
+  restoreLibraryItem,
   saveLibraryItem,
+  setLibraryItemFavorite,
+  softDeleteLibraryItem,
   updateLibraryProgress,
 } from '../storage/library';
 import { createTitle } from '../utils/text';
@@ -42,5 +46,47 @@ export function useLibrary({ onError }) {
     );
   }, []);
 
-  return { items, ready, saveText, saveProgress };
+  const renameItem = useCallback(async (id, title) => {
+    const trimmedTitle = title.trim();
+    if (!trimmedTitle) return false;
+    await renameLibraryItem(id, trimmedTitle);
+    setItems((current) =>
+      current.map((item) => (item.id === id ? { ...item, title: trimmedTitle } : item))
+    );
+    return true;
+  }, []);
+
+  const toggleFavorite = useCallback(async (item) => {
+    const nextValue = !item.is_favorite;
+    await setLibraryItemFavorite(item.id, nextValue);
+    setItems((current) =>
+      current.map((currentItem) =>
+        currentItem.id === item.id
+          ? { ...currentItem, is_favorite: nextValue ? 1 : 0 }
+          : currentItem
+      )
+    );
+  }, []);
+
+  const deleteItem = useCallback(async (item) => {
+    await softDeleteLibraryItem(item.id);
+    setItems((current) => current.filter((currentItem) => currentItem.id !== item.id));
+    return item;
+  }, []);
+
+  const restoreItem = useCallback(async (item) => {
+    await restoreLibraryItem(item.id);
+    setItems((current) => [item, ...current]);
+  }, []);
+
+  return {
+    deleteItem,
+    items,
+    ready,
+    renameItem,
+    restoreItem,
+    saveProgress,
+    saveText,
+    toggleFavorite,
+  };
 }

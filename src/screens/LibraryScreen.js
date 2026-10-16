@@ -1,11 +1,45 @@
 import { useMemo, useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { styles } from '../styles';
-import { filterLibraryItems, getLibraryItemMeta, LIBRARY_FILTERS } from '../utils/library';
+import { getLibraryItemMeta, LIBRARY_FILTERS, prepareLibraryItems } from '../utils/library';
 
-export function LibraryScreen({ items, ready, onAdd, onOpen }) {
+export function LibraryScreen({
+  items,
+  ready,
+  onAdd,
+  onOpen,
+  onRename,
+  onToggleFavorite,
+  onDelete,
+  onRestore,
+}) {
   const [filter, setFilter] = useState('Tümü');
-  const filteredItems = useMemo(() => filterLibraryItems(items, filter), [filter, items]);
+  const [query, setQuery] = useState('');
+  const [sort, setSort] = useState('Son Kullanılan');
+  const [editingId, setEditingId] = useState(null);
+  const [draftTitle, setDraftTitle] = useState('');
+  const [managedId, setManagedId] = useState(null);
+  const [deletedItem, setDeletedItem] = useState(null);
+  const filteredItems = useMemo(
+    () => prepareLibraryItems(items, { filter, query, sort }),
+    [filter, items, query, sort]
+  );
+
+  const startRename = (item) => {
+    setEditingId(item.id);
+    setDraftTitle(item.title);
+  };
+
+  const saveRename = async () => {
+    const saved = await onRename(editingId, draftTitle);
+    if (saved) setEditingId(null);
+  };
+
+  const deleteWithUndo = async (item) => {
+    await onDelete(item);
+    setDeletedItem(item);
+    setManagedId(null);
+  };
 
   return (
     <View style={styles.white}>
@@ -14,6 +48,25 @@ export function LibraryScreen({ items, ready, onAdd, onOpen }) {
         <View style={styles.pro}>
           <Text style={styles.proText}>PRO</Text>
         </View>
+      </View>
+      <View style={styles.libraryTools}>
+        <TextInput
+          accessibilityLabel="Kütüphanede ara"
+          value={query}
+          onChangeText={setQuery}
+          placeholder="Metinlerde ara"
+          placeholderTextColor="#999"
+          style={styles.searchInput}
+        />
+        <Pressable
+          accessibilityRole="button"
+          onPress={() =>
+            setSort((current) => (current === 'Son Kullanılan' ? 'Başlık' : 'Son Kullanılan'))
+          }
+          style={styles.sortButton}
+        >
+          <Text style={styles.sortButtonText}>{sort === 'Son Kullanılan' ? 'Son ↕' : 'A-Z'}</Text>
+        </Pressable>
       </View>
       <ScrollView
         horizontal
@@ -38,31 +91,84 @@ export function LibraryScreen({ items, ready, onAdd, onOpen }) {
         ) : filteredItems.length === 0 ? (
           <Text style={styles.empty}>
             {items.length
-              ? 'Bu filtrede gösterilecek metin yok.'
+              ? 'Aramanızla eşleşen bir metin yok.'
               : 'Henüz kayıtlı metin yok. İlk metninizi eklemek için + düğmesine dokunun.'}
           </Text>
         ) : (
           filteredItems.map((item) => (
-            <Pressable
-              accessibilityRole="button"
-              key={item.id}
-              onPress={() => onOpen(item)}
-              style={styles.libraryCard}
-            >
-              <View style={styles.preview}>
-                <Text style={styles.previewText}>☰</Text>
-              </View>
-              <View style={styles.copy}>
-                <Text numberOfLines={1} style={styles.itemTitle}>
-                  {item.title}
-                </Text>
-                <Text style={styles.meta}>{getLibraryItemMeta(item)}</Text>
-              </View>
-              <Text style={styles.more}>›</Text>
-            </Pressable>
+            <View key={item.id} style={styles.libraryCard}>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => onOpen(item)}
+                style={styles.libraryCardMain}
+              >
+                <View style={styles.preview}>
+                  <Text style={styles.previewText}>{item.is_favorite ? '♥' : '☰'}</Text>
+                </View>
+                <View style={styles.copy}>
+                  {editingId === item.id ? (
+                    <View style={styles.renameRow}>
+                      <TextInput
+                        accessibilityLabel="Yeni başlık"
+                        autoFocus
+                        value={draftTitle}
+                        onChangeText={setDraftTitle}
+                        style={styles.renameInput}
+                      />
+                      <Pressable accessibilityRole="button" onPress={saveRename}>
+                        <Text style={styles.renameSave}>Kaydet</Text>
+                      </Pressable>
+                    </View>
+                  ) : (
+                    <Text numberOfLines={1} style={styles.itemTitle}>
+                      {item.title}
+                    </Text>
+                  )}
+                  <Text style={styles.meta}>{getLibraryItemMeta(item)}</Text>
+                </View>
+              </Pressable>
+              <Pressable
+                accessibilityLabel="Metin işlemleri"
+                accessibilityRole="button"
+                onPress={() => setManagedId((current) => (current === item.id ? null : item.id))}
+              >
+                <Text style={styles.more}>•••</Text>
+              </Pressable>
+              {managedId === item.id && (
+                <View style={styles.itemActions}>
+                  <Pressable accessibilityRole="button" onPress={() => onToggleFavorite(item)}>
+                    <Text style={styles.itemAction}>
+                      {item.is_favorite ? 'Favoriden çıkar' : 'Favorile'}
+                    </Text>
+                  </Pressable>
+                  <Pressable accessibilityRole="button" onPress={() => startRename(item)}>
+                    <Text style={styles.itemAction}>Yeniden adlandır</Text>
+                  </Pressable>
+                  <Pressable accessibilityRole="button" onPress={() => deleteWithUndo(item)}>
+                    <Text style={styles.deleteAction}>Sil</Text>
+                  </Pressable>
+                </View>
+              )}
+            </View>
           ))
         )}
       </ScrollView>
+      {deletedItem && (
+        <View style={styles.undoBar}>
+          <Text numberOfLines={1} style={styles.undoText}>
+            “{deletedItem.title}” silindi.
+          </Text>
+          <Pressable
+            accessibilityRole="button"
+            onPress={async () => {
+              await onRestore(deletedItem);
+              setDeletedItem(null);
+            }}
+          >
+            <Text style={styles.undoAction}>Geri al</Text>
+          </Pressable>
+        </View>
+      )}
       <Pressable
         accessibilityLabel="Yeni metin ekle"
         accessibilityRole="button"

@@ -13,6 +13,20 @@ export function filterLibraryItems(items, filter) {
   return items;
 }
 
+export function prepareLibraryItems(items, { filter, query, sort }) {
+  const normalizedQuery = query.trim().toLocaleLowerCase('tr-TR');
+  const filtered = filterLibraryItems(items, filter).filter((item) => {
+    if (!normalizedQuery) return true;
+    return `${item.title} ${item.content}`.toLocaleLowerCase('tr-TR').includes(normalizedQuery);
+  });
+  return [...filtered].sort((first, second) => {
+    if (sort === 'Başlık') return first.title.localeCompare(second.title, 'tr-TR');
+    const firstDate = first.last_played_at || first.created_at;
+    const secondDate = second.last_played_at || second.created_at;
+    return secondDate.localeCompare(firstDate);
+  });
+}
+
 export function getLibraryItemMeta(item) {
   const wordCount = item.content?.trim().split(/\s+/).filter(Boolean).length || 0;
   const duration = Math.max(1, Math.ceil(wordCount / 150));
