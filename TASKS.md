@@ -115,7 +115,7 @@ Bu işler, uygulamanın yalnızca demoda çalışmasından gerçek kullanıcıla
 
 - [x] Backend için teknoloji, barındırma bölgesi, ortamlar (development/staging/production) ve sahiplik kararını `docs/ARCHITECTURE.md` içinde tanımla.
 - [x] API sözleşmesini `docs/api/openapi.yaml` ve `docs/API.md` içinde yaz: istek/yanıt şemaları, sürümleme, hata kodları, zaman aşımı ve tekrar deneme davranışı.
-- [ ] Kimlik doğrulama stratejisini belirle: anonim başlangıç, e-posta/Apple/Google girişi ve hesap silme akışı.
+- [x] Kimlik doğrulama stratejisini `docs/AUTH.md` içinde belirle: anonim başlangıç, e-posta/Apple/Google girişi ve hesap silme akışı.
 - [ ] API anahtarları için secret manager, ortam değişkenleri ve erişim yetkisi kur.
 - [ ] İstek doğrulama, kullanıcı başına kota/rate limit ve kötüye kullanım koruması ekle.
 - [ ] OpenAI/ElevenLabs gibi sağlayıcılar için timeout, retry, fallback ve maliyet limiti tasarla.
