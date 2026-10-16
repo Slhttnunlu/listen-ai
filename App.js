@@ -8,6 +8,7 @@ import { ComposerScreen } from './src/screens/ComposerScreen';
 import { HomeScreen } from './src/screens/HomeScreen';
 import { LibraryScreen } from './src/screens/LibraryScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
+import { pickTextDocument } from './src/services/documents';
 import { styles } from './src/styles';
 import { DEFAULT_TEXT } from './src/utils/text';
 
@@ -50,15 +51,28 @@ export default function App() {
   }, [stop]);
 
   const useFeature = useCallback(
-    (id) => {
-      if (id === 'write') startNewText();
-      else
+    async (id) => {
+      if (id === 'write') {
+        startNewText();
+      } else if (id === 'document') {
+        try {
+          const document = await pickTextDocument();
+          if (!document) return;
+          stop();
+          setCurrentItem(null);
+          setText(document.content);
+          setComposerOpen(true);
+        } catch (error) {
+          Alert.alert('Dosya açılamadı', error.message || 'Metin dosyası okunamadı.');
+        }
+      } else {
         Alert.alert(
           'Yakında',
           'Bu özellik ürün planına eklendi. Önce metin dinleme akışını tamamlıyoruz.'
         );
+      }
     },
-    [startNewText]
+    [startNewText, stop]
   );
 
   const openItem = useCallback(

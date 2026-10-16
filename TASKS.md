@@ -20,7 +20,7 @@
 
 ## 3. Doküman
 
-- [ ] TXT dosyası seçme ile başlama
+- [x] Cihazdan UTF-8 TXT seçme, boyut/içerik doğrulama ve editöre aktarma
 - [ ] PDF metin çıkarma; taranmış PDF'yi OCR akışına yönlendirme
 - [ ] DOCX desteği ve büyük dosyayı bölümlere ayırma
 - [ ] Drive bağlantısı için OAuth + backend (sonraki faz)
