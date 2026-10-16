@@ -1,10 +1,12 @@
 import {
   DOCX_MIME_TYPE,
+  PDF_MIME_TYPE,
   createDocumentSectionTitle,
   getDocumentType,
   MAX_EXTRACTED_DOCUMENT_CHARS,
   splitDocumentContent,
   MAX_TEXT_FILE_BYTES,
+  MAX_PDF_FILE_BYTES,
   validateDocumentAsset,
   validateTextDocument,
 } from '../utils/document';
@@ -17,7 +19,10 @@ describe('document validation', () => {
   });
 
   test('rejects unsupported, oversized and empty files', () => {
-    expect(validateTextDocument({ name: 'notlar.pdf', size: 20 }, 'metin').error).toContain('.txt');
+    expect(validateDocumentAsset({ name: 'notlar.csv', size: 20 }).error).toContain('.pdf');
+    expect(validateTextDocument({ name: 'notlar.pdf', size: 20 }, 'metin').error).toContain(
+      'UTF-8 TXT'
+    );
     expect(
       validateTextDocument({ name: 'notlar.txt', size: MAX_TEXT_FILE_BYTES + 1 }, 'metin').error
     ).toContain('2 MB');
@@ -32,6 +37,14 @@ describe('document validation', () => {
     expect(validateDocumentAsset({ name: 'rapor.docx', size: 11 * 1024 * 1024 }).error).toContain(
       '10 MB'
     );
+  });
+
+  test('recognizes PDF by extension or MIME type and applies its size limit', () => {
+    expect(getDocumentType({ name: 'rapor.pdf' })).toBe('pdf');
+    expect(getDocumentType({ name: 'rapor', mimeType: PDF_MIME_TYPE })).toBe('pdf');
+    expect(
+      validateDocumentAsset({ name: 'rapor.pdf', size: MAX_PDF_FILE_BYTES + 1 }).error
+    ).toContain('10 MB');
   });
 
   test('splits large documents at paragraph boundaries within the editor limit', () => {
@@ -55,5 +68,6 @@ describe('document validation', () => {
   test('creates recognizable section titles from imported file names', () => {
     expect(createDocumentSectionTitle('Uzun Rapor.docx', 0, 3)).toBe('Uzun Rapor · Bölüm 1/3');
     expect(createDocumentSectionTitle('notlar.txt', 0, 1)).toBe('notlar');
+    expect(createDocumentSectionTitle('Rapor.pdf', 0, 1)).toBe('Rapor');
   });
 });

@@ -2,15 +2,17 @@ import * as DocumentPicker from 'expo-document-picker';
 import { File } from 'expo-file-system';
 import {
   DOCX_MIME_TYPE,
+  PDF_MIME_TYPE,
   splitDocumentContent,
   validateDocumentAsset,
   validateTextDocument,
 } from '../utils/document';
 import { extractDocxText } from './docx';
+import { extractPdfText } from './pdf';
 
 export async function pickTextDocument() {
   const result = await DocumentPicker.getDocumentAsync({
-    type: ['text/plain', DOCX_MIME_TYPE],
+    type: ['text/plain', DOCX_MIME_TYPE, PDF_MIME_TYPE],
     copyToCacheDirectory: true,
     multiple: false,
   });
@@ -27,6 +29,16 @@ export async function pickTextDocument() {
       sections: splitDocumentContent(content).sections,
       name: asset.name,
       type: 'docx',
+    };
+  }
+
+  if (assetValidation.type === 'pdf') {
+    const content = await extractPdfText(asset.uri);
+    return {
+      content,
+      sections: splitDocumentContent(content).sections,
+      name: asset.name,
+      type: 'pdf',
     };
   }
 

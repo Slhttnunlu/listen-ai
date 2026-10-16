@@ -1,21 +1,29 @@
 export const MAX_TEXT_FILE_BYTES = 2 * 1024 * 1024;
 export const MAX_DOCX_FILE_BYTES = 10 * 1024 * 1024;
+export const MAX_PDF_FILE_BYTES = 10 * 1024 * 1024;
 export const MAX_EXTRACTED_DOCUMENT_CHARS = 250000;
 
 export const DOCX_MIME_TYPE =
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+export const PDF_MIME_TYPE = 'application/pdf';
 
 export function getDocumentType(asset) {
   const fileName = asset.name?.toLocaleLowerCase('tr-TR') || '';
   if (fileName.endsWith('.txt') || asset.mimeType === 'text/plain') return 'txt';
   if (fileName.endsWith('.docx') || asset.mimeType === DOCX_MIME_TYPE) return 'docx';
+  if (fileName.endsWith('.pdf') || asset.mimeType === PDF_MIME_TYPE) return 'pdf';
   return null;
 }
 
 export function validateDocumentAsset(asset) {
   const type = getDocumentType(asset);
-  if (!type) return { error: 'Yalnızca .txt ve .docx dosyaları destekleniyor.' };
-  const maxBytes = type === 'docx' ? MAX_DOCX_FILE_BYTES : MAX_TEXT_FILE_BYTES;
+  if (!type) return { error: 'Yalnızca .txt, .docx ve .pdf dosyaları destekleniyor.' };
+  const maxBytes =
+    type === 'txt'
+      ? MAX_TEXT_FILE_BYTES
+      : type === 'docx'
+        ? MAX_DOCX_FILE_BYTES
+        : MAX_PDF_FILE_BYTES;
   const maxMegabytes = maxBytes / 1024 / 1024;
   if ((asset.size || 0) > maxBytes) {
     return { error: `${type.toUpperCase()} dosyası en fazla ${maxMegabytes} MB olabilir.` };
@@ -68,7 +76,7 @@ export function splitDocumentContent(content, maxLength = MAX_EXTRACTED_DOCUMENT
 }
 
 export function createDocumentSectionTitle(fileName, index, total) {
-  const baseName = (fileName || 'Belge').replace(/\.(txt|docx)$/i, '').trim() || 'Belge';
+  const baseName = (fileName || 'Belge').replace(/\.(txt|docx|pdf)$/i, '').trim() || 'Belge';
   return total > 1 ? `${baseName} · Bölüm ${index + 1}/${total}` : baseName;
 }
 

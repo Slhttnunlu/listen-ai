@@ -60,7 +60,7 @@ Projede Expo SDK 57'nin desteklediği Node sürümleri kullanılmalıdır. Öner
 - 0.75×–1.5× hız kontrolü
 - Başlatma, hız değiştirme ve durdurma
 
-Bulut TTS (OpenAI veya Google Gemini), PDF içe aktarma ve kullanıcı hesabı sonraki aşamalardır. API anahtarları mobil uygulamaya eklenmemelidir; bu özellikler için bir backend kullanılmalıdır.
+Bulut TTS (OpenAI veya Google Gemini) ve kullanıcı hesabı sonraki aşamalardır. Dijital PDF metin çıkarma native development build gerektirir; taranmış PDF'ler için OCR akışı henüz kullanıma açılmamıştır. API anahtarları mobil uygulamaya eklenmemelidir; bu özellikler için bir backend kullanılmalıdır.
 
 Yerel/çevrimdışı sınır ile gelecekteki backend bileşenleri [hedef mimari](docs/ARCHITECTURE.md) belgesinde tanımlanmıştır.
 
