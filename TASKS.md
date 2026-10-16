@@ -142,7 +142,11 @@ Bu işler, uygulamanın yalnızca demoda çalışmasından gerçek kullanıcıla
 ## P2 — Yayın, büyüme ve gelir modeli
 
 - [ ] Uygulama kimliği, ikon, splash ekranı, mağaza görselleri ve Türkçe mağaza açıklamasını tamamla.
+  - [x] iOS/Android uygulama kimliği, sürüm numarası, ikon ve splash varlıklarını yapılandır.
+  - [ ] Mağaza ekran görüntülerini ve Türkçe mağaza açıklamasını son ürün görünümüyle hazırla.
 - [ ] EAS Build/Submit veya eşdeğer imzalı build ve dağıtım sürecini kur.
+  - [x] Development, Simulator E2E, internal preview ve production EAS profillerini tanımla.
+  - [ ] EAS projesini hesaba bağla; imzalı iOS/Android build ve submit doğrulamasını tamamla.
 - [ ] iOS TestFlight ve Google Play Internal Testing kanallarında kapalı beta yayınla.
 - [ ] Beta katılımcıları için geri bildirim formu, hata toplama ve haftalık değerlendirme ritmi belirle.
 - [ ] Freemium sınırlarını tanımla: ücretsiz metin uzunluğu, ses seçimi, dosya/OCR ve AI kullanımı.

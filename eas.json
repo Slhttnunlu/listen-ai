@@ -1,4 +1,8 @@
 {
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "local"
+  },
   "build": {
     "development": {
       "developmentClient": true,
@@ -9,6 +13,17 @@
       "ios": {
         "simulator": true
       }
+    },
+    "preview": {
+      "distribution": "internal",
+      "channel": "preview"
+    },
+    "production": {
+      "autoIncrement": true,
+      "channel": "production"
     }
+  },
+  "submit": {
+    "production": {}
   }
 }
