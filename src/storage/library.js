@@ -1,4 +1,5 @@
 import * as SQLite from 'expo-sqlite';
+import { normalizeLibraryItem } from '../utils/library';
 
 let database;
 export const LIBRARY_SCHEMA_VERSION = 2;
@@ -48,9 +49,10 @@ export async function initializeLibrary() {
 
 export async function getLibraryItems() {
   const db = await getDatabase();
-  return db.getAllAsync(
+  const items = await db.getAllAsync(
     'SELECT * FROM library_items WHERE deleted_at IS NULL ORDER BY COALESCE(last_played_at, created_at) DESC'
   );
+  return items.map(normalizeLibraryItem);
 }
 
 export async function renameLibraryItem(id, title) {

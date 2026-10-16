@@ -11,15 +11,36 @@ import {
 } from '../storage/library';
 import { createTitle } from '../utils/text';
 
+async function loadLibraryItems() {
+  await initializeLibrary();
+  return getLibraryItems();
+}
+
 export function useLibrary({ onError }) {
   const [items, setItems] = useState([]);
   const [ready, setReady] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+
+  const reload = useCallback(async () => {
+    setReady(false);
+    setLoadError(false);
+    try {
+      setItems(await loadLibraryItems());
+    } catch (error) {
+      setLoadError(true);
+      onError?.(error);
+    } finally {
+      setReady(true);
+    }
+  }, [onError]);
 
   useEffect(() => {
-    initializeLibrary()
-      .then(getLibraryItems)
+    loadLibraryItems()
       .then(setItems)
-      .catch(onError)
+      .catch((error) => {
+        setLoadError(true);
+        onError?.(error);
+      })
       .finally(() => setReady(true));
   }, [onError]);
 
@@ -82,7 +103,9 @@ export function useLibrary({ onError }) {
   return {
     deleteItem,
     items,
+    loadError,
     ready,
+    reload,
     renameItem,
     restoreItem,
     saveProgress,

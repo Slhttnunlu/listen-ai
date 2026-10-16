@@ -45,6 +45,23 @@ describe('screen interactions', () => {
     expect(screen.queryByText('Yarım kalan metin')).toBeNull();
   });
 
+  test('retries when the local library cannot be loaded', () => {
+    const onRetry = jest.fn();
+    const screen = render(
+      <LibraryScreen
+        ready
+        loadError
+        items={[]}
+        onAdd={jest.fn()}
+        onOpen={jest.fn()}
+        onRetry={onRetry}
+      />
+    );
+    expect(screen.getByText('Kütüphane yüklenemedi')).toBeTruthy();
+    fireEvent.press(screen.getByTestId('library-retry-button'));
+    expect(onRetry).toHaveBeenCalledTimes(1);
+  });
+
   test('keeps player callbacks attached to their controls', () => {
     const onChangeRate = jest.fn();
     const onStop = jest.fn();

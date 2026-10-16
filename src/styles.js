@@ -243,6 +243,16 @@ export const styles = StyleSheet.create({
   readText: { fontSize: 17, lineHeight: 25, color: '#1c1c1c' },
   readActive: { backgroundColor: '#d5ac27', color: '#fff', fontWeight: '800' },
   empty: { color: '#898989', fontSize: 16, lineHeight: 24, paddingTop: 16, textAlign: 'center' },
+  errorState: { alignItems: 'center', paddingHorizontal: 24, paddingTop: 18 },
+  errorTitle: { color: '#222', fontSize: 19, fontWeight: '800' },
+  retryButton: {
+    backgroundColor: '#ffbc00',
+    borderRadius: 16,
+    marginTop: 18,
+    paddingHorizontal: 22,
+    paddingVertical: 13,
+  },
+  retryButtonText: { color: '#222', fontSize: 15, fontWeight: '800' },
   entryPage: { flex: 1, padding: 22 },
   entryActions: {
     alignItems: 'center',

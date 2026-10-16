@@ -6,6 +6,8 @@ import { getLibraryItemMeta, LIBRARY_FILTERS, prepareLibraryItems } from '../uti
 export function LibraryScreen({
   items,
   ready,
+  loadError,
+  onRetry,
   onAdd,
   onOpen,
   onRename,
@@ -88,6 +90,19 @@ export function LibraryScreen({
       <ScrollView contentContainerStyle={styles.list}>
         {!ready ? (
           <Text style={styles.empty}>Kütüphaneniz yükleniyor…</Text>
+        ) : loadError ? (
+          <View style={styles.errorState}>
+            <Text style={styles.errorTitle}>Kütüphane yüklenemedi</Text>
+            <Text style={styles.empty}>Kayıtlarınıza şu anda ulaşılamıyor.</Text>
+            <Pressable
+              accessibilityRole="button"
+              testID="library-retry-button"
+              onPress={onRetry}
+              style={styles.retryButton}
+            >
+              <Text style={styles.retryButtonText}>Tekrar dene</Text>
+            </Pressable>
+          </View>
         ) : filteredItems.length === 0 ? (
           <Text style={styles.empty}>
             {items.length

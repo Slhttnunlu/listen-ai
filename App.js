@@ -18,9 +18,6 @@ export default function App() {
   const [text, setText] = useState(DEFAULT_TEXT);
   const [currentItem, setCurrentItem] = useState(null);
 
-  const showLibraryError = useCallback(() => {
-    Alert.alert('Kütüphane açılamadı', 'Yerel kayıt alanı başlatılamadı.');
-  }, []);
   const showSpeechError = useCallback((message) => {
     Alert.alert('Seslendirme hatası', message);
   }, []);
@@ -28,13 +25,15 @@ export default function App() {
   const {
     deleteItem,
     items,
+    loadError,
     ready,
+    reload,
     renameItem,
     restoreItem,
     saveText,
     saveProgress,
     toggleFavorite,
-  } = useLibrary({ onError: showLibraryError });
+  } = useLibrary({});
   const { activeRange, changeRate, play, playing, rate, stop } = useSpeechPlayer({
     text,
     itemId: currentItem?.id,
@@ -134,6 +133,8 @@ export default function App() {
             <LibraryScreen
               items={items}
               ready={ready}
+              loadError={loadError}
+              onRetry={reload}
               onAdd={startNewText}
               onOpen={openItem}
               onRename={renameItem}

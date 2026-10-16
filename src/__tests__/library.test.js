@@ -1,4 +1,9 @@
-import { filterLibraryItems, getLibraryItemMeta, prepareLibraryItems } from '../utils/library';
+import {
+  filterLibraryItems,
+  getLibraryItemMeta,
+  normalizeLibraryItem,
+  prepareLibraryItems,
+} from '../utils/library';
 
 const items = [
   {
@@ -60,5 +65,26 @@ describe('library utilities', () => {
         (item) => item.title
       )
     ).toEqual(['Alışveriş', 'Çalışma notu']);
+  });
+
+  test('normalizes malformed local rows without losing their identity', () => {
+    expect(
+      normalizeLibraryItem({
+        id: 42,
+        title: null,
+        content: null,
+        created_at: null,
+        progress_index: 99,
+        is_completed: null,
+      })
+    ).toMatchObject({
+      id: 42,
+      title: 'Başlıksız metin',
+      content: '',
+      created_at: '1970-01-01T00:00:00.000Z',
+      progress_index: 0,
+      is_completed: 0,
+      is_favorite: 0,
+    });
   });
 });

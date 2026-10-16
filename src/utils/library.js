@@ -1,5 +1,30 @@
 export const LIBRARY_FILTERS = ['Tümü', 'Devam', 'Tamamlandı', '♡ Favoriler'];
 
+export function normalizeLibraryItem(item) {
+  const content = typeof item?.content === 'string' ? item.content : '';
+  const title =
+    typeof item?.title === 'string' && item.title.trim() ? item.title.trim() : 'Başlıksız metin';
+  const createdAt =
+    typeof item?.created_at === 'string' && item.created_at
+      ? item.created_at
+      : new Date(0).toISOString();
+  const progressIndex = Number.isFinite(item?.progress_index)
+    ? Math.max(0, Math.min(item.progress_index, content.length))
+    : 0;
+
+  return {
+    ...item,
+    title,
+    content,
+    created_at: createdAt,
+    last_played_at:
+      typeof item?.last_played_at === 'string' && item.last_played_at ? item.last_played_at : null,
+    progress_index: progressIndex,
+    is_completed: item?.is_completed ? 1 : 0,
+    is_favorite: item?.is_favorite ? 1 : 0,
+  };
+}
+
 export function filterLibraryItems(items, filter) {
   if (filter === 'Devam') {
     return items.filter((item) => item.progress_index > 0 && !item.is_completed);
