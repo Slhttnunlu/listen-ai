@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useState } from 'react';
-import { Alert, SafeAreaView } from 'react-native';
+import { Alert, Linking, SafeAreaView } from 'react-native';
 import { BottomNav } from './src/components/BottomNav';
 import { useLibrary } from './src/hooks/useLibrary';
 import { useSpeechPlayer } from './src/hooks/useSpeechPlayer';
@@ -104,6 +104,14 @@ export default function App() {
     setComposerOpen(false);
   }, [stop]);
 
+  const openFeedback = useCallback(async () => {
+    try {
+      await Linking.openURL('https://github.com/Slhttnunlu/listen-ai/issues/new');
+    } catch {
+      Alert.alert('Bağlantı açılamadı', 'Geri bildirim sayfası şu anda açılamıyor.');
+    }
+  }, []);
+
   return (
     <SafeAreaView style={styles.safe}>
       <StatusBar style="dark" />
@@ -134,7 +142,7 @@ export default function App() {
               onRestore={restoreItem}
             />
           )}
-          {tab === 'settings' && <SettingsScreen />}
+          {tab === 'settings' && <SettingsScreen onFeedback={openFeedback} />}
           <BottomNav active={tab} onChange={setTab} />
         </>
       )}

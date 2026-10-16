@@ -2,6 +2,7 @@ import { fireEvent, render } from '@testing-library/react-native';
 import { HomeScreen } from '../screens/HomeScreen';
 import { LibraryScreen } from '../screens/LibraryScreen';
 import { PlayerScreen } from '../screens/PlayerScreen';
+import { SettingsScreen } from '../screens/SettingsScreen';
 
 describe('screen interactions', () => {
   test('opens the write feature from home', () => {
@@ -60,5 +61,12 @@ describe('screen interactions', () => {
     fireEvent.press(screen.getByTestId('stop-button'));
     expect(onChangeRate).toHaveBeenCalledTimes(1);
     expect(onStop).toHaveBeenCalledTimes(1);
+  });
+
+  test('opens feedback from settings', () => {
+    const onFeedback = jest.fn();
+    const screen = render(<SettingsScreen onFeedback={onFeedback} />);
+    fireEvent.press(screen.getByTestId('feedback-button'));
+    expect(onFeedback).toHaveBeenCalledTimes(1);
   });
 });

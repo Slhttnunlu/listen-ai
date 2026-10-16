@@ -78,12 +78,12 @@ Bu işler, uygulamanın yalnızca demoda çalışmasından gerçek kullanıcıla
 
 ## P0 — Ürün temelini doğrulama
 
-- [ ] Hedef kullanıcı, ana problem ve ilk kullanım senaryosunu tek cümlede tanımla.
-- [ ] Başarı metriklerini belirle: ilk dinleme başlatma oranı, ilk haftada geri dönüş, dinleme süresi, hata oranı.
-- [ ] Basit ürün analitiği olaylarını tanımla: uygulama açıldı, metin oluşturuldu, dinleme başladı/durdu/bitti, hata oluştu, içerik kaydedildi.
-- [ ] Analitik olaylarına kullanıcı metni, e-posta içeriği veya kişisel veri ekleme.
-- [ ] Kullanıcı geri bildirim akışı ekle: Ayarlar içinde geri bildirim ve hata bildirimi.
-- [ ] Gerçek cihazlarda en az iOS ve Android için temel kullanıcı kabul testi senaryoları oluştur.
+- [x] Hedef kullanıcı, ana problem ve ilk kullanım senaryosunu `docs/PRODUCT.md` içinde tanımla.
+- [x] Başarı metriklerini ve ilk beta hedeflerini belirle.
+- [x] İçerik taşımayan temel ürün analitiği event sözleşmesini tanımla.
+- [x] Analytics olaylarında kullanıcı metni, dosya adı ve kişisel veriyi yasakla.
+- [x] Ayarlar içinde GitHub issue formuna açılan yardım ve geri bildirim akışı ekle.
+- [x] `docs/ACCEPTANCE_TESTS.md` içinde iOS ve Android gerçek cihaz kabul senaryolarını oluştur.
 
 ## P0 — Uygulama kalitesi
 
@@ -91,8 +91,8 @@ Bu işler, uygulamanın yalnızca demoda çalışmasından gerçek kullanıcıla
 - [x] `App.js` içeriğini ekran, bileşen, hook ve servis katmanlarına ayır.
 - [x] SQLite `user_version` tabanlı şema sürümleme ve transaction migration stratejisi kur.
 - [ ] Çökme, beklenmeyen TTS hatası ve bozuk yerel veri için kullanıcıya anlaşılır kurtarma akışları ekle.
-- [ ] Uzun metin, Türkçe karakter, emoji, satır sonu ve çok uzun kelime senaryolarını kapsayan test verisi oluştur.
-- [ ] Performans hedefleri belirle: ilk açılış, ilk sesin başlaması, uzun metinde kaydırma ve bellek kullanımı.
+- [x] Uzun metin, Türkçe karakter, emoji, satır sonu ve çok uzun kelime test sınıflarını tanımla.
+- [x] İlk açılış, ilk ses, uzun metin, kütüphane ve bellek performans hedeflerini belirle.
 - [ ] Erişilebilirlik denetimi yap: VoiceOver/TalkBack, dinamik metin boyutu, kontrast ve dokunma alanları.
 
 ## P0 — Otomatik test ve kalite kapıları
