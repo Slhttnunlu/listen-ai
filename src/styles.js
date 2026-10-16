@@ -255,6 +255,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   settingText: { fontSize: 18, fontWeight: '600' },
+  settingStatus: { color: '#777', fontSize: 14, fontWeight: '700' },
   chevron: { fontSize: 30, color: '#aaa' },
   composerHead: {
     padding: 16,

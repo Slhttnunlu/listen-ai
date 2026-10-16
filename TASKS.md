@@ -124,12 +124,12 @@ Bu işler, uygulamanın yalnızca demoda çalışmasından gerçek kullanıcıla
 
 ## P1 — Veri güvenliği ve uyumluluk
 
-- [ ] Gizlilik politikası, kullanım koşulları ve destek iletişim kanalını hazırla.
-- [ ] Hangi kullanıcı verisinin neden toplandığını, ne kadar süre tutulduğunu ve nasıl silindiğini belgeleyin.
-- [ ] Hesap silme ve veri dışa aktarma/silme sürecini tasarla.
-- [ ] Dosya ve e-posta özellikleri öncesinde izin metinlerini, saklama politikasını ve OAuth kapsamlarını gözden geçir.
-- [ ] iOS App Privacy ve Google Play Data Safety beyanları için veri envanteri çıkar.
-- [ ] Çocuklara yönelik kullanım, telifli içerik ve kullanıcı tarafından yüklenen içerik risklerini ürün kararlarında değerlendir.
+- [x] Gizlilik politikası, kullanım koşulları ve destek iletişim kanalını hazırla.
+- [x] Hangi kullanıcı verisinin neden toplandığını, ne kadar süre tutulduğunu ve nasıl silindiğini `docs/DATA_INVENTORY.md` içinde belgele.
+- [x] Hesaplı ve hesapsız kullanım için veri dışa aktarma/silme sürecini tasarla.
+- [x] Dosya ve e-posta özellikleri öncesinde izin, saklama ve en dar OAuth kapsamı kararlarını gözden geçir.
+- [x] iOS App Privacy ve Google Play Data Safety beyanları için mevcut beta veri envanterini çıkar.
+- [x] Çocuklara yönelik kullanım, telifli içerik ve kullanıcı içeriği risklerini `docs/CONTENT_RISKS.md` içinde değerlendir.
 
 ## P1 — Operasyon ve gözlemlenebilirlik
 

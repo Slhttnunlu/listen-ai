@@ -1,0 +1,33 @@
+appId: ${APP_ID}
+---
+- openLink: ${APP_URL}
+- runFlow:
+    when:
+      visible:
+        id: player-back-button
+    commands:
+      - tapOn:
+          id: player-back-button
+- runFlow:
+    when:
+      visible:
+        id: back-button
+    commands:
+      - tapOn:
+          id: back-button
+- extendedWaitUntil:
+    visible:
+      id: nav-settings
+    timeout: 60000
+- tapOn:
+    id: nav-settings
+- assertVisible: 'Ayarlar'
+- scrollUntilVisible:
+    element:
+      id: privacy-button
+    direction: DOWN
+- assertVisible:
+    id: terms-button
+- assertVisible: 'Yakında'
+- assertVisible:
+    id: feedback-button

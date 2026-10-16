@@ -16,6 +16,10 @@ import { styles } from './src/styles';
 import { DEFAULT_TEXT } from './src/utils/text';
 
 const navigationRef = createNavigationContainerRef();
+const LEGAL_URLS = {
+  privacy: 'https://github.com/Slhttnunlu/listen-ai/blob/main/docs/PRIVACY_TR.md',
+  terms: 'https://github.com/Slhttnunlu/listen-ai/blob/main/docs/TERMS_TR.md',
+};
 
 export function AppContent() {
   const [text, setText] = useState(DEFAULT_TEXT);
@@ -113,6 +117,14 @@ export function AppContent() {
     }
   }, []);
 
+  const openLegalDocument = useCallback(async (type) => {
+    try {
+      await Linking.openURL(LEGAL_URLS[type]);
+    } catch {
+      Alert.alert('Bağlantı açılamadı', 'Belge şu anda açılamıyor. Daha sonra tekrar deneyin.');
+    }
+  }, []);
+
   return (
     <SafeAreaView style={styles.safe}>
       <StatusBar style="dark" />
@@ -134,7 +146,13 @@ export function AppContent() {
             onRestore={restoreItem}
           />
         }
-        settings={<SettingsScreen onFeedback={openFeedback} />}
+        settings={
+          <SettingsScreen
+            onFeedback={openFeedback}
+            onPrivacy={() => openLegalDocument('privacy')}
+            onTerms={() => openLegalDocument('terms')}
+          />
+        }
         composer={
           <ComposerScreen
             text={text}

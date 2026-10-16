@@ -94,4 +94,16 @@ describe('screen interactions', () => {
     fireEvent.press(screen.getByTestId('feedback-button'));
     expect(onFeedback).toHaveBeenCalledTimes(1);
   });
+
+  test('opens privacy and terms documents from settings', () => {
+    const onPrivacy = jest.fn();
+    const onTerms = jest.fn();
+    const screen = render(
+      <SettingsScreen onFeedback={jest.fn()} onPrivacy={onPrivacy} onTerms={onTerms} />
+    );
+    fireEvent.press(screen.getByTestId('privacy-button'));
+    fireEvent.press(screen.getByTestId('terms-button'));
+    expect(onPrivacy).toHaveBeenCalledTimes(1);
+    expect(onTerms).toHaveBeenCalledTimes(1);
+  });
 });
