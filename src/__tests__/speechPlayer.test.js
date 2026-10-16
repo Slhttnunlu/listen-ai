@@ -59,4 +59,35 @@ describe('useSpeechPlayer error recovery', () => {
     expect(result.current.playing).toBe(false);
     expect(onError).toHaveBeenCalledWith('Seslendirme başlatılamadı. Tekrar deneyebilirsiniz.');
   });
+
+  test('uses and updates persisted playback preferences', async () => {
+    const onRateChange = jest.fn();
+    const onVoiceChange = jest.fn();
+    getPreferredVoices.mockResolvedValue([
+      { identifier: 'tr-one', name: 'Bir', language: 'tr-TR' },
+      { identifier: 'tr-two', name: 'İki', language: 'tr-TR' },
+    ]);
+    const { result, rerender } = renderHook(
+      ({ preferredRate, preferredVoiceId }) =>
+        useSpeechPlayer({
+          text: 'Tercih testi',
+          preferredRate,
+          preferredVoiceId,
+          onRateChange,
+          onVoiceChange,
+        }),
+      { initialProps: { preferredRate: 1.25, preferredVoiceId: 'tr-two' } }
+    );
+    await act(async () => Promise.resolve());
+    expect(result.current.rate).toBe(1.25);
+    expect(result.current.voiceId).toBe('tr-two');
+
+    act(() => result.current.selectVoice('tr-one'));
+    act(() => result.current.selectRate(1.5));
+    expect(onVoiceChange).toHaveBeenCalledWith('tr-one');
+    expect(onRateChange).toHaveBeenCalledWith(1.5);
+
+    rerender({ preferredRate: 0.5, preferredVoiceId: 'tr-one' });
+    expect(result.current.rate).toBe(0.5);
+  });
 });

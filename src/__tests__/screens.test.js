@@ -95,6 +95,26 @@ describe('screen interactions', () => {
     expect(onFeedback).toHaveBeenCalledTimes(1);
   });
 
+  test('changes the default voice and playback rate from settings', () => {
+    const onChangeVoice = jest.fn();
+    const onChangeRate = jest.fn();
+    const screen = render(
+      <SettingsScreen
+        rate={1.25}
+        voice={{ name: 'Türkçe Ses' }}
+        voiceCount={2}
+        onChangeVoice={onChangeVoice}
+        onChangeRate={onChangeRate}
+      />
+    );
+    expect(screen.getByText('Türkçe Ses')).toBeTruthy();
+    expect(screen.getByText('1.25×')).toBeTruthy();
+    fireEvent.press(screen.getByTestId('voice-setting'));
+    fireEvent.press(screen.getByTestId('rate-setting'));
+    expect(onChangeVoice).toHaveBeenCalledTimes(1);
+    expect(onChangeRate).toHaveBeenCalledTimes(1);
+  });
+
   test('opens privacy and terms documents from settings', () => {
     const onPrivacy = jest.fn();
     const onTerms = jest.fn();

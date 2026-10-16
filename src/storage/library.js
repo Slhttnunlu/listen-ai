@@ -2,14 +2,15 @@ import * as SQLite from 'expo-sqlite';
 import { getSoftDeleteCutoff, normalizeLibraryItem } from '../utils/library';
 
 let database;
-export const LIBRARY_SCHEMA_VERSION = 3;
+let initializationPromise;
+export const LIBRARY_SCHEMA_VERSION = 4;
 
 async function getDatabase() {
   if (!database) database = await SQLite.openDatabaseAsync('listen-ai.db');
   return database;
 }
 
-export async function initializeLibrary() {
+async function runLibraryInitialization() {
   const db = await getDatabase();
   await db.execAsync('PRAGMA journal_mode = WAL;');
   await db.withTransactionAsync(async () => {
@@ -25,6 +26,10 @@ export async function initializeLibrary() {
         progress_index INTEGER NOT NULL DEFAULT 0,
         source_type TEXT NOT NULL DEFAULT 'text',
         deleted_at TEXT
+      );
+      CREATE TABLE IF NOT EXISTS app_settings (
+        key TEXT PRIMARY KEY NOT NULL,
+        value TEXT NOT NULL
       );
     `);
 
@@ -52,12 +57,42 @@ export async function initializeLibrary() {
         );
       }
     }
+    // v4 app_settings tablosu CREATE TABLE IF NOT EXISTS ile yukarıda oluşturulur.
     await db.execAsync(`PRAGMA user_version = ${LIBRARY_SCHEMA_VERSION};`);
     await db.runAsync(
       'DELETE FROM library_items WHERE deleted_at IS NOT NULL AND deleted_at <= ?',
       getSoftDeleteCutoff()
     );
   });
+}
+
+export function initializeLibrary() {
+  if (!initializationPromise) {
+    initializationPromise = runLibraryInitialization().catch((error) => {
+      initializationPromise = null;
+      throw error;
+    });
+  }
+  return initializationPromise;
+}
+
+export async function getPlaybackPreferences() {
+  await initializeLibrary();
+  const db = await getDatabase();
+  const rows = await db.getAllAsync(
+    "SELECT key, value FROM app_settings WHERE key IN ('playback_rate', 'voice_id')"
+  );
+  const settings = Object.fromEntries(rows.map((row) => [row.key, row.value]));
+  return {
+    rate: Number(settings.playback_rate) || 1,
+    voiceId: settings.voice_id || null,
+  };
+}
+
+export async function setPlaybackPreference(key, value) {
+  await initializeLibrary();
+  const db = await getDatabase();
+  await db.runAsync('INSERT OR REPLACE INTO app_settings (key, value) VALUES (?, ?)', key, value);
 }
 
 export async function getLibraryItems() {

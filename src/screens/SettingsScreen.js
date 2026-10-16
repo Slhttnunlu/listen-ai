@@ -2,6 +2,11 @@ import { Pressable, ScrollView, Text, View } from 'react-native';
 import { styles } from '../styles';
 
 export function SettingsScreen({
+  rate,
+  voice,
+  voiceCount = 0,
+  onChangeRate,
+  onChangeVoice,
   onFeedback,
   onPrivacy,
   onTerms,
@@ -13,12 +18,33 @@ export function SettingsScreen({
     <ScrollView style={styles.white} contentContainerStyle={styles.settings}>
       <Text style={styles.libTitle}>Ayarlar</Text>
       <Text style={styles.intro}>Dinleme deneyiminizi kişiselleştirin.</Text>
-      {['Varsayılan ses', 'Oynatma hızı', 'Bildirimler'].map((name) => (
-        <View key={name} style={styles.setting}>
-          <Text style={styles.settingText}>{name}</Text>
-          <Text style={styles.settingStatus}>Yakında</Text>
-        </View>
-      ))}
+      <Pressable
+        accessibilityHint={voiceCount > 1 ? 'Sonraki kullanılabilir sesi seçer' : undefined}
+        accessibilityRole="button"
+        disabled={voiceCount < 2}
+        onPress={onChangeVoice}
+        style={styles.setting}
+        testID="voice-setting"
+      >
+        <Text style={styles.settingText}>Varsayılan ses</Text>
+        <Text style={styles.settingStatus} numberOfLines={1}>
+          {voice?.name || (voiceCount ? 'Sistem sesi' : 'Ses bulunamadı')}
+        </Text>
+      </Pressable>
+      <Pressable
+        accessibilityHint="Sonraki varsayılan oynatma hızını seçer"
+        accessibilityRole="button"
+        onPress={onChangeRate}
+        style={styles.setting}
+        testID="rate-setting"
+      >
+        <Text style={styles.settingText}>Oynatma hızı</Text>
+        <Text style={styles.settingStatus}>{rate || 1}×</Text>
+      </Pressable>
+      <View style={styles.setting}>
+        <Text style={styles.settingText}>Bildirimler</Text>
+        <Text style={styles.settingStatus}>Yakında</Text>
+      </View>
       <Text style={styles.settingsSection}>VERİLERİNİZ</Text>
       <Pressable
         accessibilityRole="button"

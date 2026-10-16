@@ -5,6 +5,7 @@ import { Alert, Linking } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { AppErrorBoundary } from './src/components/AppErrorBoundary';
 import { useLibrary } from './src/hooks/useLibrary';
+import { usePlaybackPreferences } from './src/hooks/usePlaybackPreferences';
 import { useSpeechPlayer } from './src/hooks/useSpeechPlayer';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { ComposerScreen } from './src/screens/ComposerScreen';
@@ -16,7 +17,7 @@ import { exportLibrary } from './src/services/libraryExport';
 import { pickLibraryBackup } from './src/services/libraryImport';
 import { styles } from './src/styles';
 import { createDocumentSectionTitle } from './src/utils/document';
-import { DEFAULT_TEXT } from './src/utils/text';
+import { DEFAULT_TEXT, getNextRate } from './src/utils/text';
 
 const navigationRef = createNavigationContainerRef();
 const LEGAL_URLS = {
@@ -48,13 +49,41 @@ export function AppContent() {
     saveProgress,
     toggleFavorite,
   } = useLibrary({});
-  const { activeRange, changeRate, play, playing, rate, stop } = useSpeechPlayer({
+  const { preferredRate, preferredVoiceId, saveRate, saveVoiceId } = usePlaybackPreferences({
+    onError: showSpeechError,
+  });
+  const {
+    activeRange,
+    changeRate,
+    play,
+    playing,
+    rate,
+    selectRate,
+    selectVoice,
+    stop,
+    voiceId,
+    voices,
+  } = useSpeechPlayer({
     text,
     itemId: currentItem?.id,
     initialIndex: currentItem?.progress_index || 0,
+    preferredRate,
+    preferredVoiceId,
     onProgress: saveProgress,
     onError: showSpeechError,
+    onRateChange: saveRate,
+    onVoiceChange: saveVoiceId,
   });
+
+  const selectNextVoice = useCallback(() => {
+    if (!voices.length) return;
+    const currentIndex = voices.findIndex((voice) => voice.identifier === voiceId);
+    selectVoice(voices[(currentIndex + 1) % voices.length].identifier);
+  }, [selectVoice, voiceId, voices]);
+
+  const selectNextDefaultRate = useCallback(() => {
+    selectRate(getNextRate(rate));
+  }, [rate, selectRate]);
 
   const startNewText = useCallback(() => {
     stop();
@@ -242,6 +271,11 @@ export function AppContent() {
         }
         settings={
           <SettingsScreen
+            rate={rate}
+            voice={voices.find((item) => item.identifier === voiceId)}
+            voiceCount={voices.length}
+            onChangeRate={selectNextDefaultRate}
+            onChangeVoice={selectNextVoice}
             onDeleteData={confirmDeleteLocalData}
             onExportData={exportLocalData}
             onImportData={importLocalData}

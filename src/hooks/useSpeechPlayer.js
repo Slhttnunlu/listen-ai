@@ -2,12 +2,20 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { getPreferredVoices, speak, stopSpeaking } from '../services/speech';
 import { clampSpeechIndex, getNextRate } from '../utils/text';
 
-export function useSpeechPlayer({ text, itemId, initialIndex = 0, onProgress, onError }) {
-  const [rate, setRate] = useState(1);
+export function useSpeechPlayer({
+  text,
+  itemId,
+  initialIndex = 0,
+  preferredRate = 1,
+  preferredVoiceId,
+  onProgress,
+  onError,
+  onRateChange,
+  onVoiceChange,
+}) {
   const [playing, setPlaying] = useState(false);
   const [activeRange, setActiveRange] = useState(null);
   const [voices, setVoices] = useState([]);
-  const [voiceId, setVoiceId] = useState();
   const sessionRef = useRef(0);
   const indexRef = useRef(initialIndex);
   const progressErrorReportedRef = useRef(false);
@@ -16,7 +24,6 @@ export function useSpeechPlayer({ text, itemId, initialIndex = 0, onProgress, on
     getPreferredVoices()
       .then((choices) => {
         setVoices(choices);
-        setVoiceId(choices[0]?.identifier);
       })
       .catch(() => onError?.('Cihazdaki sesler yüklenemedi.'));
     return () => {
@@ -24,6 +31,10 @@ export function useSpeechPlayer({ text, itemId, initialIndex = 0, onProgress, on
       stopSpeaking();
     };
   }, [onError]);
+
+  const rate = preferredRate;
+  const preferredVoiceExists = voices.some((voice) => voice.identifier === preferredVoiceId);
+  const voiceId = preferredVoiceExists ? preferredVoiceId : voices[0]?.identifier;
 
   useEffect(() => {
     indexRef.current = clampSpeechIndex(initialIndex, text.length);
@@ -102,9 +113,23 @@ export function useSpeechPlayer({ text, itemId, initialIndex = 0, onProgress, on
 
   const changeRate = useCallback(() => {
     const nextRate = getNextRate(rate);
-    setRate(nextRate);
+    onRateChange?.(nextRate);
     play(nextRate, indexRef.current);
-  }, [play, rate]);
+  }, [onRateChange, play, rate]);
+
+  const selectRate = useCallback(
+    (nextRate) => {
+      onRateChange?.(nextRate);
+    },
+    [onRateChange]
+  );
+
+  const selectVoice = useCallback(
+    (nextVoiceId) => {
+      onVoiceChange?.(nextVoiceId);
+    },
+    [onVoiceChange]
+  );
 
   return {
     activeRange,
@@ -112,8 +137,8 @@ export function useSpeechPlayer({ text, itemId, initialIndex = 0, onProgress, on
     play,
     playing,
     rate,
-    setRate,
-    setVoiceId,
+    selectRate,
+    selectVoice,
     stop,
     voiceId,
     voices,

@@ -17,6 +17,7 @@ Her release adayı en az bir güncel iPhone ve bir güncel Android gerçek cihaz
 11. Kayıt aranır, yeniden adlandırılır, favorilenir, silinir ve **Geri al** ile geri getirilir.
 12. 250.000 karakteri aşan belge içe aktarılır; bölümler kütüphanede sıralı ve ayrı kayıtlar olarak görünür.
 13. Kütüphane JSON olarak dışa aktarılır, bir kayıt silindikten sonra yedek birleştirilir; kayıt geri gelir ve mevcut/mükerrer kayıtlar korunur.
+14. Ayarlar'dan varsayılan Türkçe ses ve hız değiştirilir; uygulama yeniden açıldığında tercihler korunur ve yeni dinleme bu tercihlerle başlar.
 
 ## Platform davranışları
 

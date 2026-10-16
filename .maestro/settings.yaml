@@ -23,6 +23,14 @@ appId: ${APP_ID}
 - tapOn:
     id: nav-settings
 - assertVisible: 'Ayarlar'
+- assertVisible:
+    id: voice-setting
+- tapOn:
+    id: voice-setting
+- assertVisible:
+    id: rate-setting
+- tapOn:
+    id: rate-setting
 - scrollUntilVisible:
     element:
       id: export-data-button

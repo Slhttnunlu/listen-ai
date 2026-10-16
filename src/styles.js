@@ -263,7 +263,13 @@ export const styles = StyleSheet.create({
     letterSpacing: 1,
     marginTop: 28,
   },
-  settingStatus: { color: '#777', fontSize: 14, fontWeight: '700' },
+  settingStatus: {
+    color: '#777',
+    fontSize: 14,
+    fontWeight: '700',
+    maxWidth: '52%',
+    textAlign: 'right',
+  },
   chevron: { fontSize: 30, color: '#aaa' },
   composerHead: {
     padding: 16,

@@ -6,6 +6,7 @@
 - [x] SQLite ile kalıcı yerel depolama
 - [x] Dinleme ilerlemesini kaydetme ve kütüphaneden kaldığı yerden devam
 - [x] Okunan kelimeyi ses motoru sınır olaylarıyla vurgulama
+- [x] Varsayılan cihaz sesi ve oynatma hızını Ayarlar'dan seçip cihazda kalıcı saklama
 - [ ] Arka plan oynatma ve kilit ekranı kontrolleri
 
 **Zorluk:** Orta. İlk yayın için en değerli, API gerektirmeyen özellik.
@@ -58,10 +59,61 @@
 
 **Zorluk:** Çok yüksek. Kullanıcı verisi ve uygulama doğrulama süreçleri vardır.
 
-## 7. AI ve bulut sesleri
+## 7. TTS motoru karşılaştırma yol haritası
+
+Dört yaklaşım aynı Türkçe test metinleriyle; ses doğallığı, telaffuz, ilk sese kadar geçen süre, uzun metin kararlılığı, çevrimdışı çalışma, uygulama boyutu, cihaz kaynak tüketimi, gizlilik, lisans ve tahmini maliyet açısından karşılaştırılacak.
+
+### 7.1 Cihazın yerleşik TTS motoru — mevcut temel
+
+- [x] iOS/Android yerleşik ses motoruyla Türkçe metin seslendirme
+- [x] Cihazdaki uygun Türkçe sesleri listeleme ve varsayılan sesi seçme
+- [x] Oynatma hızını değiştirme, okunan kelimeyi vurgulama ve ilerlemeyi kaydetme
+- [ ] Gerçek iOS ve Android cihazlarda ses kalitesi, kesinti ve uzun metin sonuçlarını ölçme
+
+**Rol:** Ücretsiz, çevrimdışı ve gizlilik odaklı temel/fallback seçenek olarak korunacak.
+
+### 7.2 MacBook Pro üzerinde hafif açık kaynak TTS servisi — POC
+
+- [ ] Türkçe destekli hafif motor ve ses modelini lisanslarıyla seç; ilk aday olarak Piper ve uygun Türkçe sesi değerlendir
+- [ ] Motoru MacBook Pro'da yalnızca yerel geliştirme ağına açık bir servis olarak çalıştır
+- [ ] Mobil uygulamada sağlayıcıdan bağımsız TTS istemcisi oluştur ve geliştirme ortamında bu servise istek gönder
+- [ ] Uzun metni güvenli parçalara ayır; WAV/MP3 üretme, indirme, önbellek ve hata/fallback akışını ekle
+- [ ] Cihaz TTS'i ile doğallık, Türkçe telaffuz, ilk ses gecikmesi ve üretim süresini karşılaştır
+- [ ] Servisi internete veya production'a açmadan önce kimlik doğrulama, TLS, kota ve lisans incelemesi yap
+
+**Rol:** API ücreti olmadan model tabanlı ses ve gerçek ses dosyası oynatma mimarisini doğrulayan geliştirme POC'si.
+
+### 7.3 OpenAI ve Google Gemini TTS API denemeleri — kontrollü POC
+
+- [ ] OpenAI ve Google Gemini'nin güncel TTS modelleri, Türkçe kalitesi, kullanım şartları ve fiyatlarını karşılaştır
+- [ ] Sağlayıcı anahtarlarını mobil uygulamaya koymadan yalnızca backend/secret manager üzerinden çağır
+- [ ] Ortak sağlayıcı arayüzü altında OpenAI ve Gemini adaptörleri geliştir
+- [ ] Kullanıcı başına karakter kotası, rate limit, timeout, sınırlı retry, maliyet üst sınırı ve cihaz TTS fallback'i ekle
+- [ ] Kullanıcı metninin aktarımı, saklama süresi ve AI ses açıklaması için açık bilgilendirme/onay akışını hazırla
+- [ ] Aynı Türkçe test setiyle kalite, gecikme ve 1.000/10.000/100.000 karakter maliyet karşılaştırması çıkar
+
+**Rol:** Production'daki isteğe bağlı Pro/doğal ses sağlayıcısını seçmek; ChatGPT aboneliği API kotası kabul edilmeyecek, API faturalandırması ayrı izlenecek.
+
+### 7.4 Uygulama içinde çalışan hafif TTS motoru — cihaz içi model POC
+
+- [ ] iOS/Android ve Expo development build ile uyumlu ONNX/native çalışma zamanını seç
+- [ ] Türkçe modelin kod, ağırlık ve eğitim verisi lisanslarını ticari dağıtım açısından doğrula
+- [ ] Model boyutu, ilk indirme/uygulamayla paketleme ve sürüm güncelleme stratejisini belirle
+- [ ] Tamamen uçak modunda çalışan metin → ses dosyası akışını prototiple
+- [ ] Orta sınıf gerçek cihazlarda ilk ses gecikmesi, gerçek zaman katsayısı, RAM, CPU, pil ve ısınmayı ölç
+- [ ] Düşük kaynakta cihaz TTS'ine güvenli fallback ve model kaldırma/depolama kontrollerini ekle
+
+**Rol:** Sunucu ve kullanım maliyeti olmadan daha tutarlı ses hedefi; yalnızca mobil performans ve lisans sonuçları kabul sınırlarını geçerse production adayı olacak.
+
+### 7.5 Karar kapısı
+
+- [ ] Dört yaklaşımın ölçümlerini tek karşılaştırma raporunda topla
+- [ ] Ücretsiz katman, Pro katman ve çevrimdışı fallback için kullanılacak motorları seçip ADR ile kaydet
+- [ ] Seçilmeyen deneysel motorları production build'den, izinlerden ve bağımlılıklardan kaldır
+
+## 8. AI özellikleri
 
 - [ ] Kimlik doğrulama, kota ve istek günlükleri olan backend
-- [ ] OpenAI/ElevenLabs kalite-maliyet karşılaştırması
 - [ ] Anahtarların yalnızca backend'de tutulması
 - [ ] Özet, başlık ve bölüm önerileri
 
@@ -71,8 +123,9 @@
 2. Arka plan oynatma ve ilerleme
 3. TXT/PDF içe aktarma
 4. Kamera + OCR
-5. Bulut sesleri / AI özetleme
-6. Podcast, ardından Mail
+5. TTS motoru POC'leri ve karşılaştırma karar kapısı
+6. Bulut sesleri / AI özetleme
+7. Podcast, ardından Mail
 
 ---
 
