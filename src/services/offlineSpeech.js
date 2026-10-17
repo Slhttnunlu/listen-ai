@@ -3,6 +3,10 @@ import { OFFLINE_TTS_MODEL } from '../constants/tts';
 let enginePromise;
 let activeController;
 
+function wait(milliseconds) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
 function loadSherpaModules() {
   // Lazy loading keeps Expo Go and builds with the feature disabled on device TTS.
   const sherpa = require('react-native-sherpa-onnx');
@@ -37,6 +41,8 @@ export async function speakOffline(text, options = {}) {
   await stopOfflineSpeaking();
   const engine = await getEngine();
   const sampleRate = await engine.getSampleRate();
+  let sampleCount = 0;
+  const startedAt = Date.now();
   await engine.startPcmPlayer(sampleRate, 1);
 
   try {
@@ -45,12 +51,25 @@ export async function speakOffline(text, options = {}) {
       { speed: options.rate || 1 },
       {
         onChunk: (chunk) => {
-          if (chunk.samples?.length) engine.writePcmChunk(chunk.samples).catch(options.onError);
+          if (chunk.samples?.length) {
+            sampleCount += chunk.samples.length;
+            engine.writePcmChunk(chunk.samples).catch(options.onError);
+          }
         },
         onEnd: async ({ cancelled } = {}) => {
           activeController = undefined;
+          const generatedAudioDurationMs = (sampleCount / sampleRate) * 1000;
+          const elapsedMs = Date.now() - startedAt;
+
+          // Stream generation can finish much faster than the generated audio plays.
+          // Keep the PCM player alive until its queued audio has had time to drain.
+          if (!cancelled && sampleCount > 0) {
+            await wait(Math.max(0, generatedAudioDurationMs - elapsedMs));
+          }
           await engine.stopPcmPlayer().catch(() => undefined);
           if (cancelled) options.onStopped?.();
+          else if (!sampleCount)
+            options.onError?.(new Error('Offline model did not produce audio.'));
           else options.onDone?.();
         },
         onError: async (error) => {

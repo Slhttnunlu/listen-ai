@@ -47,4 +47,14 @@ describe('offline speech provider', () => {
     );
     expect(mockEngine.writePcmChunk).toHaveBeenCalledWith([0.1, 0.2]);
   });
+
+  test('reports an error instead of completing silently when no audio is generated', async () => {
+    const { speakOffline } = require('../services/offlineSpeech');
+    const onError = jest.fn();
+
+    await speakOffline('Sessiz test', { onError });
+    await mockStreamHandlers.onEnd({ cancelled: false });
+
+    expect(onError).toHaveBeenCalledWith(expect.any(Error));
+  });
 });
