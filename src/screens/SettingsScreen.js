@@ -6,7 +6,7 @@ export function SettingsScreen({
   rate,
   ttsEngine = TTS_ENGINES.device,
   offlineTtsEnabled = false,
-  offlineTtsName = 'Offline Türkçe (Deneysel)',
+  offlineTtsName = 'Supertonic 3 INT8 Türkçe',
   voice,
   voiceCount = 0,
   onChangeRate,

@@ -105,6 +105,9 @@ Dört yaklaşım aynı Türkçe test metinleriyle; ses doğallığı, telaffuz, 
 - [x] POC Türkçe Piper modelinin lisansını incele: CC BY-NC-SA 4.0 olduğu için ticari production dağıtımına uygun değil
 - [x] İlk POC için yaklaşık 79 MB modeli uygulamayla paketle; production öncesi indirilebilir model ve sürümleme kararı al
 - [x] Sherpa-ONNX streaming PCM ile tamamen cihaz içinde çalışan metin → ses prototipini geliştir
+- [x] Piper/DFKI POC ses kalitesini reddet ve modeli uygulama paketinden kaldır
+- [x] Türkçe destekli Supertonic 3 INT8 modelini OpenRAIL-M lisansıyla ikinci cihaz içi POC olarak paketle
+- [ ] Supertonic 3 INT8 Türkçe ses kalitesi, başlangıç gecikmesi ve uzun metin kararlılığını gerçek cihazda kabul et
 - [ ] Orta sınıf gerçek cihazlarda ilk ses gecikmesi, gerçek zaman katsayısı, RAM, CPU, pil ve ısınmayı ölç
 - [x] Ayarlardan cihaz/offline motor seçimi, build-time görünürlük bayrağı ve hata halinde cihaz TTS'ine güvenli fallback ekle
 - [ ] Production modelini uygulamadan indirilebilir/kaldırılabilir yap ve depolama kontrollerini tamamla
@@ -112,6 +115,8 @@ Dört yaklaşım aynı Türkçe test metinleriyle; ses doğallığı, telaffuz, 
 POC uygulama ve doğrulama notları: [`docs/ON_DEVICE_TTS_POC.md`](docs/ON_DEVICE_TTS_POC.md)
 
 **Rol:** Sunucu ve kullanım maliyeti olmadan daha tutarlı ses hedefi; yalnızca mobil performans ve lisans sonuçları kabul sınırlarını geçerse production adayı olacak.
+
+Supertonic kabul testinden sonraki deney, API anahtarı yalnızca backend'de tutulan OpenAI benzeri bulut TTS sağlayıcılarıdır; mobil istemciye sağlayıcı anahtarı eklenmez.
 
 ### 7.5 Karar kapısı
 

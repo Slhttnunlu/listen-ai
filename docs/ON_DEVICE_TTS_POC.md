@@ -2,13 +2,15 @@
 
 ## Kapsam
 
-Bu POC, `react-native-sherpa-onnx` üzerinde Piper'ın `vits-piper-tr_TR-dfki-medium` Türkçe modelini CPU ile ve internet bağlantısı olmadan çalıştırır. Ses native PCM player'a parça parça gönderilir. Cihazın yerleşik TTS motoru varsayılan seçenek olarak korunur.
+Bu POC, `react-native-sherpa-onnx` üzerinde `sherpa-onnx-supertonic-3-tts-int8-2026-05-11` modelini Türkçe (`tr`) ve CPU ile internet bağlantısı olmadan çalıştırır. Cihazın yerleşik TTS motoru varsayılan seçenek olarak korunur.
+
+İlk Piper `vits-piper-tr_TR-dfki-medium` POC'si çalışır durumda doğrulandı ancak ses kalitesi kabul edilmediği ve model lisansı ticari kullanımı kısıtladığı için uygulama paketinden kaldırıldı.
 
 ## Kullanım
 
 1. Native bağımlılıkları kurmak için `LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 pod install` komutunu `ios/` altında çalıştırın.
 2. Expo Go yerine `npm run ios` ile development build oluşturun.
-3. Uygulamada **Ayarlar → Ses motoru** satırına dokunarak `Cihazın sistem sesi` ve `Offline Türkçe (Deneysel)` arasında geçiş yapın.
+3. Uygulamada **Ayarlar → Ses motoru** satırına dokunarak `Cihazın sistem sesi` ve `Supertonic 3 INT8 Türkçe` arasında geçiş yapın.
 
 Yerel `withOfflineTtsAssets` config plugin'i `assets/models` dizinini iOS uygulama paketindeki `models/` dizinine kopyalar. `ios/` yeniden üretildiğinde model kaynak ayarı bu nedenle kaybolmaz. `expo-asset` yalnızca desteklenen tekil varlık türlerini işler; çok dosyalı ONNX model klasörü için kullanılmaz.
 
@@ -24,14 +26,14 @@ Bayrak model ve native kütüphaneyi derlenen binary'den fiziksel olarak çıkar
 
 ## Lisans uyarısı
 
-Kullanılan DFKI Türkçe modelinin model kartı eğitim verisini **CC BY-NC-SA 4.0** olarak belirtir. Bu nedenle bu model yalnızca teknik POC içindir; ücretli veya ticari production sürümünde kullanılamaz. Production öncesinde ticari kullanıma uygun bir Türkçe model seçilmeli ve kod, ağırlıklar, eğitim verisi ile üçüncü taraf native lisansları hukuk incelemesinden geçmelidir.
+Supertonic örnek/entegrasyon kodu MIT, model ağırlıkları **OpenRAIL-M** lisanslıdır. OpenRAIL-M kullanım kısıtları ve dağıtım yükümlülükleri production kararı öncesinde hukuk incelemesinden geçmelidir.
 
-Modelle birlikte kaynak model kartı `assets/models/vits-piper-tr_TR-dfki-medium/MODEL_CARD` altında tutulur.
+Modelle birlikte resmi `LICENSE` ve `README.md` dosyaları `assets/models/sherpa-onnx-supertonic-3-tts-int8-2026-05-11/` altında tutulur.
 
 ## Bilinen sınırlar
 
 - Native modül nedeniyle Expo Go desteklenmez.
-- Model paketi yaklaşık 79 MB'dir ve uygulama boyutunu belirgin artırır.
-- Mevcut kelime vurgulama `expo-speech` boundary olaylarına dayanır. Bu ilk offline streaming POC gerçek kelime zaman damgası üretmediğinden Sherpa sesi seçiliyken sarı kelime takibi yoktur. İkinci iterasyonda Sherpa alignment modeli veya güvenilir zamanlama eşlemesi gerekir.
+- Paketlenen model klasörü yaklaşık 139 MB'dir ve uygulama boyutunu belirgin artırır.
+- Supertonic/Sherpa akışı gerçek kelime sınırı üretmez. Production kelime vurgusu için zorunlu hizalama modeli veya motorun sağladığı gerçek zaman damgaları kullanılmalıdır.
 - Gerçek iPhone/Android üzerinde gecikme, RAM, CPU, pil ve uzun metin kabul testleri henüz yapılmamıştır.
-- Bu makinedeki Swift 6.0, Expo 57'nin `ExpoModulesJSI` Swift tools 6.2 gereksinimini karşılamıyor. Native Simulator build'i için Swift 6.2 sağlayan güncel Xcode gereklidir.
+- Supertonic kabul testinden sonra OpenAI benzeri bulut TTS sağlayıcıları backend üzerinden karşılaştırılacaktır; API anahtarları mobil uygulamaya konulmaz.

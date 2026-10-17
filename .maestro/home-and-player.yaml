@@ -48,6 +48,10 @@ appId: ${APP_ID}
 - assertVisible:
     id: player-screen
 - tapOn:
-    id: stop-button
+    id: pause-button
+- assertVisible:
+    id: resume-button
+- tapOn:
+    id: player-back-button
 - assertVisible:
     id: text-input

@@ -29,13 +29,15 @@ async function getEngine() {
     enginePromise = Promise.resolve().then(async () => {
       const { sherpa, tts } = loadSherpaModules();
       const modelPath = sherpa.assetModelPath(OFFLINE_TTS_MODEL.assetPath);
-      const detection = await tts.detectTtsModel(modelPath, { modelType: 'vits' });
+      const detection = await tts.detectTtsModel(modelPath, {
+        modelType: OFFLINE_TTS_MODEL.modelType,
+      });
       if (!detection.success) {
         throw new Error(detection.error || 'Offline Türkçe ses modeli doğrulanamadı.');
       }
       return tts.createStreamingTTS({
         modelPath,
-        modelType: 'vits',
+        modelType: OFFLINE_TTS_MODEL.modelType,
         numThreads: 2,
         provider: 'cpu',
       });
@@ -58,7 +60,11 @@ export async function speakOffline(text, options = {}) {
   try {
     const controller = await engine.generateSpeechStream(
       text,
-      { speed: options.rate || 1 },
+      {
+        speed: options.rate || 1,
+        numSteps: 8,
+        extra: { lang: OFFLINE_TTS_MODEL.language },
+      },
       {
         onChunk: (chunk) => {
           if (chunk.samples?.length) {

@@ -143,7 +143,7 @@ describe('screen interactions', () => {
         onChangeTtsEngine={onChangeTtsEngine}
       />
     );
-    expect(screen.getByText('Offline Türkçe (Deneysel)')).toBeTruthy();
+    expect(screen.getByText('Supertonic 3 INT8 Türkçe')).toBeTruthy();
     fireEvent.press(screen.getByTestId('tts-engine-setting'));
     expect(onChangeTtsEngine).toHaveBeenCalledTimes(1);
   });

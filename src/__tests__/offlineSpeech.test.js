@@ -20,7 +20,7 @@ jest.mock('react-native-sherpa-onnx', () => ({
 jest.mock('react-native-sherpa-onnx/tts', () => ({
   createStreamingTTS: mockCreateStreamingTTS,
   detectTtsModel: jest.fn(() =>
-    Promise.resolve({ success: true, modelType: 'vits', detectedModels: [] })
+    Promise.resolve({ success: true, modelType: 'supertonic', detectedModels: [] })
   ),
 }));
 
@@ -43,12 +43,12 @@ describe('offline speech provider', () => {
     await completion;
 
     expect(mockCreateStreamingTTS).toHaveBeenCalledWith(
-      expect.objectContaining({ modelType: 'vits', numThreads: 2, provider: 'cpu' })
+      expect.objectContaining({ modelType: 'supertonic', numThreads: 2, provider: 'cpu' })
     );
     expect(mockEngine.startPcmPlayer).toHaveBeenCalledWith(22050, 1);
     expect(mockEngine.generateSpeechStream).toHaveBeenCalledWith(
       'Merhaba dünya',
-      { speed: 1.25 },
+      { speed: 1.25, numSteps: 8, extra: { lang: 'tr' } },
       expect.any(Object)
     );
     expect(mockEngine.writePcmChunk).toHaveBeenCalledWith([0.1, 0.2]);

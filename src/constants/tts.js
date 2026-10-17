@@ -10,9 +10,11 @@ export const DEFAULT_TTS_ENGINE = TTS_ENGINES.device;
 export const ON_DEVICE_TTS_ENABLED = process.env.EXPO_PUBLIC_ENABLE_ON_DEVICE_TTS !== 'false';
 
 export const OFFLINE_TTS_MODEL = {
-  assetPath: 'models/vits-piper-tr_TR-dfki-medium',
-  displayName: 'Offline Türkçe (Deneysel)',
-  license: 'CC BY-NC-SA 4.0 — yalnızca POC',
+  assetPath: 'models/sherpa-onnx-supertonic-3-tts-int8-2026-05-11',
+  displayName: 'Supertonic 3 INT8 Türkçe',
+  modelType: 'supertonic',
+  language: 'tr',
+  license: 'OpenRAIL-M',
 };
 
 export function normalizeTtsEngine(value) {
