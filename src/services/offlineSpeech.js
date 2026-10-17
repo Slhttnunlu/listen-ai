@@ -3,6 +3,10 @@ import { OFFLINE_TTS_MODEL } from '../constants/tts';
 let enginePromise;
 let activeController;
 let progressTimers = new Set();
+let playbackSession = 0;
+
+const PLAYBACK_PROGRESS_INTERVAL_MS = 100;
+const PCM_DRAIN_PADDING_MS = 450;
 
 function wait(milliseconds) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
@@ -45,11 +49,11 @@ async function getEngine() {
 
 export async function speakOffline(text, options = {}) {
   await stopOfflineSpeaking();
+  const session = ++playbackSession;
   const engine = await getEngine();
   const sampleRate = await engine.getSampleRate();
+  const chunks = [];
   let sampleCount = 0;
-  const startedAt = Date.now();
-  await engine.startPcmPlayer(sampleRate, 1);
 
   try {
     const controller = await engine.generateSpeechStream(
@@ -59,39 +63,47 @@ export async function speakOffline(text, options = {}) {
         onChunk: (chunk) => {
           if (chunk.samples?.length) {
             sampleCount += chunk.samples.length;
-            engine.writePcmChunk(chunk.samples).catch(options.onError);
-            if (typeof chunk.progress === 'number') {
-              const scheduledAt = Math.max(
-                0,
-                (sampleCount / sampleRate) * 1000 - (Date.now() - startedAt)
-              );
-              const timer = setTimeout(() => {
-                progressTimers.delete(timer);
-                options.onProgress?.(chunk.progress);
-              }, scheduledAt);
-              progressTimers.add(timer);
-            }
+            chunks.push(chunk.samples);
           }
         },
         onEnd: async ({ cancelled } = {}) => {
           activeController = undefined;
-          const generatedAudioDurationMs = (sampleCount / sampleRate) * 1000;
-          const elapsedMs = Date.now() - startedAt;
-
-          // Stream generation can finish much faster than the generated audio plays.
-          // Keep the PCM player alive until its queued audio has had time to drain.
-          if (!cancelled && sampleCount > 0) {
-            await wait(Math.max(0, generatedAudioDurationMs - elapsedMs));
+          if (cancelled || session !== playbackSession) {
+            options.onStopped?.();
+            return;
           }
-          await engine.stopPcmPlayer().catch(() => undefined);
-          clearProgressTimers();
-          if (cancelled) options.onStopped?.();
-          else if (!sampleCount)
+          if (!sampleCount) {
             options.onError?.(new Error('Offline model did not produce audio.'));
-          else options.onDone?.();
+            return;
+          }
+
+          const audioDurationMs = (sampleCount / sampleRate) * 1000;
+          await engine.startPcmPlayer(sampleRate, 1);
+          const playbackStartedAt = Date.now();
+          for (const samples of chunks) {
+            if (session !== playbackSession) return;
+            await engine.writePcmChunk(samples);
+          }
+
+          const progressTimer = setInterval(() => {
+            const elapsedMs = Date.now() - playbackStartedAt;
+            options.onProgress?.(Math.min(1, elapsedMs / audioDurationMs));
+          }, PLAYBACK_PROGRESS_INTERVAL_MS);
+          progressTimers.add(progressTimer);
+
+          const elapsedWhileQueueingMs = Date.now() - playbackStartedAt;
+          await wait(Math.max(0, audioDurationMs - elapsedWhileQueueingMs) + PCM_DRAIN_PADDING_MS);
+          if (session !== playbackSession) return;
+
+          clearProgressTimers();
+          options.onProgress?.(1);
+          await engine.stopPcmPlayer().catch(() => undefined);
+          options.onDone?.();
         },
         onError: async (error) => {
           activeController = undefined;
+          if (session !== playbackSession) return;
+          clearProgressTimers();
           await engine.stopPcmPlayer().catch(() => undefined);
           options.onError?.(error);
         },
@@ -106,6 +118,7 @@ export async function speakOffline(text, options = {}) {
 }
 
 export async function stopOfflineSpeaking() {
+  playbackSession += 1;
   clearProgressTimers();
   const controller = activeController;
   activeController = undefined;

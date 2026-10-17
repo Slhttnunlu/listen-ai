@@ -32,9 +32,15 @@ describe('offline speech provider', () => {
 
   test('creates a streaming engine and forwards PCM chunks to native playback', async () => {
     const { speakOffline } = require('../services/offlineSpeech');
+    const onDone = jest.fn();
+    const onProgress = jest.fn();
+    jest.useFakeTimers();
 
-    await speakOffline('Merhaba dünya', { rate: 1.25 });
+    await speakOffline('Merhaba dünya', { rate: 1.25, onDone, onProgress });
     await mockStreamHandlers.onChunk({ samples: [0.1, 0.2] });
+    const completion = mockStreamHandlers.onEnd({ cancelled: false });
+    await jest.runAllTimersAsync();
+    await completion;
 
     expect(mockCreateStreamingTTS).toHaveBeenCalledWith(
       expect.objectContaining({ modelType: 'vits', numThreads: 2, provider: 'cpu' })
@@ -46,6 +52,9 @@ describe('offline speech provider', () => {
       expect.any(Object)
     );
     expect(mockEngine.writePcmChunk).toHaveBeenCalledWith([0.1, 0.2]);
+    expect(onProgress).toHaveBeenLastCalledWith(1);
+    expect(onDone).toHaveBeenCalledTimes(1);
+    jest.useRealTimers();
   });
 
   test('reports an error instead of completing silently when no audio is generated', async () => {

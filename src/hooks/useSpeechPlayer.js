@@ -75,9 +75,14 @@ export function useSpeechPlayer({
         onBoundary: ({ charIndex = 0, charLength = 0 }) => {
           if (session !== sessionRef.current) return;
           const wordStart = start + charIndex;
-          indexRef.current = wordStart;
-          setActiveRange({ start: wordStart, end: wordStart + charLength });
-          persistProgress(wordStart, false);
+          const range =
+            charLength > 0
+              ? { start: wordStart, end: wordStart + charLength }
+              : getWordRangeAt(text, wordStart);
+          if (!range) return;
+          indexRef.current = range.start;
+          setActiveRange({ start: range.start, end: range.end });
+          persistProgress(range.start, false);
         },
         onProgress: (progress) => {
           if (session !== sessionRef.current) return;

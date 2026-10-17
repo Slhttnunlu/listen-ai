@@ -41,6 +41,20 @@ describe('useSpeechPlayer error recovery', () => {
     );
   });
 
+  test('uses the full current word when a system voice omits boundary length', async () => {
+    let speechOptions;
+    speakWithEngine.mockImplementation((_engine, _text, options) => {
+      speechOptions = options;
+    });
+    const { result } = renderHook(() => useSpeechPlayer({ text: 'Bir test metni' }));
+    await act(async () => Promise.resolve());
+
+    act(() => result.current.play());
+    act(() => speechOptions.onBoundary({ charIndex: 4, charLength: 0 }));
+
+    expect(result.current.activeRange).toEqual({ start: 4, end: 8 });
+  });
+
   test('returns to a stopped state when speech cannot start', async () => {
     const onError = jest.fn();
     speakWithEngine.mockRejectedValue(new Error('speech unavailable'));
