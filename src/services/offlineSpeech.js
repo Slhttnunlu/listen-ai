@@ -2,9 +2,15 @@ import { OFFLINE_TTS_MODEL } from '../constants/tts';
 
 let enginePromise;
 let activeController;
+let progressTimers = new Set();
 
 function wait(milliseconds) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
+function clearProgressTimers() {
+  progressTimers.forEach(clearTimeout);
+  progressTimers = new Set();
 }
 
 function loadSherpaModules() {
@@ -54,6 +60,17 @@ export async function speakOffline(text, options = {}) {
           if (chunk.samples?.length) {
             sampleCount += chunk.samples.length;
             engine.writePcmChunk(chunk.samples).catch(options.onError);
+            if (typeof chunk.progress === 'number') {
+              const scheduledAt = Math.max(
+                0,
+                (sampleCount / sampleRate) * 1000 - (Date.now() - startedAt)
+              );
+              const timer = setTimeout(() => {
+                progressTimers.delete(timer);
+                options.onProgress?.(chunk.progress);
+              }, scheduledAt);
+              progressTimers.add(timer);
+            }
           }
         },
         onEnd: async ({ cancelled } = {}) => {
@@ -67,6 +84,7 @@ export async function speakOffline(text, options = {}) {
             await wait(Math.max(0, generatedAudioDurationMs - elapsedMs));
           }
           await engine.stopPcmPlayer().catch(() => undefined);
+          clearProgressTimers();
           if (cancelled) options.onStopped?.();
           else if (!sampleCount)
             options.onError?.(new Error('Offline model did not produce audio.'));
@@ -88,6 +106,7 @@ export async function speakOffline(text, options = {}) {
 }
 
 export async function stopOfflineSpeaking() {
+  clearProgressTimers();
   const controller = activeController;
   activeController = undefined;
   if (controller) await controller.cancel().catch(() => undefined);

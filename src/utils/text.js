@@ -35,6 +35,18 @@ export function splitTextWithRanges(text) {
   });
 }
 
+export function getWordRangeAt(text, index) {
+  const parts = splitTextWithRanges(text);
+  const safeIndex = clampSpeechIndex(index, text.length);
+  const words = parts.filter(({ part }) => part.trim().length > 0);
+  return (
+    words.find(({ start, end }) => safeIndex >= start && safeIndex < end) ||
+    words.find(({ start }) => start >= safeIndex) ||
+    words.at(-1) ||
+    null
+  );
+}
+
 export function rangesOverlap(first, second) {
   return Boolean(first && second && first.start < second.end && first.end > second.start);
 }

@@ -62,6 +62,22 @@ describe('useSpeechPlayer error recovery', () => {
     );
   });
 
+  test('maps offline stream progress to the currently read word', async () => {
+    let speechOptions;
+    speakWithEngine.mockImplementation((_engine, _text, options) => {
+      speechOptions = options;
+    });
+    const { result } = renderHook(() =>
+      useSpeechPlayer({ text: 'Bir iki üç', ttsEngine: 'offline-model' })
+    );
+    await act(async () => Promise.resolve());
+
+    act(() => result.current.play());
+    act(() => speechOptions.onProgress(0.5));
+
+    expect(result.current.activeRange).toEqual({ start: 4, end: 7 });
+  });
+
   test('falls back to device speech when the offline engine cannot start', async () => {
     const onError = jest.fn();
     const onEngineFallback = jest.fn();

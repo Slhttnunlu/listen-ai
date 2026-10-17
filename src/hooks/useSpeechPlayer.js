@@ -6,7 +6,7 @@ import {
   speakWithEngine,
   stopSpeaking,
 } from '../services/speech';
-import { clampSpeechIndex, getNextRate } from '../utils/text';
+import { clampSpeechIndex, getNextRate, getWordRangeAt } from '../utils/text';
 
 export function useSpeechPlayer({
   text,
@@ -79,11 +79,22 @@ export function useSpeechPlayer({
           setActiveRange({ start: wordStart, end: wordStart + charLength });
           persistProgress(wordStart, false);
         },
+        onProgress: (progress) => {
+          if (session !== sessionRef.current) return;
+          const position =
+            start + Math.round((text.length - start) * Math.min(1, Math.max(0, progress)));
+          const range = getWordRangeAt(text, position);
+          if (!range) return;
+          indexRef.current = range.start;
+          setActiveRange({ start: range.start, end: range.end });
+          persistProgress(range.start, progress >= 1);
+        },
         onDone: () => {
           if (session !== sessionRef.current) return;
           setPlaying(false);
-          setActiveRange(null);
-          indexRef.current = 0;
+          const finalRange = getWordRangeAt(text, text.length);
+          setActiveRange(finalRange ? { start: finalRange.start, end: finalRange.end } : null);
+          indexRef.current = text.length;
           persistProgress(0, true);
         },
         onStopped: () => {

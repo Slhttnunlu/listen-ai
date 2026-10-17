@@ -3,6 +3,7 @@ import {
   createTitle,
   getNextRate,
   getProgressPercent,
+  getWordRangeAt,
   rangesOverlap,
   splitTextWithRanges,
 } from '../utils/text';
@@ -38,5 +39,10 @@ describe('text utilities', () => {
       { part: 'dünya', start: 8, end: 13 },
     ]);
     expect(rangesOverlap(ranges[2], { start: 8, end: 13 })).toBe(true);
+  });
+
+  test('finds the readable word at a character position', () => {
+    expect(getWordRangeAt('Bir iki üç', 5)).toEqual({ part: 'iki', start: 4, end: 7 });
+    expect(getWordRangeAt('Bir iki üç', 10)).toEqual({ part: 'üç', start: 8, end: 10 });
   });
 });
