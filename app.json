@@ -15,7 +15,13 @@
     "ios": {
       "bundleIdentifier": "com.slhttnunlu.listenai",
       "buildNumber": "1",
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocalNetworkUsageDescription": "Geliştirme sırasında Mac üzerindeki yerel ses servisine bağlanmak için yerel ağ erişimi kullanılır.",
+        "NSAppTransportSecurity": {
+          "NSAllowsLocalNetworking": true
+        }
+      }
     },
     "android": {
       "package": "com.slhttnunlu.listenai",
@@ -39,7 +45,7 @@
       "expo-sqlite",
       "expo-sharing",
       "./plugins/withIosSceneLifecycle",
-      "./plugins/withOfflineTtsAssets"
+      "expo-audio"
     ]
   }
 }

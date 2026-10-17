@@ -1,6 +1,6 @@
 import * as Speech from 'expo-speech';
 import { TTS_ENGINES } from '../constants/tts';
-import { destroyOfflineSpeech, speakOffline, stopOfflineSpeaking } from './offlineSpeech';
+import { pauseLocalTts, resumeLocalTts, speakWithLocalTts, stopLocalTts } from './localTtsSpeech';
 
 export async function getPreferredVoices() {
   const voices = await Speech.getAvailableVoicesAsync();
@@ -14,15 +14,26 @@ export function speak(text, options) {
 
 export function stopSpeaking() {
   Speech.stop();
-  return stopOfflineSpeaking();
+  return stopLocalTts();
 }
 
 export async function speakWithEngine(engine, text, options) {
-  if (engine === TTS_ENGINES.offline) return speakOffline(text, options);
+  if (engine === TTS_ENGINES.localApi) return speakWithLocalTts(text, options);
   return speak(text, options);
+}
+
+export function pauseSpeaking(engine) {
+  if (engine === TTS_ENGINES.localApi) return pauseLocalTts();
+  return stopSpeaking();
+}
+
+export function resumeSpeaking(engine) {
+  if (engine !== TTS_ENGINES.localApi) return false;
+  resumeLocalTts();
+  return true;
 }
 
 export function destroySpeechEngines() {
   Speech.stop();
-  return destroyOfflineSpeech();
+  return stopLocalTts();
 }

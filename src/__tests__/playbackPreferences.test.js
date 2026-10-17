@@ -24,7 +24,7 @@ describe('usePlaybackPreferences', () => {
 
     expect(result.current.preferredRate).toBe(1.25);
     expect(result.current.preferredVoiceId).toBe('tr-two');
-    expect(result.current.ttsEngine).toBe('offline-model');
+    expect(result.current.ttsEngine).toBe('device');
 
     await act(async () => {
       await result.current.saveRate(1.5);

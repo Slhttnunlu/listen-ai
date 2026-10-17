@@ -5,8 +5,8 @@ import { styles } from '../styles';
 export function SettingsScreen({
   rate,
   ttsEngine = TTS_ENGINES.device,
-  offlineTtsEnabled = false,
-  offlineTtsName = 'Supertonic 3 INT8 Türkçe',
+  localTtsEnabled = false,
+  localTtsName = 'Mac yerel AI sesi',
   voice,
   voiceCount = 0,
   onChangeRate,
@@ -23,9 +23,9 @@ export function SettingsScreen({
     <ScrollView style={styles.white} contentContainerStyle={styles.settings}>
       <Text style={styles.libTitle}>Ayarlar</Text>
       <Text style={styles.intro}>Dinleme deneyiminizi kişiselleştirin.</Text>
-      {offlineTtsEnabled ? (
+      {localTtsEnabled ? (
         <Pressable
-          accessibilityHint="Cihaz sistemi ve deneysel offline model arasında geçiş yapar"
+          accessibilityHint="Cihaz sistemi ve Mac yerel AI sesi arasında geçiş yapar"
           accessibilityRole="button"
           onPress={onChangeTtsEngine}
           style={styles.setting}
@@ -33,14 +33,14 @@ export function SettingsScreen({
         >
           <Text style={styles.settingText}>Ses motoru</Text>
           <Text style={styles.settingStatus} numberOfLines={1}>
-            {ttsEngine === TTS_ENGINES.offline ? offlineTtsName : 'Cihazın sistem sesi'}
+            {ttsEngine === TTS_ENGINES.localApi ? localTtsName : 'Cihazın sistem sesi'}
           </Text>
         </Pressable>
       ) : null}
       <Pressable
         accessibilityHint={voiceCount > 1 ? 'Sonraki kullanılabilir sesi seçer' : undefined}
         accessibilityRole="button"
-        disabled={voiceCount < 2 || ttsEngine === TTS_ENGINES.offline}
+        disabled={voiceCount < 2 || ttsEngine === TTS_ENGINES.localApi}
         onPress={onChangeVoice}
         style={styles.setting}
         testID="voice-setting"

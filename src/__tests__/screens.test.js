@@ -134,16 +134,16 @@ describe('screen interactions', () => {
     expect(onChangeRate).toHaveBeenCalledTimes(1);
   });
 
-  test('switches between device and experimental offline TTS engines', () => {
+  test('switches between device and the Mac local TTS service', () => {
     const onChangeTtsEngine = jest.fn();
     const screen = render(
       <SettingsScreen
-        offlineTtsEnabled
-        ttsEngine="offline-model"
+        localTtsEnabled
+        ttsEngine="mac-local-api"
         onChangeTtsEngine={onChangeTtsEngine}
       />
     );
-    expect(screen.getByText('Supertonic 3 INT8 Türkçe')).toBeTruthy();
+    expect(screen.getByText('Mac yerel AI sesi')).toBeTruthy();
     fireEvent.press(screen.getByTestId('tts-engine-setting'));
     expect(onChangeTtsEngine).toHaveBeenCalledTimes(1);
   });

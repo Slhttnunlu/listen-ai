@@ -79,9 +79,10 @@ Dört yaklaşım aynı Türkçe test metinleriyle; ses doğallığı, telaffuz, 
 
 ### 7.2 MacBook Pro üzerinde hafif açık kaynak TTS servisi — POC
 
-- [ ] Türkçe destekli hafif motor ve ses modelini lisanslarıyla seç; ilk aday olarak Piper ve uygun Türkçe sesi değerlendir
-- [ ] Motoru MacBook Pro'da yalnızca yerel geliştirme ağına açık bir servis olarak çalıştır
-- [ ] Mobil uygulamada sağlayıcıdan bağımsız TTS istemcisi oluştur ve geliştirme ortamında bu servise istek gönder
+- [x] Türkçe destekli motoru seç: MacBook Pro POC'sinde MIT lisanslı Chatterbox Multilingual V3 kullan
+- [x] Chatterbox Multilingual V3'ü Apple Silicon/MPS üzerinde kur ve sabit Türkçe test metniyle doğrudan ses üret
+- [x] Motoru MacBook Pro'da yalnızca yerel geliştirme ağına açık bir servis olarak çalıştır
+- [x] Mobil uygulamada sağlayıcıdan bağımsız TTS istemcisi oluştur ve geliştirme ortamında bu servise istek gönder
 - [ ] Uzun metni güvenli parçalara ayır; WAV/MP3 üretme, indirme, önbellek ve hata/fallback akışını ekle
 - [ ] Cihaz TTS'i ile doğallık, Türkçe telaffuz, ilk ses gecikmesi ve üretim süresini karşılaştır
 - [ ] Servisi internete veya production'a açmadan önce kimlik doğrulama, TLS, kota ve lisans incelemesi yap
@@ -107,16 +108,14 @@ Dört yaklaşım aynı Türkçe test metinleriyle; ses doğallığı, telaffuz, 
 - [x] Sherpa-ONNX streaming PCM ile tamamen cihaz içinde çalışan metin → ses prototipini geliştir
 - [x] Piper/DFKI POC ses kalitesini reddet ve modeli uygulama paketinden kaldır
 - [x] Türkçe destekli Supertonic 3 INT8 modelini OpenRAIL-M lisansıyla ikinci cihaz içi POC olarak paketle
-- [ ] Supertonic 3 INT8 Türkçe ses kalitesi, başlangıç gecikmesi ve uzun metin kararlılığını gerçek cihazda kabul et
-- [ ] Orta sınıf gerçek cihazlarda ilk ses gecikmesi, gerçek zaman katsayısı, RAM, CPU, pil ve ısınmayı ölç
+- [x] Supertonic 3 INT8 Türkçe ses kalitesini reddet; cihaz içi model yaklaşımını production adayı olmaktan çıkar
+- [x] Cihaz içi model kaynak ölçümünü iptal et; kabul edilmeyen ses kalitesi nedeniyle ek geliştirme eforu harcama
 - [x] Ayarlardan cihaz/offline motor seçimi, build-time görünürlük bayrağı ve hata halinde cihaz TTS'ine güvenli fallback ekle
-- [ ] Production modelini uygulamadan indirilebilir/kaldırılabilir yap ve depolama kontrollerini tamamla
-
-POC uygulama ve doğrulama notları: [`docs/ON_DEVICE_TTS_POC.md`](docs/ON_DEVICE_TTS_POC.md)
+- [x] Supertonic modelini, Sherpa-ONNX bağımlılığını ve deneysel ayarı mobil paketten kaldır
 
 **Rol:** Sunucu ve kullanım maliyeti olmadan daha tutarlı ses hedefi; yalnızca mobil performans ve lisans sonuçları kabul sınırlarını geçerse production adayı olacak.
 
-Supertonic kabul testinden sonraki deney, API anahtarı yalnızca backend'de tutulan OpenAI benzeri bulut TTS sağlayıcılarıdır; mobil istemciye sağlayıcı anahtarı eklenmez.
+Cihaz içi model deneyi ses kalitesi nedeniyle sonlandırıldı. Offline/fallback motoru işletim sisteminin TTS'idir. Sıradaki deneyler önce geliştirme ağındaki MacBook Pro Chatterbox servisi, ardından anahtarları yalnızca backend'de tutulan OpenAI, Gemini ve ElevenLabs sağlayıcılarıdır.
 
 ### 7.5 Karar kapısı
 

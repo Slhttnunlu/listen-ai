@@ -3,9 +3,9 @@ const expoConfig = require('eslint-config-expo/flat');
 const globals = require('globals');
 
 module.exports = defineConfig([
+  { ignores: ['dist/**', 'ios/**', 'local-tts-server/**', 'node_modules/**'] },
   ...expoConfig,
   {
-    ignores: ['dist/**', 'ios/**', 'node_modules/**'],
     rules: {
       'react-hooks/exhaustive-deps': 'error',
       'no-console': ['warn', { allow: ['warn', 'error'] }],

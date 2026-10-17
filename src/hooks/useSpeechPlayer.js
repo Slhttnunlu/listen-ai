@@ -3,6 +3,8 @@ import { TTS_ENGINES } from '../constants/tts';
 import {
   destroySpeechEngines,
   getPreferredVoices,
+  pauseSpeaking,
+  resumeSpeaking,
   speakWithEngine,
   stopSpeaking,
 } from '../services/speech';
@@ -121,21 +123,21 @@ export function useSpeechPlayer({
         fallbackStarted = true;
         onEngineFallback?.(TTS_ENGINES.device);
         onError?.(
-          'Offline ses modeli kullanılamadı. Bu dinleme cihazın sistem sesiyle devam edecek.'
+          'Mac yerel ses servisine ulaşılamadı. Bu dinleme cihazın sistem sesiyle devam edecek.'
         );
         Promise.resolve(
           speakWithEngine(TTS_ENGINES.device, text.slice(start), speechOptions)
         ).catch(() => speechOptions.onError());
       };
       const selectedEngineOptions =
-        ttsEngine === TTS_ENGINES.offline
+        ttsEngine === TTS_ENGINES.localApi
           ? { ...speechOptions, onError: fallbackToDevice }
           : speechOptions;
 
       Promise.resolve(speakWithEngine(ttsEngine, text.slice(start), selectedEngineOptions)).catch(
         () => {
           if (session !== sessionRef.current) return;
-          if (ttsEngine === TTS_ENGINES.offline) {
+          if (ttsEngine === TTS_ENGINES.localApi) {
             fallbackToDevice();
             return;
           }
@@ -155,15 +157,19 @@ export function useSpeechPlayer({
   }, []);
 
   const pause = useCallback(() => {
-    sessionRef.current += 1;
-    stopSpeaking();
+    if (ttsEngine !== TTS_ENGINES.localApi) sessionRef.current += 1;
+    pauseSpeaking(ttsEngine);
     setPlaying(false);
-  }, []);
+  }, [ttsEngine]);
 
   const resume = useCallback(() => {
+    if (resumeSpeaking(ttsEngine)) {
+      setPlaying(true);
+      return true;
+    }
     const resumeIndex = indexRef.current >= text.length ? 0 : indexRef.current;
     return play(rate, resumeIndex, itemId);
-  }, [itemId, play, rate, text.length]);
+  }, [itemId, play, rate, text.length, ttsEngine]);
 
   const changeRate = useCallback(() => {
     const nextRate = getNextRate(rate);

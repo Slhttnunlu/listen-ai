@@ -1,16 +1,16 @@
 import {
   DEFAULT_TTS_ENGINE,
   getNextTtsEngine,
+  LOCAL_TTS_ENABLED,
+  LOCAL_TTS_NAME,
   normalizeTtsEngine,
-  OFFLINE_TTS_MODEL,
   TTS_ENGINES,
 } from '../constants/tts';
 
 describe('TTS engine configuration', () => {
-  test('configures the embedded Supertonic model for Turkish', () => {
-    expect(OFFLINE_TTS_MODEL).toEqual(
-      expect.objectContaining({ modelType: 'supertonic', language: 'tr' })
-    );
+  test('keeps the Mac provider disabled without a development URL', () => {
+    expect(LOCAL_TTS_ENABLED).toBe(false);
+    expect(LOCAL_TTS_NAME).toBe('Mac yerel AI sesi');
   });
 
   test('keeps device TTS as the safe default', () => {
@@ -18,8 +18,8 @@ describe('TTS engine configuration', () => {
     expect(normalizeTtsEngine('unknown')).toBe(TTS_ENGINES.device);
   });
 
-  test('cycles between device and offline engines', () => {
-    expect(getNextTtsEngine(TTS_ENGINES.device)).toBe(TTS_ENGINES.offline);
-    expect(getNextTtsEngine(TTS_ENGINES.offline)).toBe(TTS_ENGINES.device);
+  test('does not select a development provider when it is not configured', () => {
+    expect(getNextTtsEngine(TTS_ENGINES.device)).toBe(TTS_ENGINES.device);
+    expect(normalizeTtsEngine(TTS_ENGINES.localApi)).toBe(TTS_ENGINES.device);
   });
 });

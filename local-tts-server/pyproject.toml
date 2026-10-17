@@ -1,0 +1,21 @@
+[project]
+name = "listen-ai-local-tts"
+version = "0.1.0"
+description = "Local-only Chatterbox TTS provider for Listen AI development"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+  "chatterbox-tts @ git+https://github.com/resemble-ai/chatterbox.git@5de7a54aa4e5e2baadb0182dde554908b48b85c2",
+  "fastapi==0.119.0",
+  "soundfile==0.13.1",
+  "uvicorn[standard]==0.37.0",
+]
+
+[dependency-groups]
+dev = [
+  "httpx==0.28.1",
+  "pytest==8.4.2",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

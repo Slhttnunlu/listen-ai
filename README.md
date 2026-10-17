@@ -11,7 +11,7 @@ npm run start -- --clear
 
 Expo Go SDK 57 ile uyumludur. Daha önce açık bir Expo sunucusu varsa önce `Ctrl+C` ile kapatın; ardından yukarıdaki komutla önbelleği temizleyerek yeniden başlatın. Expo Go ile ekrandaki QR kodu okutun veya iOS/Android simülatörü açın.
 
-Deneysel Sherpa-ONNX offline Türkçe motoru native modül kullandığı için Expo Go'da çalışmaz; development build gerekir. Ayarlardan cihaz sesi/offline model seçilebilir. Kurulum, kapatma bayrağı, lisans ve bilinen sınırlar [`docs/ON_DEVICE_TTS_POC.md`](docs/ON_DEVICE_TTS_POC.md) içinde açıklanır.
+Çevrimdışı kullanımda cihazın sistem TTS'i kullanılır. Geliştirme ortamında MacBook üzerinde çalışan Chatterbox servisi [`local-tts-server/README.md`](local-tts-server/README.md) adımlarıyla isteğe bağlı olarak kullanılabilir.
 
 ## iOS Simulator UI testleri
 

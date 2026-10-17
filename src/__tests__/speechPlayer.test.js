@@ -4,6 +4,8 @@ import { getPreferredVoices, speakWithEngine } from '../services/speech';
 
 jest.mock('../services/speech', () => ({
   getPreferredVoices: jest.fn(() => Promise.resolve([])),
+  pauseSpeaking: jest.fn(),
+  resumeSpeaking: jest.fn(() => false),
   speakWithEngine: jest.fn(),
   stopSpeaking: jest.fn(),
   destroySpeechEngines: jest.fn(),
@@ -76,22 +78,6 @@ describe('useSpeechPlayer error recovery', () => {
     );
   });
 
-  test('maps offline stream progress to the currently read word', async () => {
-    let speechOptions;
-    speakWithEngine.mockImplementation((_engine, _text, options) => {
-      speechOptions = options;
-    });
-    const { result } = renderHook(() =>
-      useSpeechPlayer({ text: 'Bir iki üç', ttsEngine: 'offline-model' })
-    );
-    await act(async () => Promise.resolve());
-
-    act(() => result.current.play());
-    act(() => speechOptions.onProgress(0.5));
-
-    expect(result.current.activeRange).toEqual({ start: 4, end: 7 });
-  });
-
   test('pauses without losing position and resumes from the current word', async () => {
     let speechOptions;
     speakWithEngine.mockImplementation((_engine, _text, options) => {
@@ -112,7 +98,7 @@ describe('useSpeechPlayer error recovery', () => {
     expect(result.current.playing).toBe(true);
   });
 
-  test('falls back to device speech when the offline engine cannot start', async () => {
+  test('falls back to device speech when the Mac service cannot start', async () => {
     const onError = jest.fn();
     const onEngineFallback = jest.fn();
     speakWithEngine
@@ -120,8 +106,8 @@ describe('useSpeechPlayer error recovery', () => {
       .mockResolvedValueOnce(undefined);
     const { result } = renderHook(() =>
       useSpeechPlayer({
-        text: 'Offline model testi',
-        ttsEngine: 'offline-model',
+        text: 'Mac servis testi',
+        ttsEngine: 'mac-local-api',
         onError,
         onEngineFallback,
       })
@@ -135,32 +121,32 @@ describe('useSpeechPlayer error recovery', () => {
     expect(speakWithEngine).toHaveBeenNthCalledWith(
       2,
       'device',
-      'Offline model testi',
+      'Mac servis testi',
       expect.any(Object)
     );
     expect(onError).toHaveBeenCalledWith(
-      'Offline ses modeli kullanılamadı. Bu dinleme cihazın sistem sesiyle devam edecek.'
+      'Mac yerel ses servisine ulaşılamadı. Bu dinleme cihazın sistem sesiyle devam edecek.'
     );
   });
 
-  test('falls back once when the offline engine reports a streaming error', async () => {
+  test('falls back once when the Mac service reports a playback error', async () => {
     const onEngineFallback = jest.fn();
-    let offlineOptions;
+    let localOptions;
     speakWithEngine.mockImplementation((engine, _text, options) => {
-      if (engine === 'offline-model') offlineOptions = options;
+      if (engine === 'mac-local-api') localOptions = options;
       return Promise.resolve();
     });
     const { result } = renderHook(() =>
       useSpeechPlayer({
         text: 'Akış hatası testi',
-        ttsEngine: 'offline-model',
+        ttsEngine: 'mac-local-api',
         onEngineFallback,
       })
     );
     await act(async () => Promise.resolve());
 
     act(() => result.current.play());
-    await act(async () => offlineOptions.onError(new Error('pcm stream failed')));
+    await act(async () => localOptions.onError(new Error('audio playback failed')));
 
     expect(onEngineFallback).toHaveBeenCalledTimes(1);
     expect(speakWithEngine).toHaveBeenNthCalledWith(

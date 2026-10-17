@@ -5,6 +5,12 @@ node_modules/
 ios/
 dist/
 *.log
+.venv/
+.python-version
+local-tts-server/.cache/
+local-tts-server/output/
+local-tts-server/.pytest_cache/
+**/__pycache__/
 .env
 .env.*
 !.env.example

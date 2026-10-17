@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react';
 import { Alert, Linking } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { AppErrorBoundary } from './src/components/AppErrorBoundary';
-import { getNextTtsEngine, OFFLINE_TTS_MODEL, ON_DEVICE_TTS_ENABLED } from './src/constants/tts';
+import { getNextTtsEngine, LOCAL_TTS_ENABLED, LOCAL_TTS_NAME } from './src/constants/tts';
 import { useLibrary } from './src/hooks/useLibrary';
 import { usePlaybackPreferences } from './src/hooks/usePlaybackPreferences';
 import { useSpeechPlayer } from './src/hooks/useSpeechPlayer';
@@ -338,8 +338,8 @@ export function AppContent() {
           <SettingsScreen
             rate={rate}
             ttsEngine={ttsEngine}
-            offlineTtsEnabled={ON_DEVICE_TTS_ENABLED}
-            offlineTtsName={OFFLINE_TTS_MODEL.displayName}
+            localTtsEnabled={LOCAL_TTS_ENABLED}
+            localTtsName={LOCAL_TTS_NAME}
             voice={voices.find((item) => item.identifier === voiceId)}
             voiceCount={voices.length}
             onChangeRate={selectNextDefaultRate}

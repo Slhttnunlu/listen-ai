@@ -3,4 +3,7 @@ node_modules/
 dist/
 ios/
 assets/models/
+local-tts-server/.pytest_cache/
+local-tts-server/.venv/
+local-tts-server/uv.lock
 package-lock.json
