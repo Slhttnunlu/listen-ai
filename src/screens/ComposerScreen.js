@@ -18,8 +18,8 @@ export function ComposerScreen({
   playing,
   playerOpen,
   activeRange,
-  onStop,
-  onReplay,
+  onPause,
+  onResume,
   onSaveAndPlay,
   onChangeRate,
   onBack,
@@ -37,8 +37,8 @@ export function ComposerScreen({
         activeRange={activeRange}
         rate={rate}
         playing={playing}
-        onStop={onStop}
-        onReplay={onReplay}
+        onPause={onPause}
+        onResume={onResume}
         onChangeRate={onChangeRate}
         onBack={onBack}
       />

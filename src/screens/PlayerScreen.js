@@ -9,8 +9,8 @@ export function PlayerScreen({
   activeRange,
   rate,
   playing,
-  onStop,
-  onReplay,
+  onPause,
+  onResume,
   onChangeRate,
   onBack,
 }) {
@@ -56,13 +56,13 @@ export function PlayerScreen({
           <Text style={styles.avatar}>◉</Text>
           <Text style={styles.skip}>↶₁₀</Text>
           <Pressable
-            accessibilityLabel={playing ? 'Dinlemeyi durdur' : 'Baştan dinle'}
+            accessibilityLabel={playing ? 'Dinlemeyi duraklat' : 'Dinlemeye devam et'}
             accessibilityRole="button"
-            testID={playing ? 'stop-button' : 'replay-button'}
-            onPress={playing ? onStop : onReplay}
+            testID={playing ? 'pause-button' : 'resume-button'}
+            onPress={playing ? onPause : onResume}
             style={styles.mainStop}
           >
-            <Text style={styles.mainStopText}>{playing ? '■' : '▶'}</Text>
+            <Text style={styles.mainStopText}>{playing ? '❚❚' : '▶'}</Text>
           </Pressable>
           <Text style={styles.skip}>↷₁₀</Text>
           <Pressable

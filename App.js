@@ -58,9 +58,11 @@ export function AppContent() {
   const {
     activeRange,
     changeRate,
+    pause,
     play,
     playing,
     rate,
+    resume,
     selectRate,
     selectVoice,
     stop,
@@ -219,10 +221,6 @@ export function AppContent() {
     if (navigationRef.canGoBack()) navigationRef.goBack();
   }, [stop]);
 
-  const replay = useCallback(() => {
-    if (play(rate, 0, currentItem?.id)) setPlayerOpen(true);
-  }, [currentItem?.id, play, rate]);
-
   const handleComposerBlur = useCallback(() => {
     stop();
     setPlayerOpen(false);
@@ -363,8 +361,8 @@ export function AppContent() {
             playing={playing}
             playerOpen={playerOpen}
             activeRange={activeRange}
-            onStop={stop}
-            onReplay={replay}
+            onPause={pause}
+            onResume={resume}
             onSaveAndPlay={saveAndPlay}
             onChangeRate={changeRate}
             onBack={closeComposer}

@@ -92,6 +92,26 @@ describe('useSpeechPlayer error recovery', () => {
     expect(result.current.activeRange).toEqual({ start: 4, end: 7 });
   });
 
+  test('pauses without losing position and resumes from the current word', async () => {
+    let speechOptions;
+    speakWithEngine.mockImplementation((_engine, _text, options) => {
+      speechOptions = options;
+    });
+    const { result } = renderHook(() => useSpeechPlayer({ text: 'Bir test metni' }));
+    await act(async () => Promise.resolve());
+
+    act(() => result.current.play());
+    act(() => speechOptions.onBoundary({ charIndex: 4, charLength: 4 }));
+    act(() => result.current.pause());
+
+    expect(result.current.playing).toBe(false);
+    expect(result.current.activeRange).toEqual({ start: 4, end: 8 });
+
+    act(() => result.current.resume());
+    expect(speakWithEngine).toHaveBeenLastCalledWith('device', 'test metni', expect.any(Object));
+    expect(result.current.playing).toBe(true);
+  });
+
   test('falls back to device speech when the offline engine cannot start', async () => {
     const onError = jest.fn();
     const onEngineFallback = jest.fn();

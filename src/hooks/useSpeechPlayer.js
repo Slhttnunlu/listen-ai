@@ -57,7 +57,7 @@ export function useSpeechPlayer({
       indexRef.current = start;
       stopSpeaking();
       setPlaying(true);
-      setActiveRange(null);
+      if (start === 0) setActiveRange(null);
       const persistProgress = (progressIndex, isCompleted) => {
         if (!onProgress) return;
         Promise.resolve()
@@ -154,6 +154,17 @@ export function useSpeechPlayer({
     setActiveRange(null);
   }, []);
 
+  const pause = useCallback(() => {
+    sessionRef.current += 1;
+    stopSpeaking();
+    setPlaying(false);
+  }, []);
+
+  const resume = useCallback(() => {
+    const resumeIndex = indexRef.current >= text.length ? 0 : indexRef.current;
+    return play(rate, resumeIndex, itemId);
+  }, [itemId, play, rate, text.length]);
+
   const changeRate = useCallback(() => {
     const nextRate = getNextRate(rate);
     onRateChange?.(nextRate);
@@ -177,9 +188,11 @@ export function useSpeechPlayer({
   return {
     activeRange,
     changeRate,
+    pause,
     play,
     playing,
     rate,
+    resume,
     selectRate,
     selectVoice,
     stop,
