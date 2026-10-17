@@ -16,8 +16,10 @@ export function ComposerScreen({
   setText,
   rate,
   playing,
+  playerOpen,
   activeRange,
   onStop,
+  onReplay,
   onSaveAndPlay,
   onChangeRate,
   onBack,
@@ -28,13 +30,15 @@ export function ComposerScreen({
     else Alert.alert('Pano boş', 'Yapıştırılacak bir metin bulunamadı.');
   };
 
-  if (playing) {
+  if (playerOpen) {
     return (
       <PlayerScreen
         text={text}
         activeRange={activeRange}
         rate={rate}
+        playing={playing}
         onStop={onStop}
+        onReplay={onReplay}
         onChangeRate={onChangeRate}
         onBack={onBack}
       />

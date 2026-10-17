@@ -77,6 +77,7 @@ describe('screen interactions', () => {
       <PlayerScreen
         text="Kısa test metni"
         rate={1}
+        playing
         onChangeRate={onChangeRate}
         onStop={onStop}
         onBack={jest.fn()}
@@ -86,6 +87,24 @@ describe('screen interactions', () => {
     fireEvent.press(screen.getByTestId('stop-button'));
     expect(onChangeRate).toHaveBeenCalledTimes(1);
     expect(onStop).toHaveBeenCalledTimes(1);
+  });
+
+  test('keeps the player open after playback and lets the user replay', () => {
+    const onReplay = jest.fn();
+    const screen = render(
+      <PlayerScreen
+        text="Kısa test metni"
+        rate={1}
+        playing={false}
+        onChangeRate={jest.fn()}
+        onReplay={onReplay}
+        onStop={jest.fn()}
+        onBack={jest.fn()}
+      />
+    );
+
+    fireEvent.press(screen.getByTestId('replay-button'));
+    expect(onReplay).toHaveBeenCalledTimes(1);
   });
 
   test('opens feedback from settings', () => {

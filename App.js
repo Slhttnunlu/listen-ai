@@ -32,6 +32,7 @@ export function AppContent() {
   const [text, setText] = useState(DEFAULT_TEXT);
   const [currentItem, setCurrentItem] = useState(null);
   const [sourceType, setSourceType] = useState('text');
+  const [playerOpen, setPlayerOpen] = useState(false);
 
   const showSpeechError = useCallback((message) => {
     Alert.alert('Seslendirme hatası', message);
@@ -96,6 +97,7 @@ export function AppContent() {
 
   const startNewText = useCallback(() => {
     stop();
+    setPlayerOpen(false);
     setCurrentItem(null);
     setSourceType('text');
     setText(DEFAULT_TEXT);
@@ -188,6 +190,7 @@ export function AppContent() {
   const openItem = useCallback(
     (item) => {
       stop();
+      setPlayerOpen(false);
       setText(item.content);
       setCurrentItem(item);
       setSourceType(item.source_type || 'text');
@@ -204,15 +207,26 @@ export function AppContent() {
     try {
       const item = currentItem || (await saveText(text, sourceType));
       setCurrentItem(item);
-      play(rate, item.progress_index || 0, item.id);
+      if (play(rate, item.progress_index || 0, item.id)) setPlayerOpen(true);
     } catch {
       Alert.alert('Kaydedilemedi', 'Metin yerel kütüphaneye kaydedilemedi.');
     }
   }, [currentItem, play, rate, saveText, sourceType, text]);
 
   const closeComposer = useCallback(() => {
+    stop();
+    setPlayerOpen(false);
     if (navigationRef.canGoBack()) navigationRef.goBack();
-  }, []);
+  }, [stop]);
+
+  const replay = useCallback(() => {
+    if (play(rate, 0, currentItem?.id)) setPlayerOpen(true);
+  }, [currentItem?.id, play, rate]);
+
+  const handleComposerBlur = useCallback(() => {
+    stop();
+    setPlayerOpen(false);
+  }, [stop]);
 
   const openFeedback = useCallback(async () => {
     try {
@@ -306,7 +320,7 @@ export function AppContent() {
       <StatusBar style="dark" />
       <AppNavigator
         navigationRef={navigationRef}
-        onComposerBlur={stop}
+        onComposerBlur={handleComposerBlur}
         home={<HomeScreen onFeature={useFeature} />}
         library={
           <LibraryScreen
@@ -347,8 +361,10 @@ export function AppContent() {
             setText={setText}
             rate={rate}
             playing={playing}
+            playerOpen={playerOpen}
             activeRange={activeRange}
             onStop={stop}
+            onReplay={replay}
             onSaveAndPlay={saveAndPlay}
             onChangeRate={changeRate}
             onBack={closeComposer}

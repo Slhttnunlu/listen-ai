@@ -4,7 +4,16 @@ import { ReadAlong } from '../components/ReadAlong';
 import { styles } from '../styles';
 import { getProgressPercent } from '../utils/text';
 
-export function PlayerScreen({ text, activeRange, rate, onStop, onChangeRate, onBack }) {
+export function PlayerScreen({
+  text,
+  activeRange,
+  rate,
+  playing,
+  onStop,
+  onReplay,
+  onChangeRate,
+  onBack,
+}) {
   const progress = getProgressPercent(activeRange, text.length);
   return (
     <View testID="player-screen" style={styles.playerPage}>
@@ -47,13 +56,13 @@ export function PlayerScreen({ text, activeRange, rate, onStop, onChangeRate, on
           <Text style={styles.avatar}>◉</Text>
           <Text style={styles.skip}>↶₁₀</Text>
           <Pressable
-            accessibilityLabel="Dinlemeyi durdur"
+            accessibilityLabel={playing ? 'Dinlemeyi durdur' : 'Baştan dinle'}
             accessibilityRole="button"
-            testID="stop-button"
-            onPress={onStop}
+            testID={playing ? 'stop-button' : 'replay-button'}
+            onPress={playing ? onStop : onReplay}
             style={styles.mainStop}
           >
-            <Text style={styles.mainStopText}>■</Text>
+            <Text style={styles.mainStopText}>{playing ? '■' : '▶'}</Text>
           </Pressable>
           <Text style={styles.skip}>↷₁₀</Text>
           <Pressable
