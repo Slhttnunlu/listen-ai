@@ -10,7 +10,7 @@ Bu POC, `react-native-sherpa-onnx` üzerinde Piper'ın `vits-piper-tr_TR-dfki-me
 2. Expo Go yerine `npm run ios` ile development build oluşturun.
 3. Uygulamada **Ayarlar → Ses motoru** satırına dokunarak `Cihazın sistem sesi` ve `Offline Türkçe (Deneysel)` arasında geçiş yapın.
 
-`expo-asset` config plugin'i `assets/models` dizinini native uygulamaya paketler. `ios/` yeniden üretildiğinde model kaynak ayarı bu nedenle kaybolmaz.
+Yerel `withOfflineTtsAssets` config plugin'i `assets/models` dizinini iOS uygulama paketindeki `models/` dizinine kopyalar. `ios/` yeniden üretildiğinde model kaynak ayarı bu nedenle kaybolmaz. `expo-asset` yalnızca desteklenen tekil varlık türlerini işler; çok dosyalı ONNX model klasörü için kullanılmaz.
 
 ## Devre dışı bırakma ve fallback
 

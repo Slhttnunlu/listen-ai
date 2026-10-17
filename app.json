@@ -27,12 +27,6 @@
     },
     "plugins": [
       [
-        "expo-asset",
-        {
-          "assets": ["./assets/models"]
-        }
-      ],
-      [
         "expo-image-picker",
         {
           "cameraPermission": "Metin taramak için kameranıza erişim izni gerekiyor.",
@@ -43,7 +37,9 @@
       "expo-document-picker",
       "expo-status-bar",
       "expo-sqlite",
-      "expo-sharing"
+      "expo-sharing",
+      "./plugins/withIosSceneLifecycle",
+      "./plugins/withOfflineTtsAssets"
     ]
   }
 }
