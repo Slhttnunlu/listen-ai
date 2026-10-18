@@ -14,9 +14,12 @@ function loadAudioModule() {
 function cleanupPlayer() {
   activeSubscription?.remove?.();
   activeSubscription = undefined;
-  activePlayer?.pause?.();
-  activePlayer?.release?.();
+  const player = activePlayer;
   activePlayer = undefined;
+  player?.clearLockScreenControls?.();
+  player?.pause?.();
+  if (player?.remove) player.remove();
+  else player?.release?.();
   if (activeFile?.exists) activeFile.delete();
   activeFile = undefined;
 }
@@ -49,12 +52,37 @@ export async function speakWithLocalTts(text, options = {}) {
     file.write(new Uint8Array(await response.arrayBuffer()));
     activeFile = file;
 
-    const { createAudioPlayer } = loadAudioModule();
-    const player = createAudioPlayer(file.uri, { updateInterval: 200 });
+    const { createAudioPlayer, setAudioModeAsync } = loadAudioModule();
+    await setAudioModeAsync({
+      playsInSilentMode: true,
+      shouldPlayInBackground: true,
+      interruptionMode: 'doNotMix',
+    });
+    if (request !== activeRequest) {
+      if (file.exists) file.delete();
+      return undefined;
+    }
+    const player = createAudioPlayer(file.uri, {
+      updateInterval: 200,
+      keepAudioSessionActive: true,
+    });
     activePlayer = player;
     player.setPlaybackRate(options.rate || 1, 'medium');
+    player.setActiveForLockScreen(
+      true,
+      {
+        title: options.title || text.trim().slice(0, 60) || 'Dinlenen metin',
+        artist: 'Listen AI',
+      },
+      { showSeekForward: false, showSeekBackward: false }
+    );
     activeSubscription = player.addListener('playbackStatusUpdate', (status) => {
       if (player !== activePlayer) return;
+      if (status.error) {
+        cleanupPlayer();
+        options.onError?.(new Error('local TTS audio playback failed'));
+        return;
+      }
       if (status.didJustFinish) {
         options.onDone?.();
         cleanupPlayer();

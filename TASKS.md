@@ -8,6 +8,9 @@
 - [x] Okunan kelimeyi ses motoru sınır olaylarıyla vurgulama
 - [x] Varsayılan cihaz sesi ve oynatma hızını Ayarlar'dan seçip cihazda kalıcı saklama
 - [ ] Arka plan oynatma ve kilit ekranı kontrolleri
+  - [x] `expo-audio` ile oynatılan üretilmiş ses dosyalarında iOS/Android background audio modunu, kilit ekranı oynat/duraklat kontrolünü ve metadata temizliğini ekle.
+  - [x] Audio config plugin'inden gereksiz mikrofon/recording iznini kaldır; yalnızca background playback yetkilerini üret.
+  - [ ] Cihazın `expo-speech` TTS akışı için kilit ekranı kontrolü sunan native ses dosyası üretme/oynatma yaklaşımını geliştir ve gerçek iOS/Android cihazda doğrula.
 
 **Zorluk:** Orta. İlk yayın için en değerli, API gerektirmeyen özellik.
 

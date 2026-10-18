@@ -2,11 +2,14 @@ const mockFileWrite = jest.fn();
 const mockFileDelete = jest.fn();
 const mockPlayer = {
   addListener: jest.fn(),
+  clearLockScreenControls: jest.fn(),
   pause: jest.fn(),
   play: jest.fn(),
-  release: jest.fn(),
+  remove: jest.fn(),
+  setActiveForLockScreen: jest.fn(),
   setPlaybackRate: jest.fn(),
 };
+const mockSetAudioModeAsync = jest.fn();
 
 jest.mock('expo-file-system', () => ({
   File: jest.fn(() => ({
@@ -20,6 +23,7 @@ jest.mock('expo-file-system', () => ({
 
 jest.mock('expo-audio', () => ({
   createAudioPlayer: jest.fn(() => mockPlayer),
+  setAudioModeAsync: mockSetAudioModeAsync,
 }));
 
 describe('Mac local TTS speech service', () => {
@@ -46,7 +50,7 @@ describe('Mac local TTS speech service', () => {
   test('requests Turkish WAV audio and starts playback', async () => {
     const { speakWithLocalTts } = require('../services/localTtsSpeech');
 
-    await speakWithLocalTts('Merhaba dünya', { rate: 1.25 });
+    await speakWithLocalTts('Merhaba dünya', { rate: 1.25, title: 'Deneme metni' });
 
     expect(global.fetch).toHaveBeenCalledWith(
       'http://127.0.0.1:8765/v1/tts',
@@ -57,8 +61,35 @@ describe('Mac local TTS speech service', () => {
       })
     );
     expect(mockFileWrite).toHaveBeenCalled();
+    expect(mockSetAudioModeAsync).toHaveBeenCalledWith({
+      playsInSilentMode: true,
+      shouldPlayInBackground: true,
+      interruptionMode: 'doNotMix',
+    });
     expect(mockPlayer.setPlaybackRate).toHaveBeenCalledWith(1.25, 'medium');
+    expect(mockPlayer.setActiveForLockScreen).toHaveBeenCalledWith(
+      true,
+      { title: 'Deneme metni', artist: 'Listen AI' },
+      { showSeekForward: false, showSeekBackward: false }
+    );
     expect(mockPlayer.play).toHaveBeenCalled();
+  });
+
+  test('clears lock-screen controls and reports a native playback error', async () => {
+    let statusListener;
+    const onError = jest.fn();
+    mockPlayer.addListener.mockImplementation((_event, listener) => {
+      statusListener = listener;
+      return { remove: jest.fn() };
+    });
+    const { speakWithLocalTts } = require('../services/localTtsSpeech');
+
+    await speakWithLocalTts('Hata testi', { onError });
+    statusListener({ error: 'decoder failed', didJustFinish: false });
+
+    expect(onError).toHaveBeenCalledWith(expect.any(Error));
+    expect(mockPlayer.clearLockScreenControls).toHaveBeenCalled();
+    expect(mockPlayer.remove).toHaveBeenCalled();
   });
 
   test('rejects when the local service is unavailable', async () => {

@@ -26,3 +26,14 @@ Her release adayı en az bir güncel iPhone ve bir güncel Android gerçek cihaz
 - Büyük metin ve büyük yazı boyutunda ana aksiyonlar ekran dışında kalmamalıdır.
 - VoiceOver/TalkBack açıkken etkileşimli kontroller anlaşılır adlarla okunmalıdır.
 - İzin reddi veya dosya sağlayıcı iptali uygulamada hata/çökme oluşturmamalıdır.
+
+## Ses dosyası tabanlı sağlayıcı — development/staging
+
+Bu senaryolar yalnızca Chatterbox geliştirme servisi veya ilerideki cloud TTS gibi gerçek bir ses dosyası üreten sağlayıcı yapılandırıldığında uygulanır. Cihazın `expo-speech` motoru henüz kilit ekranı kontrolü sunmaz.
+
+1. Ses dosyası oynarken uygulama arka plana alınır ve ekran kilitlenir; ses kesilmeden devam eder.
+2. Kilit ekranında metin başlığı, **Listen AI** sanatçı bilgisi ve oynat/duraklat kontrolü görünür.
+3. Kilit ekranından duraklatılıp devam edildiğinde ses aynı konumdan sürer.
+4. Uygulama içinden dinleme durdurulduğunda veya ses tamamlandığında kilit ekranı metadata'sı temizlenir.
+5. Başka bir uygulama ses odağını aldığında Listen AI çökmez; sistem kesintisi davranışı iOS ve Android'de kaydedilir.
+6. Android'de uygulama en az beş dakika arka planda bırakılır; media playback foreground service üzerinden sesin sürdüğü doğrulanır.

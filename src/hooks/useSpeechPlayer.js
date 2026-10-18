@@ -131,7 +131,11 @@ export function useSpeechPlayer({
       };
       const selectedEngineOptions =
         ttsEngine === TTS_ENGINES.localApi
-          ? { ...speechOptions, onError: fallbackToDevice }
+          ? {
+              ...speechOptions,
+              title: text.trim().split(/\r?\n/, 1)[0].slice(0, 60),
+              onError: fallbackToDevice,
+            }
           : speechOptions;
 
       Promise.resolve(speakWithEngine(ttsEngine, text.slice(start), selectedEngineOptions)).catch(

@@ -148,6 +148,12 @@ describe('useSpeechPlayer error recovery', () => {
     act(() => result.current.play());
     await act(async () => localOptions.onError(new Error('audio playback failed')));
 
+    expect(speakWithEngine).toHaveBeenNthCalledWith(
+      1,
+      'mac-local-api',
+      'Akış hatası testi',
+      expect.objectContaining({ title: 'Akış hatası testi' })
+    );
     expect(onEngineFallback).toHaveBeenCalledTimes(1);
     expect(speakWithEngine).toHaveBeenNthCalledWith(
       2,
