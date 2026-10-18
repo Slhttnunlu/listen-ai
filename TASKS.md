@@ -235,7 +235,9 @@ Bu işler, uygulamanın yalnızca demoda çalışmasından gerçek kullanıcıla
 - [x] Freemium sınırlarını `docs/FREEMIUM.md` içinde tanımla: ücretsiz metin uzunluğu, ses seçimi, dosya/OCR, bulut AI/TTS ve Pro açılış kapıları.
   - [x] Ödeme ve Pro açılış kapıları tamamlanana kadar “PRO” ve “Ücretsiz deneyin” iddialarını kapalı beta arayüzünden kaldır.
 - [x] StoreKit/Google Play Billing, deneme, iptal, geri yükleme ve backend entitlement uzlaştırma akışlarını `docs/BILLING.md` içinde tasarla.
-- [ ] Fiyatlandırmayı sağlayıcı maliyeti, mağaza komisyonu, destek ve hedef brüt marja göre doğrula.
+- [ ] Fiyatlandırmayı sağlayıcı maliyeti, mağaza komisyonu, destek ve hedef katkı marjına göre doğrula.
+  - [x] Güncel liste fiyatı kaynaklarını, maliyet formülünü, tüketim senaryolarını ve marj karar kapılarını `docs/PRICING.md` içinde tanımla.
+  - [ ] Aday TTS sağlayıcısının gerçek staging kullanımı, mağaza proceeds, altyapı ve destek verileriyle aylık/yıllık satış fiyatını onayla.
 - [ ] A/B test veya feature flag altyapısını yalnızca ölçülecek net bir ürün hipotezi varsa ekle.
   - [x] TTS sağlayıcı rollout/kill switch stratejisini, ölçülebilir hipotezi ve kaldırma yaşam döngüsünü `docs/FEATURE_FLAGS.md` içinde tanımla.
   - [ ] Ortamları ayrılmış remote config, audit kaydı ve backend kill switch'i kurup staging'de doğrula.

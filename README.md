@@ -74,4 +74,6 @@ Gelecekteki bulut TTS denemeleri [sağlayıcı dayanıklılığı ve maliyet sı
 
 Gelecekteki Pro satın alma, iptal, geri yükleme ve mağaza/backend entitlement uzlaştırması [abonelik tasarımında](docs/BILLING.md) tanımlanmıştır.
 
+Provider, mağaza, altyapı ve destek maliyetlerini satış kotasına dönüştüren karar kapıları [Pro fiyatlandırma modelinde](docs/PRICING.md) tanımlanmıştır.
+
 TTS sağlayıcılarının kontrollü açılması, acil kapatılması ve deney yaşam döngüsü [feature flag sözleşmesinde](docs/FEATURE_FLAGS.md) tanımlanır.

@@ -63,3 +63,5 @@ Pro etiketi, ödeme ekranı veya deneme süresi ancak aşağıdakilerin tümü k
 Bu kapılar geçilmeden uygulama yalnızca ücretsiz kapalı beta olarak dağıtılır; “Pro”, “ücretsiz deneme” veya sınırsız bulut ses vaadi kullanıcı arayüzünde gösterilmez.
 
 StoreKit/Google Play Billing satın alma, iptal, deneme ve geri yükleme durumları [abonelik ve entitlement tasarımında](BILLING.md) tanımlanmıştır.
+
+Satılabilir kota ve fiyatın hangi maliyet/marj kanıtlarıyla onaylanacağı [Pro fiyatlandırma modelinde](PRICING.md) açıklanmıştır.
