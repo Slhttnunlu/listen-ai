@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import io
+import os
 import threading
 from dataclasses import dataclass
+
+from .text import split_text
 
 
 @dataclass(frozen=True)
@@ -59,6 +62,7 @@ class ChatterboxEngine:
         language: str = "tr",
         reference_audio: str | None = None,
     ) -> SynthesizedAudio:
+        import numpy as np
         import soundfile as sf
 
         model = self._load()
@@ -66,10 +70,28 @@ class ChatterboxEngine:
         if reference_audio:
             options["audio_prompt_path"] = reference_audio
 
-        with self._lock:
-            waveform = model.generate(text, **options)
+        max_segment_chars = int(os.getenv("LOCAL_TTS_SEGMENT_CHARS", "350"))
+        segments = split_text(text, max_chars=max_segment_chars)
+        if not segments:
+            raise ValueError("text must contain a non-whitespace character")
 
-        samples = waveform.detach().cpu().numpy().squeeze()
+        with self._lock:
+            waveforms = [
+                model.generate(segment.text, **options).detach().cpu().numpy().squeeze()
+                for segment in segments
+            ]
+
+        if len(waveforms) == 1:
+            samples = waveforms[0]
+        else:
+            pause = np.zeros(int(model.sr * 0.12), dtype=waveforms[0].dtype)
+            combined: list = []
+            for index, waveform in enumerate(waveforms):
+                if index:
+                    combined.append(pause)
+                combined.append(waveform)
+            samples = np.concatenate(combined)
+
         output = io.BytesIO()
         sf.write(output, samples, model.sr, format="WAV", subtype="PCM_16")
         return SynthesizedAudio(content=output.getvalue(), sample_rate=model.sr)

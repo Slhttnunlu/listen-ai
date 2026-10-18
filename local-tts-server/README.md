@@ -41,6 +41,15 @@ curl -X POST http://127.0.0.1:8765/v1/tts \
   --output /tmp/listen-ai-local-tts.wav
 ```
 
+The endpoint accepts up to 20,000 characters. The service splits long input at
+paragraph, sentence, and word boundaries before synthesis, then combines the
+segments into one WAV response. `LOCAL_TTS_SEGMENT_CHARS` can override the
+development default of 350 characters; values below 32 are rejected.
+
+This synchronous behavior is only for the local POC. Production uses an
+asynchronous job and segment manifest so playback can begin before the full text
+has been generated; see `docs/ARCHITECTURE.md`.
+
 ## Security and privacy
 
 - Request bodies are not logged by application code.

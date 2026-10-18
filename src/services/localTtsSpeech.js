@@ -5,6 +5,8 @@ let activeSubscription;
 let activeFile;
 let activeRequest;
 
+const LOCAL_TTS_TIMEOUT_MS = 10 * 60 * 1000;
+
 function loadAudioModule() {
   return require('expo-audio');
 }
@@ -26,7 +28,9 @@ export async function speakWithLocalTts(text, options = {}) {
   await stopLocalTts();
   const request = new AbortController();
   activeRequest = request;
-  const timeout = setTimeout(() => request.abort(), 120_000);
+  // The development-only Mac model is synchronous and long text can take
+  // several minutes. Production uses asynchronous jobs instead.
+  const timeout = setTimeout(() => request.abort(), LOCAL_TTS_TIMEOUT_MS);
 
   try {
     const token = process.env.EXPO_PUBLIC_LOCAL_TTS_TOKEN;

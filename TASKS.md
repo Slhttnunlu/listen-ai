@@ -84,6 +84,9 @@ Dört yaklaşım aynı Türkçe test metinleriyle; ses doğallığı, telaffuz, 
 - [x] Motoru MacBook Pro'da yalnızca yerel geliştirme ağına açık bir servis olarak çalıştır
 - [x] Mobil uygulamada sağlayıcıdan bağımsız TTS istemcisi oluştur ve geliştirme ortamında bu servise istek gönder
 - [ ] Uzun metni güvenli parçalara ayır; WAV/MP3 üretme, indirme, önbellek ve hata/fallback akışını ekle
+  - [x] Yerel POC servisinde 20.000 karaktere kadar metni paragraf, cümle ve kelime sınırlarında bölerek tek WAV üret; doğrulama hatalarında kullanıcı metnini response'a yansıtma.
+  - [ ] Production backend'de asenkron job ve segment manifest'i uygula; ilk segment hazır olduğunda oynatmayı başlat ve sonraki segmentleri önceden üret.
+  - [ ] Süreli ses önbelleği, kısmi retry, job iptali ve yarım kalan segmentten cihaz TTS'ine geçiş akışını uygula.
 - [ ] Cihaz TTS'i ile doğallık, Türkçe telaffuz, ilk ses gecikmesi ve üretim süresini karşılaştır
 - [ ] Servisi internete veya production'a açmadan önce kimlik doğrulama, TLS, kota ve lisans incelemesi yap
 
