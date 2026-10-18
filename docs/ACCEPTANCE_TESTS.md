@@ -9,16 +9,17 @@ Her release adayı en az bir güncel iPhone ve bir güncel Android gerçek cihaz
 3. Klavye açıkken **Kaydet ve Dinle** erişilebilir ve çalışır.
 4. Okunan kelime sarı vurguyla takip edilir.
 5. Hız değiştirilir; oynatıcı kapanmaz ve metin başa dönmez.
-6. Dinleme durdurulup kütüphaneden açılır; kayıtlı ilerlemeden devam eder.
-7. Dinleme tamamlanır; kayıt **Tamamlandı** filtresinde görünür.
-8. TXT dosyası seçilir, editörde görüntülenir ve dinletilir.
-9. Türkçe paragraflar içeren DOCX seçilir, biçim metne dönüştürülür ve dinletilir.
-10. Boş, desteklenmeyen, 2 MB'dan büyük TXT ve 10 MB'dan büyük DOCX dosyasında anlaşılır hata görülür.
-11. Kayıt aranır, yeniden adlandırılır, favorilenir, silinir ve **Geri al** ile geri getirilir.
-12. 250.000 karakteri aşan belge içe aktarılır; bölümler kütüphanede sıralı ve ayrı kayıtlar olarak görünür.
-13. Kütüphane JSON olarak dışa aktarılır, bir kayıt silindikten sonra yedek birleştirilir; kayıt geri gelir ve mevcut/mükerrer kayıtlar korunur.
-14. Ayarlar'dan varsayılan Türkçe ses ve hız değiştirilir; uygulama yeniden açıldığında tercihler korunur ve yeni dinleme bu tercihlerle başlar.
-15. En az 10.000 karakterlik Türkçe metin cihaz sesiyle dinletilir; platform TTS sınırlarında kesilmeden sonraki bölüme geçer, vurgu özgün metindeki doğru kelimede kalır ve yalnızca son bölümden sonra tamamlanır.
+6. Oynatıcıdaki geri düğmesine basılır; oynatma durur ve metin kaybolmadan düzenleme ekranına dönülür.
+7. Dinleme durdurulup kütüphaneden açılır; kayıtlı ilerlemeden devam eder.
+8. Dinleme tamamlanır; kayıt **Tamamlandı** filtresinde görünür.
+9. TXT dosyası seçilir, editörde görüntülenir ve dinletilir.
+10. Türkçe paragraflar içeren DOCX seçilir, biçim metne dönüştürülür ve dinletilir.
+11. Boş, desteklenmeyen, 2 MB'dan büyük TXT ve 10 MB'dan büyük DOCX dosyasında anlaşılır hata görülür.
+12. Kayıt aranır, yeniden adlandırılır, favorilenir, silinir ve **Geri al** ile geri getirilir.
+13. 250.000 karakteri aşan belge içe aktarılır; bölümler kütüphanede sıralı ve ayrı kayıtlar olarak görünür.
+14. Kütüphane JSON olarak dışa aktarılır, bir kayıt silindikten sonra yedek birleştirilir; kayıt geri gelir ve mevcut/mükerrer kayıtlar korunur.
+15. Ayarlar'dan varsayılan Türkçe ses ve hız değiştirilir; uygulama yeniden açıldığında tercihler korunur ve yeni dinleme bu tercihlerle başlar.
+16. En az 10.000 karakterlik Türkçe metin cihaz sesiyle dinletilir; platform TTS sınırlarında kesilmeden sonraki bölüme geçer, vurgu özgün metindeki doğru kelimede kalır ve yalnızca son bölümden sonra tamamlanır.
 
 ## Platform davranışları
 

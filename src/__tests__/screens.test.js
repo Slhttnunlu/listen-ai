@@ -1,5 +1,6 @@
 import { fireEvent, render } from '@testing-library/react-native';
 import { BottomNav } from '../components/BottomNav';
+import { ComposerScreen } from '../screens/ComposerScreen';
 import { HomeScreen } from '../screens/HomeScreen';
 import { LibraryScreen } from '../screens/LibraryScreen';
 import { PlayerScreen } from '../screens/PlayerScreen';
@@ -131,6 +132,30 @@ describe('screen interactions', () => {
 
     fireEvent.press(screen.getByTestId('resume-button'));
     expect(onResume).toHaveBeenCalledTimes(1);
+  });
+
+  test('returns from the player to the editor without closing the composer route', () => {
+    const onBack = jest.fn();
+    const onPlayerBack = jest.fn();
+    const screen = render(
+      <ComposerScreen
+        text="Düzenlenebilir metin"
+        setText={jest.fn()}
+        rate={1}
+        playing={false}
+        playerOpen
+        onPause={jest.fn()}
+        onResume={jest.fn()}
+        onSaveAndPlay={jest.fn()}
+        onChangeRate={jest.fn()}
+        onBack={onBack}
+        onPlayerBack={onPlayerBack}
+      />
+    );
+
+    fireEvent.press(screen.getByTestId('player-back-button'));
+    expect(onPlayerBack).toHaveBeenCalledTimes(1);
+    expect(onBack).not.toHaveBeenCalled();
   });
 
   test('opens feedback from settings', () => {

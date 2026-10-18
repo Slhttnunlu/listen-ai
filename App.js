@@ -221,6 +221,11 @@ export function AppContent() {
     if (navigationRef.canGoBack()) navigationRef.goBack();
   }, [stop]);
 
+  const closePlayer = useCallback(() => {
+    stop();
+    setPlayerOpen(false);
+  }, [stop]);
+
   const handleComposerBlur = useCallback(() => {
     stop();
     setPlayerOpen(false);
@@ -366,6 +371,7 @@ export function AppContent() {
             onSaveAndPlay={saveAndPlay}
             onChangeRate={changeRate}
             onBack={closeComposer}
+            onPlayerBack={closePlayer}
           />
         }
       />

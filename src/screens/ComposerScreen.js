@@ -23,6 +23,7 @@ export function ComposerScreen({
   onSaveAndPlay,
   onChangeRate,
   onBack,
+  onPlayerBack,
 }) {
   const paste = async () => {
     const value = await Clipboard.getStringAsync();
@@ -40,7 +41,7 @@ export function ComposerScreen({
         onPause={onPause}
         onResume={onResume}
         onChangeRate={onChangeRate}
-        onBack={onBack}
+        onBack={onPlayerBack || onBack}
       />
     );
   }

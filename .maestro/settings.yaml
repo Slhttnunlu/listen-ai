@@ -48,5 +48,9 @@ appId: ${APP_ID}
 - assertVisible:
     id: terms-button
 - assertVisible: 'Yakında'
+- scrollUntilVisible:
+    element:
+      id: feedback-button
+    direction: DOWN
 - assertVisible:
     id: feedback-button
