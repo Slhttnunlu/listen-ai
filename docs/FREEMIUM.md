@@ -61,3 +61,5 @@ Pro etiketi, ödeme ekranı veya deneme süresi ancak aşağıdakilerin tümü k
 7. Sağlayıcı maliyeti, mağaza komisyonu, vergi ve destek dahil hedef brüt marj belgelenmiştir.
 
 Bu kapılar geçilmeden uygulama yalnızca ücretsiz kapalı beta olarak dağıtılır; “Pro”, “ücretsiz deneme” veya sınırsız bulut ses vaadi kullanıcı arayüzünde gösterilmez.
+
+StoreKit/Google Play Billing satın alma, iptal, deneme ve geri yükleme durumları [abonelik ve entitlement tasarımında](BILLING.md) tanımlanmıştır.

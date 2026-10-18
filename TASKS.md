@@ -234,7 +234,7 @@ Bu işler, uygulamanın yalnızca demoda çalışmasından gerçek kullanıcıla
 - [x] Beta katılımcıları için geri bildirim formu, hata toplama ve haftalık değerlendirme ritmi belirle.
 - [x] Freemium sınırlarını `docs/FREEMIUM.md` içinde tanımla: ücretsiz metin uzunluğu, ses seçimi, dosya/OCR, bulut AI/TTS ve Pro açılış kapıları.
   - [x] Ödeme ve Pro açılış kapıları tamamlanana kadar “PRO” ve “Ücretsiz deneyin” iddialarını kapalı beta arayüzünden kaldır.
-- [ ] Abonelik düşünülüyorsa StoreKit/Google Play Billing, deneme, iptal ve geri yükleme akışlarını tasarla.
+- [x] StoreKit/Google Play Billing, deneme, iptal, geri yükleme ve backend entitlement uzlaştırma akışlarını `docs/BILLING.md` içinde tasarla.
 - [ ] Fiyatlandırmayı sağlayıcı maliyeti, mağaza komisyonu, destek ve hedef brüt marja göre doğrula.
 - [ ] A/B test veya feature flag altyapısını yalnızca ölçülecek net bir ürün hipotezi varsa ekle.
   - [x] TTS sağlayıcı rollout/kill switch stratejisini, ölçülebilir hipotezi ve kaldırma yaşam döngüsünü `docs/FEATURE_FLAGS.md` içinde tanımla.
