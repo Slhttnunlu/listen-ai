@@ -44,9 +44,6 @@ export function HomeScreen({ onFeature }) {
         </View>
         <View style={styles.heroFooter}>
           <Text style={styles.heroTitle}>İstediğiniz zaman, istediğiniz yerde dinleyin</Text>
-          <View style={styles.trial}>
-            <Text>Ücretsiz deneyin</Text>
-          </View>
         </View>
       </View>
       <View style={styles.sheet}>

@@ -28,10 +28,6 @@ export function PlayerScreen({
         >
           <Text style={styles.playerBackText}>‹</Text>
         </Pressable>
-        <View style={styles.playerTools}>
-          <Text style={styles.playerTool}>♧ AI</Text>
-          <Text style={styles.playerTool}>Aᴬ</Text>
-        </View>
       </View>
       <ScrollView contentContainerStyle={styles.readingArea}>
         <ReadAlong text={text} activeRange={activeRange} dark />
@@ -53,8 +49,7 @@ export function PlayerScreen({
           <Text>—</Text>
         </View>
         <View style={styles.playerButtons}>
-          <Text style={styles.avatar}>◉</Text>
-          <Text style={styles.skip}>↶₁₀</Text>
+          <View accessible={false} style={styles.playerButtonSpacer} />
           <Pressable
             accessibilityLabel={playing ? 'Dinlemeyi duraklat' : 'Dinlemeye devam et'}
             accessibilityRole="button"
@@ -64,7 +59,6 @@ export function PlayerScreen({
           >
             <Text style={styles.mainStopText}>{playing ? '❚❚' : '▶'}</Text>
           </Pressable>
-          <Text style={styles.skip}>↷₁₀</Text>
           <Pressable
             accessibilityLabel={`Oynatma hızı ${rate}`}
             accessibilityHint="Oynatma hızını değiştirir"

@@ -20,6 +20,14 @@ describe('screen interactions', () => {
     expect(onFeature).toHaveBeenCalledWith('write');
   });
 
+  test('does not advertise a trial or Pro plan before billing is available', () => {
+    const home = render(<HomeScreen onFeature={jest.fn()} />);
+    const library = render(<LibraryScreen ready items={[]} onAdd={jest.fn()} />);
+
+    expect(home.queryByText('Ücretsiz deneyin')).toBeNull();
+    expect(library.queryByText('PRO')).toBeNull();
+  });
+
   test('filters library items using real state fields', () => {
     const screen = render(
       <LibraryScreen
@@ -87,6 +95,24 @@ describe('screen interactions', () => {
     fireEvent.press(screen.getByTestId('pause-button'));
     expect(onChangeRate).toHaveBeenCalledTimes(1);
     expect(onPause).toHaveBeenCalledTimes(1);
+  });
+
+  test('does not show unfinished AI, formatting, or skip controls in the player', () => {
+    const screen = render(
+      <PlayerScreen
+        text="Kısa test metni"
+        rate={1}
+        playing
+        onChangeRate={jest.fn()}
+        onPause={jest.fn()}
+        onBack={jest.fn()}
+      />
+    );
+
+    expect(screen.queryByText('♧ AI')).toBeNull();
+    expect(screen.queryByText('Aᴬ')).toBeNull();
+    expect(screen.queryByText('↶₁₀')).toBeNull();
+    expect(screen.queryByText('↷₁₀')).toBeNull();
   });
 
   test('keeps the player open after playback and lets the user replay', () => {

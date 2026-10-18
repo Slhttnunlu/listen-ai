@@ -49,9 +49,6 @@ export function LibraryScreen({
         <Text accessibilityRole="header" style={styles.libTitle}>
           Kütüphanem
         </Text>
-        <View style={styles.pro}>
-          <Text style={styles.proText}>PRO</Text>
-        </View>
       </View>
       <View style={styles.libraryTools}>
         <TextInput
