@@ -5,6 +5,7 @@ import {
   getProgressPercent,
   getWordRangeAt,
   rangesOverlap,
+  splitSpeechText,
   splitTextWithRanges,
 } from '../utils/text';
 
@@ -44,5 +45,36 @@ describe('text utilities', () => {
   test('finds the readable word at a character position', () => {
     expect(getWordRangeAt('Bir iki üç', 5)).toEqual({ part: 'iki', start: 4, end: 7 });
     expect(getWordRangeAt('Bir iki üç', 10)).toEqual({ part: 'üç', start: 8, end: 10 });
+  });
+
+  test('splits speech at sentence and word boundaries with original offsets', () => {
+    const text = 'Birinci cümle burada. İkinci cümle burada ve devam ediyor.';
+    const segments = splitSpeechText(text, 32);
+
+    expect(segments.map((segment) => segment.text)).toEqual([
+      'Birinci cümle burada.',
+      'İkinci cümle burada ve devam',
+      'ediyor.',
+    ]);
+    expect(
+      segments.every((segment) => text.slice(segment.start, segment.end) === segment.text)
+    ).toBe(true);
+    expect(segments.every((segment) => segment.text.length <= 32)).toBe(true);
+  });
+
+  test('never separates the two code units of an emoji', () => {
+    const text = `abcdefghi🎧${'x'.repeat(12)}`;
+    const segments = splitSpeechText(text, 10);
+
+    expect(segments.map((segment) => segment.text).join('')).toBe(text);
+    expect(
+      segments.some(
+        (segment) => segment.text.includes('\ud83c') !== segment.text.includes('\udfa7')
+      )
+    ).toBe(false);
+  });
+
+  test('rejects invalid speech chunk limits', () => {
+    expect(() => splitSpeechText('Metin', 0)).toThrow('positive integer');
   });
 });

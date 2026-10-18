@@ -7,6 +7,7 @@
 - [x] Dinleme ilerlemesini kaydetme ve kütüphaneden kaldığı yerden devam
 - [x] Okunan kelimeyi ses motoru sınır olaylarıyla vurgulama
 - [x] Varsayılan cihaz sesi ve oynatma hızını Ayarlar'dan seçip cihazda kalıcı saklama
+- [x] Uzun metinleri cihaz TTS motorunun platform sınırında cümle/kelime sınırlarıyla kuyrukla; kelime olaylarını özgün metin konumuna eşle.
 - [ ] Arka plan oynatma ve kilit ekranı kontrolleri
   - [x] `expo-audio` ile oynatılan üretilmiş ses dosyalarında iOS/Android background audio modunu, kilit ekranı oynat/duraklat kontrolünü ve metadata temizliğini ekle.
   - [x] Audio config plugin'inden gereksiz mikrofon/recording iznini kaldır; yalnızca background playback yetkilerini üret.
