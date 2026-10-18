@@ -9,15 +9,17 @@ Backend; hesaplar arası senkronizasyon, bulut TTS, AI özetleme, OCR sağlayıc
 ## Hedef bileşenler
 
 ```text
-Expo iOS/Android
-  ├─ Yerel: SQLite + cihaz TTS
-  └─ HTTPS: API
-       ├─ Kimlik ve kota
+Mağazadan dağıtılan mobil uygulama (iOS IPA / Android AAB-APK)
+  ├─ Yerel: SQLite + cihaz TTS (çevrimdışı kullanım ve fallback)
+  └─ HTTPS: Listen AI API
+       ├─ Kimlik, yetkilendirme, kota ve abonelik
        ├─ İçerik metadata servisi
-       ├─ AI/TTS sağlayıcı adaptörleri
+       ├─ TTS job servisi ve sağlayıcı yönlendirme
        └─ Asenkron iş kuyruğu
-            ├─ Worker
-            └─ Şifreli obje depolama
+            ├─ TTS worker'ları
+            │    ├─ Yönetilen API: OpenAI / Gemini / ElevenLabs
+            │    └─ Self-hosted model: Chatterbox veya seçilecek başka motor
+            └─ Şifreli obje depolama + CDN/imzalı URL
 
 API/Worker ─ PostgreSQL
 API/Worker ─ Secret manager
@@ -25,6 +27,48 @@ API/Worker ─ Logs, metrics, traces, crash/error reporting
 ```
 
 Ham kullanıcı metni varsayılan olarak kalıcı sunucu günlüğüne yazılmaz. Bir üretim işi için içerik yüklemek zorunluysa amaç, saklama süresi ve silme davranışı kullanıcıya gönderimden önce açıklanır.
+
+## Production TTS akışı
+
+Mobil uygulama, sağlayıcı ayrıntılarını ve API anahtarlarını bilmez. Kullanıcının açık eylemiyle metni Listen AI backend'ine gönderir; backend sağlayıcı limitlerine göre metni cümle ve paragraf sınırlarında parçalara ayırır. Böylece bölümleme davranışı mobil sürüm yayınlamadan değiştirilebilir ve bütün sağlayıcılarda aynı güvenlik, kota ve maliyet politikaları uygulanır.
+
+```text
+1. Mobil → POST /v1/tts/jobs (metin, dil, ses, hız, idempotency key)
+2. API → doğrulama + kimlik + kota/maliyet rezervasyonu
+3. API → 202 Accepted + job kimliği
+4. Worker → metni anlamlı ve sağlayıcıya uygun segmentlere ayırma
+5. Worker → seçilen TTS sağlayıcısında segmentleri üretme
+6. Worker → sesleri şifreli obje depolamaya yazma
+7. Mobil → hazır ilk segmenti oynatma; sonraki segmentler üretilirken indirme
+8. Backend → kullanım uzlaştırma, süreli saklama ve otomatik silme
+```
+
+Uzun içerikte tüm sesin bitmesini beklemek yerine ilk küçük segment hazır olduğunda oynatma başlar. Sonraki segmentler kuyrukta önceden üretilip indirilir; kullanıcı açısından ağ ve model gecikmesi böyle gizlenir. Segment manifest'i metindeki başlangıç/bitiş konumlarını taşır. Kelime vurgusu ancak sağlayıcı gerçek zaman damgası veya hizalama verisi sağlıyorsa yapılır; tahmini zamanlayıcı kullanılmaz.
+
+Mobil istemci kısa süreli imzalı ses URL'lerini kullanır ve gerekli segmentleri kontrollü olarak cihaz önbelleğine alır. Aynı kullanıcı, metin, ses, hız ve model sürümü için güvenli bir içerik özeti üzerinden tekrar kullanılabilir cache değerlendirilebilir; kullanıcılar arasında ham içerik veya tahmin edilebilir cache anahtarı paylaşılmaz.
+
+İş başarısız olduğunda backend kontrollü hata kodu döndürür. Mobil uygulama sınırlı retry uygular, kısmen hazır segmentleri kaybetmez ve kullanıcı isterse cihazın yerleşik TTS motoruyla devam eder. Backend veya bulut sağlayıcısı erişilemezken yerel kütüphane kullanılabilir kalır.
+
+## TTS sağlayıcı stratejisi
+
+Backend tek bir sağlayıcı arayüzü sunar. OpenAI, Google Gemini, ElevenLabs ve self-hosted motorlar bu arayüzün ayrı adaptörleridir. Sağlayıcı seçimi mobil uygulamada sabitlenmez; ortam, kullanıcı planı, dil/ses seçimi, özellik bayrağı, sağlık durumu, gecikme ve maliyet politikasına göre backend tarafından yapılır.
+
+- **Cihaz TTS:** Ücretsiz, çevrimdışı temel ve bulut hatalarında fallback.
+- **Yönetilen TTS API'leri:** Başlangıçta operasyonu kolaylaştıran production adayları; karakter/ses süresi kotası ve maliyet alarmı zorunludur.
+- **Self-hosted TTS:** Chatterbox MacBook POC'sinde doğrulanan akışın container ve worker olarak buluta taşınmış biçimidir. Production için warm worker, tercihen GPU, otomatik ölçekleme, model lisansı ve kapasite planı gerekir.
+- **MacBook servisi:** Yalnızca development/POC içindir; production trafiği almaz, internete doğrudan açılmaz ve kalıcı backend yerine geçmez.
+
+İlk production sürümünde yönetilen bir sağlayıcıyla düşük operasyon yükü hedeflenir. Self-hosted seçenek ancak Türkçe ses kalitesi, ilk sese kadar gecikme, eşzamanlı kullanıcı kapasitesi ve toplam maliyet ölçümleri yönetilen sağlayıcıya göre anlamlı avantaj gösterirse devreye alınır. Sağlayıcı değişimi feature flag/kill switch ile yapılabilir olmalıdır.
+
+## Production deployment topolojisi
+
+- Mobil uygulamanın IPA/AAB-APK paketi mağazalardan dağıtılır; backend adresi ortama göre build yapılandırmasından gelir.
+- Public internete yalnızca API gateway/load balancer açıktır. API, worker, veritabanı ve kuyruk özel ağ sınırlarında çalışır.
+- API stateless ölçeklenir; uzun ses üretimi request sürecinde tutulmaz, dayanıklı kuyruğa yazılır.
+- TTS worker havuzları yönetilen sağlayıcı adaptörleri ile self-hosted model worker'larından bağımsız ölçeklenir.
+- Ses dosyaları backend belleğinde veya veritabanında tutulmaz; şifreli obje depolamada süreli saklanır ve kısa ömürlü imzalı URL ile sunulur.
+- PostgreSQL yalnızca kullanıcı, job, kota, faturalama ve içerik metadata'sını taşır; ham metin saklama varsayılanı kapalıdır.
+- Queue, veritabanı ve obje depolama için yedekleme, yaşam döngüsü, silme ve felaket kurtarma politikaları ortam bazında tanımlanır.
 
 ## Teknoloji kararı
 
