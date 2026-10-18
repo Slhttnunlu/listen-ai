@@ -57,6 +57,7 @@ export function ComposerScreen({
           accessibilityRole="button"
           testID="back-button"
           onPress={onBack}
+          style={styles.headerBackButton}
         >
           <Text style={styles.back}>‹</Text>
         </Pressable>

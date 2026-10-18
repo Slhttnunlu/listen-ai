@@ -132,7 +132,11 @@ export function LibraryScreen({
                         onChangeText={setDraftTitle}
                         style={styles.renameInput}
                       />
-                      <Pressable accessibilityRole="button" onPress={saveRename}>
+                      <Pressable
+                        accessibilityRole="button"
+                        onPress={saveRename}
+                        style={styles.renameSaveButton}
+                      >
                         <Text style={styles.renameSave}>Kaydet</Text>
                       </Pressable>
                     </View>
@@ -148,6 +152,7 @@ export function LibraryScreen({
                 accessibilityLabel="Metin işlemleri"
                 accessibilityRole="button"
                 onPress={() => setManagedId((current) => (current === item.id ? null : item.id))}
+                style={styles.moreButton}
               >
                 <Text style={styles.more}>•••</Text>
               </Pressable>
