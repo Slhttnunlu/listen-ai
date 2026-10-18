@@ -141,9 +141,7 @@ export function LibraryScreen({
                       </Pressable>
                     </View>
                   ) : (
-                    <Text numberOfLines={1} style={styles.itemTitle}>
-                      {item.title}
-                    </Text>
+                    <Text style={styles.itemTitle}>{item.title}</Text>
                   )}
                   <Text style={styles.meta}>{getLibraryItemMeta(item)}</Text>
                 </View>
@@ -190,9 +188,7 @@ export function LibraryScreen({
       </ScrollView>
       {deletedItem && (
         <View style={styles.undoBar}>
-          <Text numberOfLines={1} style={styles.undoText}>
-            “{deletedItem.title}” silindi.
-          </Text>
+          <Text style={styles.undoText}>“{deletedItem.title}” silindi.</Text>
           <Pressable
             accessibilityRole="button"
             onPress={async () => {
@@ -205,14 +201,16 @@ export function LibraryScreen({
           </Pressable>
         </View>
       )}
-      <Pressable
-        accessibilityLabel="Yeni metin ekle"
-        accessibilityRole="button"
-        onPress={onAdd}
-        style={styles.fab}
-      >
-        <Text style={styles.fabText}>＋</Text>
-      </Pressable>
+      {!deletedItem && (
+        <Pressable
+          accessibilityLabel="Yeni metin ekle"
+          accessibilityRole="button"
+          onPress={onAdd}
+          style={styles.fab}
+        >
+          <Text style={styles.fabText}>＋</Text>
+        </Pressable>
+      )}
     </View>
   );
 }

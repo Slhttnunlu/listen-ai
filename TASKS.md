@@ -177,6 +177,7 @@ Bu işler, uygulamanın yalnızca demoda çalışmasından gerçek kullanıcıla
   - [x] Etkileşimli kontrollerin ad, rol, seçili durum ve minimum dokunma alanı temelini iyileştir.
     - [x] Geri, menü, yeniden adlandırma, filtre ve oynatıcı kontrollerinin kritik dokunma hedeflerini en az 44 pt yapıp otomatik stil testiyle koru.
   - [x] Kritik normal metin/zemin çiftlerini WCAG AA 4,5:1 kontrasta getir ve otomatik regresyon testi ekle.
+  - [x] Banner, alt navigasyon, ayar satırları, kütüphane başlıkları ve hata kurtarma ekranını dinamik metin büyümesine uyarlayıp otomatik regresyon testi ekle.
   - [x] `docs/ACCESSIBILITY.md` içinde yayın öncesi gerçek cihaz denetim listesini tanımla.
   - [ ] VoiceOver/TalkBack, maksimum dinamik metin ve kontrast kontrollerini gerçek cihazlarda tamamla.
 

@@ -32,7 +32,7 @@ export function SettingsScreen({
           testID="tts-engine-setting"
         >
           <Text style={styles.settingText}>Ses motoru</Text>
-          <Text style={styles.settingStatus} numberOfLines={1}>
+          <Text style={styles.settingStatus}>
             {ttsEngine === TTS_ENGINES.localApi ? localTtsName : 'Cihazın sistem sesi'}
           </Text>
         </Pressable>
@@ -46,7 +46,7 @@ export function SettingsScreen({
         testID="voice-setting"
       >
         <Text style={styles.settingText}>Varsayılan ses</Text>
-        <Text style={styles.settingStatus} numberOfLines={1}>
+        <Text style={styles.settingStatus}>
           {voice?.name || (voiceCount ? 'Sistem sesi' : 'Ses bulunamadı')}
         </Text>
       </Pressable>

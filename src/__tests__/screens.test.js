@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react-native';
+import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import { BottomNav } from '../components/BottomNav';
 import { ComposerScreen } from '../screens/ComposerScreen';
 import { HomeScreen } from '../screens/HomeScreen';
@@ -77,6 +77,34 @@ describe('screen interactions', () => {
     expect(screen.getByText('Kütüphane yüklenemedi')).toBeTruthy();
     fireEvent.press(screen.getByTestId('library-retry-button'));
     expect(onRetry).toHaveBeenCalledTimes(1);
+  });
+
+  test('keeps the add button from covering the delete undo message', async () => {
+    const screen = render(
+      <LibraryScreen
+        ready
+        items={[
+          {
+            id: 1,
+            title: 'Silinecek metin',
+            content: 'a',
+            progress_index: 0,
+            is_completed: 0,
+            is_favorite: 0,
+            created_at: '2026-01-01T00:00:00.000Z',
+          },
+        ]}
+        onAdd={jest.fn()}
+        onOpen={jest.fn()}
+        onDelete={jest.fn().mockResolvedValue(undefined)}
+      />
+    );
+
+    fireEvent.press(screen.getByLabelText('Metin işlemleri'));
+    fireEvent.press(screen.getByText('Sil'));
+
+    await waitFor(() => expect(screen.getByText('“Silinecek metin” silindi.')).toBeTruthy());
+    expect(screen.queryByLabelText('Yeni metin ekle')).toBeNull();
   });
 
   test('keeps player callbacks attached to their controls', () => {

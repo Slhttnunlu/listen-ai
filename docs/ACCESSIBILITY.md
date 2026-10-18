@@ -8,11 +8,14 @@ Bu belge otomatik kontroller ile gerçek cihaz doğrulamasını birbirinden ayı
 - Seçili sekme ve filtreler `accessibilityState.selected` ile bildirilmelidir.
 - Yalnızca dekoratif semboller ekran okuyucudan gizlenmelidir.
 - Metin ölçekleme React Native varsayılanıyla açık tutulmalıdır; `allowFontScaling={false}` kullanılmaz.
+- Banner, alt navigasyon ve kurtarma ekranı gibi metin taşıyan ana yüzeyler sabit yüksekliğe zorlanmamalı; içerik büyümeli veya kaydırılabilmelidir.
+- Ayar değerleri, kütüphane başlıkları ve metin aksiyonları erişilebilir yazı boyutunda tek satıra zorlanmamalı; satırlar gerektiğinde sarılmalıdır.
 - Ana dokunma hedefleri en az 44 × 44 pt olmalıdır.
 - Sembol/ikon tabanlı kritik kontrollerin iki ekseni ve metin tabanlı aksiyonların yüksekliği otomatik stil testiyle en az 44 pt olarak korunur.
 - Hata ve boş durumları yalnızca renkle anlatılmamalıdır.
 - Küçük/normal metin ile zemini en az WCAG AA 4,5:1 kontrast oranını sağlamalıdır; kritik stil çiftleri otomatik regresyon testiyle korunur.
 - Koyu oynatıcıdaki süre/ilerleme metni doğrudan `Text` bileşenine renk vermelidir; React Native'de üst `View` rengi alt metne miras kalmaz.
+- Ana ekranların font scaling'i kapatmaması, büyüyebilen yüzeylerin sabit `height` kullanmaması ve kritik satırların sarılabilmesi otomatik regresyon testiyle korunur.
 
 ## Yayın öncesi gerçek cihaz kontrolü
 
