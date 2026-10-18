@@ -70,4 +70,6 @@ Beta geri bildirimleri ve haftalık ürün değerlendirmesi [kapalı beta geri b
 
 Gelecekteki bulut TTS denemeleri [sağlayıcı dayanıklılığı ve maliyet sınırlarına](docs/TTS_PROVIDER_RELIABILITY.md), telemetry kurulumu ise [gözlemlenebilirlik ve alarm sözleşmesine](docs/OBSERVABILITY.md) uymalıdır.
 
+Ücretsiz kapalı beta kapsamı ile gelecekteki Pro açılış kapıları [freemium sınırları](docs/FREEMIUM.md) belgesinde tanımlanmıştır.
+
 TTS sağlayıcılarının kontrollü açılması, acil kapatılması ve deney yaşam döngüsü [feature flag sözleşmesinde](docs/FEATURE_FLAGS.md) tanımlanır.

@@ -226,7 +226,7 @@ Bu işler, uygulamanın yalnızca demoda çalışmasından gerçek kullanıcıla
   - [ ] EAS projesini hesaba bağla; imzalı iOS/Android build ve submit doğrulamasını tamamla.
 - [ ] iOS TestFlight ve Google Play Internal Testing kanallarında kapalı beta yayınla.
 - [x] Beta katılımcıları için geri bildirim formu, hata toplama ve haftalık değerlendirme ritmi belirle.
-- [ ] Freemium sınırlarını tanımla: ücretsiz metin uzunluğu, ses seçimi, dosya/OCR ve AI kullanımı.
+- [x] Freemium sınırlarını `docs/FREEMIUM.md` içinde tanımla: ücretsiz metin uzunluğu, ses seçimi, dosya/OCR, bulut AI/TTS ve Pro açılış kapıları.
 - [ ] Abonelik düşünülüyorsa StoreKit/Google Play Billing, deneme, iptal ve geri yükleme akışlarını tasarla.
 - [ ] Fiyatlandırmayı sağlayıcı maliyeti, mağaza komisyonu, destek ve hedef brüt marja göre doğrula.
 - [ ] A/B test veya feature flag altyapısını yalnızca ölçülecek net bir ürün hipotezi varsa ekle.
