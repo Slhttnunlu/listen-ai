@@ -175,6 +175,7 @@ Bu işler, uygulamanın yalnızca demoda çalışmasından gerçek kullanıcıla
 - [x] İlk açılış, ilk ses, uzun metin, kütüphane ve bellek performans hedeflerini belirle.
 - [ ] Erişilebilirlik denetimi yap: VoiceOver/TalkBack, dinamik metin boyutu, kontrast ve dokunma alanları.
   - [x] Etkileşimli kontrollerin ad, rol, seçili durum ve minimum dokunma alanı temelini iyileştir.
+  - [x] Kritik normal metin/zemin çiftlerini WCAG AA 4,5:1 kontrasta getir ve otomatik regresyon testi ekle.
   - [x] `docs/ACCESSIBILITY.md` içinde yayın öncesi gerçek cihaz denetim listesini tanımla.
   - [ ] VoiceOver/TalkBack, maksimum dinamik metin ve kontrast kontrollerini gerçek cihazlarda tamamla.
 

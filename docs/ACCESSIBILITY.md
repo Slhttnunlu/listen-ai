@@ -10,6 +10,8 @@ Bu belge otomatik kontroller ile gerçek cihaz doğrulamasını birbirinden ayı
 - Metin ölçekleme React Native varsayılanıyla açık tutulmalıdır; `allowFontScaling={false}` kullanılmaz.
 - Ana dokunma hedefleri en az 44 × 44 pt olmalıdır.
 - Hata ve boş durumları yalnızca renkle anlatılmamalıdır.
+- Küçük/normal metin ile zemini en az WCAG AA 4,5:1 kontrast oranını sağlamalıdır; kritik stil çiftleri otomatik regresyon testiyle korunur.
+- Koyu oynatıcıdaki süre/ilerleme metni doğrudan `Text` bileşenine renk vermelidir; React Native'de üst `View` rengi alt metne miras kalmaz.
 
 ## Yayın öncesi gerçek cihaz kontrolü
 

@@ -45,8 +45,8 @@ export function PlayerScreen({
           <View style={[styles.progressDot, { left: `${progress}%` }]} />
         </View>
         <View style={styles.timeRow}>
-          <Text>{progress}%</Text>
-          <Text>—</Text>
+          <Text style={styles.timeText}>{progress}%</Text>
+          <Text style={styles.timeText}>—</Text>
         </View>
         <View style={styles.playerButtons}>
           <View accessible={false} style={styles.playerButtonSpacer} />
